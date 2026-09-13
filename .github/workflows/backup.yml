@@ -29,7 +29,7 @@ jobs:
           pg_dump "$DATABASE_URL_DIRECT" --no-owner --no-privileges -Fc -f "backup-$(date +%F).dump"
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: db-backup-${{ github.run_id }}
           path: backup-*.dump
