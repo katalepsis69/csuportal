@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { unstable_cache } from 'next/cache';
+import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import { AvgBar, SentimentPie } from '@/components/Charts';
@@ -7,6 +9,24 @@ import Stagger, { StaggerItem } from '@/components/Stagger';
 import type { DeanOverview, Semester } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
+
+/**
+ * Dean overview is the heaviest aggregate and contains no student identity,
+ * so it is fetched with the service key and cached 60s under the 'evals' tag
+ * (revalidated on every submitted evaluation). Role checks stay in the page.
+ */
+const getDeanOverview = unstable_cache(
+  async (semesterId: string | null): Promise<DeanOverview> => {
+    const supabase = createServiceClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    );
+    const { data } = await supabase.rpc('rpc_dean_overview', { p_semester_id: semesterId });
+    return (data ?? {}) as DeanOverview;
+  },
+  ['dean-overview'],
+  { revalidate: 60, tags: ['evals'] },
+);
 
 export default async function DeanPage({
   searchParams,
@@ -18,11 +38,10 @@ export default async function DeanPage({
   const supabase = await createClient();
 
   const semesterId = typeof sem === 'string' ? sem : null;
-  const [{ data: semesters }, { data }] = await Promise.all([
+  const [{ data: semesters }, overview] = await Promise.all([
     supabase.from('semesters').select('*').order('academic_year', { ascending: false }),
-    supabase.rpc('rpc_dean_overview', { p_semester_id: semesterId }),
+    getDeanOverview(semesterId),
   ]);
-  const overview = (data ?? {}) as DeanOverview;
   const semester = overview.semester as Semester | null;
   const label = semester ? `${semester.academic_year} ${semester.term}` : 'No semester';
 

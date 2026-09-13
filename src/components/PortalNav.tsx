@@ -94,12 +94,15 @@ export function TopNav({ role }: { role: Role }) {
   const isActive = useActive();
   const items = SIDE[role].flatMap((g) => g.items);
   return (
-    <nav className="hidden items-center gap-7 lg:flex" aria-label="Primary">
+    <nav
+      className="flex min-w-0 flex-1 items-center gap-5 overflow-x-auto md:gap-7"
+      aria-label="Primary"
+    >
       {items.map((item) => (
         <Link
           key={item.href}
           href={item.href}
-          className={`nav-link ${isActive(item.href) ? 'active' : ''}`}
+          className={`nav-link shrink-0 ${isActive(item.href) ? 'active' : ''}`}
         >
           {item.label}
         </Link>

@@ -42,3 +42,6 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# k6 load test env (generated, contains test creds)
+k6/loadtest-env.json

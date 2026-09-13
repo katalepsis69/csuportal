@@ -1,5 +1,7 @@
 'use server';
 
+import { revalidateTag } from 'next/cache';
+
 export type SubmitInput = {
   sectionSubjectId: string;
   anonymous: boolean;
@@ -67,6 +69,7 @@ export async function submitEvaluation(input: SubmitInput): Promise<SubmitResult
   if (!result?.ok) {
     return { ok: false, error: FRIENDLY[result?.error ?? ''] ?? 'Submission failed.' };
   }
+  revalidateTag('evals', 'max'); // refresh the cached dean overview
   return { ok: true };
 }
 
