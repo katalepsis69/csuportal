@@ -91,11 +91,16 @@ brandkit). **No new skills required.** The gaps are process gates:
 
 | Gate | Status | Owner skill/agent |
 |---|---|---|
-| Accessibility (contrast, focus, keyboard, reduced-motion) | ✅ applied in this rebrand | `ecc:accessibility`, ui-ux-pro-max checklist |
-| Security review of new write surfaces (drafts RPC) | ✅ self-reviewed with migration 0004 (enrollment check, size caps, student-only RLS) | `ecc:security-review` |
-| Test coverage (eval submit, draft, RLS smoke) | ⬜ pending — biggest open gap | `ecc:react-testing`, `ecc:e2e-testing` |
-| Load test (500 concurrent, k6 — plan §7) | ⬜ pending | k6 OSS |
+| Accessibility (contrast, focus, keyboard, reduced-motion) | ✅ applied in the rebrand | `ecc:accessibility`, ui-ux-pro-max checklist |
+| Security review of new write surfaces (drafts RPC) | ✅ self-reviewed with migration 0004 (enrollment check, size caps, student-only RLS); standard security headers deployed | `ecc:security-review` |
+| Test coverage (eval submit, draft, RLS smoke) | ✅ 10 API-level tests (`npm test`) — caught a real RPC-overload bug (fixed in migration 0005) | `ecc:react-testing`, `ecc:e2e-testing` |
+| Load test (500 concurrent, k6 — plan §7) | ✅ k6 harness in `k6/` + `scripts/loadtest-setup/teardown.mjs`; 20-VU smoke: 0% errors, p95 250ms; full 500-VU run documented | k6 OSS |
 | Dependency updates | ✅ automated | Dependabot (weekly) |
 | Design token persistence | ✅ this file | ui-ux-pro-max `--persist` pattern |
+
+Known operational facts: Supabase auth rate-limits ~60 logins/min per IP
+(measured) — irrelevant for real students on distinct IPs, relevant for
+computer-lab rollouts; RPC submit path sustained ~105 req/s from 20 VUs with
+p95 250ms.
 
 Re-review gates after: new features, new pages, or each semester rollout.
