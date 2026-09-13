@@ -10,13 +10,18 @@ export default async function EvalPage({ params }: { params: Promise<{ id: strin
   const { id } = await params;
   const supabase = await createClient();
 
-  const [{ data: row }, { data: questions }] = await Promise.all([
+  const [{ data: row }, { data: questions }, { data: draft }] = await Promise.all([
     supabase.from('student_evals').select('*').eq('section_subject_id', id).single(),
     supabase
       .from('questions')
       .select('id, text, category')
       .eq('active', true)
       .order('sort_order'),
+    supabase
+      .from('drafts')
+      .select('answers, comment, anonymous')
+      .eq('section_subject_id', id)
+      .maybeSingle(),
   ]);
 
   if (!row) notFound();
@@ -31,6 +36,7 @@ export default async function EvalPage({ params }: { params: Promise<{ id: strin
       facultyName={row.faculty_name}
       closesAt={row.closes_at}
       questions={questions ?? []}
+      draft={draft ?? null}
     />
   );
 }

@@ -13,11 +13,14 @@ import {
   YAxis,
 } from 'recharts';
 
+/* CETC-LSC chart tokens (MASTER.md) */
 const SENTIMENT_COLORS: Record<string, string> = {
-  positive: '#16a34a',
-  neutral: '#94a3b8',
-  negative: '#dc2626',
+  positive: '#6FA86F',
+  neutral: '#B58A3C',
+  negative: '#B0453D',
 };
+const GRID = 'rgba(245,240,232,0.08)';
+const TICK = { fontSize: 11, fill: '#A99D8D' };
 
 export function SentimentPie({
   counts,
@@ -31,17 +34,24 @@ export function SentimentPie({
   ].filter((d) => d.value > 0);
 
   if (data.length === 0)
-    return <p className="py-8 text-center text-sm text-slate-400">No data yet</p>;
+    return <p className="py-8 text-center text-sm text-cream-faint">No data yet</p>;
 
   return (
     <ResponsiveContainer width="100%" height={220}>
       <PieChart>
         <Pie data={data} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80}>
           {data.map((d) => (
-            <Cell key={d.name} fill={SENTIMENT_COLORS[d.name.toLowerCase()]} />
+            <Cell key={d.name} fill={SENTIMENT_COLORS[d.name.toLowerCase()]} stroke="#171310" />
           ))}
         </Pie>
-        <Tooltip />
+        <Tooltip
+          contentStyle={{
+            background: '#1F1A15',
+            border: '1px solid rgba(245,240,232,0.1)',
+            borderRadius: 8,
+            color: '#F5F0E8',
+          }}
+        />
       </PieChart>
     </ResponsiveContainer>
   );
@@ -58,23 +68,24 @@ export function AvgBar({
 }) {
   const rows = data.map((d) => ({ name: d.name, value: d.value ?? 0 }));
   if (rows.length === 0)
-    return <p className="py-8 text-center text-sm text-slate-400">No data yet</p>;
+    return <p className="py-8 text-center text-sm text-cream-faint">No data yet</p>;
 
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={rows} margin={{ left: -20, right: 8, top: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-        <XAxis
-          dataKey="name"
-          tick={{ fontSize: 11 }}
-          interval={0}
-          angle={-15}
-          textAnchor="end"
-          height={60}
+        <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
+        <XAxis dataKey="name" tick={TICK} interval={0} angle={-15} textAnchor="end" height={60} />
+        <YAxis domain={[0, domainMax]} tick={TICK} />
+        <Tooltip
+          cursor={{ fill: 'rgba(245,240,232,0.04)' }}
+          contentStyle={{
+            background: '#1F1A15',
+            border: '1px solid rgba(245,240,232,0.1)',
+            borderRadius: 8,
+            color: '#F5F0E8',
+          }}
         />
-        <YAxis domain={[0, domainMax]} tick={{ fontSize: 11 }} />
-        <Tooltip />
-        <Bar dataKey="value" fill="#0f172a" radius={[4, 4, 0, 0]} />
+        <Bar dataKey="value" fill="#D86A12" radius={[4, 4, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );

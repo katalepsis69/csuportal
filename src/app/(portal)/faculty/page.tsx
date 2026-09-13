@@ -36,7 +36,7 @@ export default async function FacultyPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">My Results</h1>
-          <p className="text-sm text-slate-500">{semesterLabel}</p>
+          <p className="text-sm text-cream-muted">{semesterLabel}</p>
         </div>
         <div className="flex items-center gap-2">
           <form method="get" className="flex items-center gap-2">
@@ -63,20 +63,20 @@ export default async function FacultyPage({
 
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="card">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Overall rating</p>
+          <p className="text-xs font-semibold tracking-wide text-cream-muted uppercase">Overall rating</p>
           <p className="mt-1 text-3xl font-semibold">
             {overview.overall != null ? overview.overall.toFixed(2) : '—'}
-            <span className="text-base font-normal text-slate-400"> / 5</span>
+            <span className="text-base font-normal text-cream-faint"> / 5</span>
           </p>
         </div>
         <div className="card">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Evaluations received</p>
+          <p className="text-xs font-semibold tracking-wide text-cream-muted uppercase">Evaluations received</p>
           <p className="mt-1 text-3xl font-semibold">{overview.per_question?.[0]?.responses ?? 0}</p>
-          <p className="text-xs text-slate-400">total answers per question</p>
+          <p className="text-xs text-cream-faint">total answers per question</p>
         </div>
         <div className="card">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Sentiment</p>
-          <p className="mt-1 text-sm text-slate-600">
+          <p className="text-xs font-semibold tracking-wide text-cream-muted uppercase">Sentiment</p>
+          <p className="mt-1 text-sm text-cream-muted">
             {sentimentTotal === 0
               ? 'No comments yet'
               : `${Math.round(((overview.sentiment.positive ?? 0) / sentimentTotal) * 100)}% positive · ${Math.round(
@@ -98,9 +98,9 @@ export default async function FacultyPage({
           <table className="table mt-3">
             <tbody>
               {(overview.per_question ?? []).map((q) => (
-                <tr key={q.id ?? q.text} className="border-b border-slate-100">
+                <tr key={q.id ?? q.text} className="border-b border-subtle">
                   <td className="td">
-                    <span className="mr-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+                    <span className="mr-2 rounded bg-panel2 px-1.5 py-0.5 text-xs text-cream-muted">
                       {q.category}
                     </span>
                     {q.text}
@@ -121,7 +121,7 @@ export default async function FacultyPage({
         <h2 className="mb-3 text-sm font-semibold">Per subject / section</h2>
         <table className="table">
           <thead>
-            <tr className="border-b border-slate-200">
+            <tr className="border-b border-subtle">
               <th className="th">Subject</th>
               <th className="th">Section</th>
               <th className="th">Evaluations</th>
@@ -130,7 +130,7 @@ export default async function FacultyPage({
           </thead>
           <tbody>
             {(overview.per_subject ?? []).map((s) => (
-              <tr key={`${s.subject_code}-${s.section_name}`} className="border-b border-slate-100">
+              <tr key={`${s.subject_code}-${s.section_name}`} className="border-b border-subtle">
                 <td className="td">
                   <span className="font-medium">{s.subject_code}</span> — {s.subject_name}
                 </td>
@@ -141,7 +141,7 @@ export default async function FacultyPage({
             ))}
             {(overview.per_subject ?? []).length === 0 && (
               <tr>
-                <td className="td text-slate-400">No evaluations yet</td>
+                <td className="td text-cream-faint">No evaluations yet</td>
               </tr>
             )}
           </tbody>
@@ -152,17 +152,17 @@ export default async function FacultyPage({
         <h2 className="mb-3 text-sm font-semibold">Student comments (anonymous)</h2>
         <div className="space-y-3">
           {(overview.comments ?? []).map((c, i) => (
-            <div key={i} className="rounded-md border border-slate-100 bg-slate-50 px-4 py-3">
-              <p className="text-sm text-slate-700">{c.comment}</p>
-              <p className="mt-1 text-xs text-slate-400">
+            <div key={i} className="rounded-md border border-subtle bg-bg2 px-4 py-3">
+              <p className="text-sm text-cream-dim">{c.comment}</p>
+              <p className="mt-1 text-xs text-cream-faint">
                 {new Date(c.at).toLocaleDateString()} ·{' '}
                 <span
                   className={
                     c.label === 'positive'
-                      ? 'text-green-600'
+                      ? 'text-positive'
                       : c.label === 'negative'
-                        ? 'text-red-600'
-                        : 'text-slate-400'
+                        ? 'text-negative'
+                        : 'text-cream-faint'
                   }
                 >
                   {c.label ?? 'neutral'}
@@ -171,7 +171,7 @@ export default async function FacultyPage({
             </div>
           ))}
           {(overview.comments ?? []).length === 0 && (
-            <p className="text-sm text-slate-400">No comments yet</p>
+            <p className="text-sm text-cream-faint">No comments yet</p>
           )}
         </div>
       </div>

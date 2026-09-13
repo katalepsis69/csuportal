@@ -48,7 +48,7 @@ export default async function ReportsPage({
     preview = (
       <div className="card">
         <h2 className="mb-3 text-sm font-semibold">Department overview — {label}</h2>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-cream-muted">
           Participation {p.submitted ?? 0}/{p.enrolled ?? 0} · {p.total_evals ?? 0} evaluations ·{' '}
           {(data?.faculty ?? []).length} faculty
         </p>
@@ -74,7 +74,7 @@ export default async function ReportsPage({
           <h2 className="mb-3 text-sm font-semibold">
             {name} — {label}
           </h2>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-cream-muted">
             {(data?.per_question ?? []).length} questions aggregated ·{' '}
             {(data?.comments ?? []).length} comments
           </p>
@@ -82,7 +82,7 @@ export default async function ReportsPage({
       );
     } else {
       preview = (
-        <div className="card text-sm text-slate-500">
+        <div className="card text-sm text-cream-muted">
           Pick a semester and a faculty member to generate the detailed report.
         </div>
       );
@@ -100,7 +100,7 @@ export default async function ReportsPage({
           <h2 className="mb-3 text-sm font-semibold">Subjects — {label}</h2>
           <table className="table">
             <thead>
-              <tr className="border-b border-slate-200">
+              <tr className="border-b border-subtle">
                 <th className="th">Code</th>
                 <th className="th">Subject</th>
                 <th className="th">Evals</th>
@@ -109,7 +109,7 @@ export default async function ReportsPage({
             </thead>
             <tbody>
               {(data ?? []).map((r: any, i: number) => (
-                <tr key={i} className="border-b border-slate-100">
+                <tr key={i} className="border-b border-subtle">
                   <td className="td font-medium">{r.code}</td>
                   <td className="td">{r.name}</td>
                   <td className="td">{r.evals}</td>
@@ -129,7 +129,7 @@ export default async function ReportsPage({
     preview = (
       <div className="card">
         <h2 className="mb-3 text-sm font-semibold">Sentiment — {label}</h2>
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-cream-muted">
           {c.positive ?? 0} positive · {c.neutral ?? 0} neutral · {c.negative ?? 0} negative ·{' '}
           {(data?.comments ?? []).length} total comments
         </p>
@@ -143,7 +143,7 @@ export default async function ReportsPage({
         <h2 className="mb-3 text-sm font-semibold">Semester trend</h2>
         <table className="table">
           <thead>
-            <tr className="border-b border-slate-200">
+            <tr className="border-b border-subtle">
               <th className="th">Semester</th>
               <th className="th">Evals</th>
               <th className="th">Avg</th>
@@ -152,15 +152,15 @@ export default async function ReportsPage({
           </thead>
           <tbody>
             {(data ?? []).map((r: any, i: number) => (
-              <tr key={i} className="border-b border-slate-100">
+              <tr key={i} className="border-b border-subtle">
                 <td className="td font-medium">
                   {r.academic_year} {r.term}
                 </td>
                 <td className="td">{r.evals}</td>
                 <td className="td">{r.avg_rating?.toFixed(2) ?? '—'}</td>
                 <td className="td">
-                  <span className="text-green-600">{r.positive}</span> /{' '}
-                  <span className="text-red-600">{r.negative}</span>
+                  <span className="text-positive">{r.positive}</span> /{' '}
+                  <span className="text-negative">{r.negative}</span>
                 </td>
               </tr>
             ))}

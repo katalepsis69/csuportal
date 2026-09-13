@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import { AvgBar, SentimentPie } from '@/components/Charts';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
+import Stagger, { StaggerItem } from '@/components/Stagger';
 import type { DeanOverview, Semester } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -35,7 +36,7 @@ export default async function DeanPage({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">Department Dashboard</h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-cream-muted">
             {label}
             {semester?.is_open ? ' · evaluation period open' : ' · period closed'}
           </p>
@@ -69,53 +70,53 @@ export default async function DeanPage({
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-4">
-        <div className="card">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Participation</p>
-          <p className="mt-1 text-3xl font-semibold">{participationPct}%</p>
-          <p className="text-xs text-slate-400">
+      <Stagger className="grid gap-4 sm:grid-cols-4">
+        <StaggerItem className="card card-hover">
+          <p className="stat-label">Participation</p>
+          <p className="stat-value">{participationPct}%</p>
+          <p className="mt-1 text-xs text-cream-faint">
             {overview.participation?.submitted ?? 0} of {overview.participation?.enrolled ?? 0} students
           </p>
-        </div>
-        <div className="card">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Evaluations</p>
-          <p className="mt-1 text-3xl font-semibold">{overview.participation?.total_evals ?? 0}</p>
-        </div>
-        <div className="card">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Faculty evaluated</p>
-          <p className="mt-1 text-3xl font-semibold">
+        </StaggerItem>
+        <StaggerItem className="card card-hover">
+          <p className="stat-label">Evaluations</p>
+          <p className="stat-value">{overview.participation?.total_evals ?? 0}</p>
+        </StaggerItem>
+        <StaggerItem className="card card-hover">
+          <p className="stat-label">Faculty evaluated</p>
+          <p className="stat-value">
             {(overview.faculty ?? []).filter((f) => f.evals > 0).length}
-            <span className="text-base font-normal text-slate-400"> / {(overview.faculty ?? []).length}</span>
+            <span className="text-base font-normal text-cream-faint"> / {(overview.faculty ?? []).length}</span>
           </p>
-        </div>
-        <div className="card">
-          <p className="text-xs font-semibold tracking-wide text-slate-500 uppercase">Comment sentiment</p>
+        </StaggerItem>
+        <StaggerItem className="card card-hover">
+          <p className="stat-label">Comment sentiment</p>
           <div className="mt-2">
             <SentimentPie counts={overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 }} />
           </div>
-        </div>
-      </div>
+        </StaggerItem>
+      </Stagger>
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <div className="card">
-          <h2 className="mb-3 text-sm font-semibold">Faculty overall ranking</h2>
+      <Stagger className="grid gap-4 lg:grid-cols-2">
+        <StaggerItem className="card">
+          <h2 className="panel-title">Faculty overall ranking</h2>
           <AvgBar
             data={(overview.faculty ?? []).map((f) => ({ name: f.full_name.split(' ')[0], value: f.overall }))}
           />
-        </div>
-        <div className="card">
-          <h2 className="mb-3 text-sm font-semibold">Average per criterion</h2>
+        </StaggerItem>
+        <StaggerItem className="card">
+          <h2 className="panel-title">Average per criterion</h2>
           <AvgBar
             data={(overview.per_criterion ?? []).map((c) => ({ name: c.category, value: c.avg_rating }))}
           />
-        </div>
-      </div>
+        </StaggerItem>
+      </Stagger>
 
       <div className="card overflow-x-auto">
         <h2 className="mb-3 text-sm font-semibold">Faculty</h2>
         <table className="table">
           <thead>
-            <tr className="border-b border-slate-200">
+            <tr className="border-b border-subtle">
               <th className="th">Name</th>
               <th className="th">Subject loads</th>
               <th className="th">Evaluations</th>
@@ -124,7 +125,7 @@ export default async function DeanPage({
           </thead>
           <tbody>
             {(overview.faculty ?? []).map((f) => (
-              <tr key={f.id} className="border-b border-slate-100">
+              <tr key={f.id} className="border-b border-subtle">
                 <td className="td font-medium">{f.full_name}</td>
                 <td className="td">{f.loads}</td>
                 <td className="td">{f.evals}</td>
@@ -133,7 +134,7 @@ export default async function DeanPage({
             ))}
             {(overview.faculty ?? []).length === 0 && (
               <tr>
-                <td className="td text-slate-400">No faculty profiles yet</td>
+                <td className="td text-cream-faint">No faculty profiles yet</td>
               </tr>
             )}
           </tbody>

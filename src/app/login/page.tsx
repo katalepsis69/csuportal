@@ -27,13 +27,22 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <div className="card w-full max-w-sm">
-        <h1 className="mb-1 text-xl font-semibold">CETC Faculty Evaluation Portal</h1>
-        <p className="mb-6 text-sm text-slate-500">Sign in with your school account.</p>
-        <form onSubmit={handleSignIn} className="space-y-4">
+    <main className="flex min-h-screen flex-1 items-center justify-center p-6">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <div
+            className="text-[28px] font-extrabold tracking-[0.03em]"
+            style={{ fontFamily: 'var(--font-display)' }}
+          >
+            CETC<span className="text-brand">-LSC</span>
+          </div>
+          <p className="mt-1 text-sm text-cream-muted">Faculty Evaluation Portal</p>
+        </div>
+        <form onSubmit={handleSignIn} className="card space-y-4">
           <div>
-            <label className="label" htmlFor="email">Email</label>
+            <label className="label" htmlFor="email">
+              Email
+            </label>
             <input
               id="email"
               type="email"
@@ -45,7 +54,9 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label className="label" htmlFor="password">Password</label>
+            <label className="label" htmlFor="password">
+              Password
+            </label>
             <input
               id="password"
               type="password"
@@ -56,11 +67,14 @@ export default function LoginPage() {
               autoComplete="current-password"
             />
           </div>
-          {error && <p className="text-sm text-red-600">{error}</p>}
+          {error && <p className="text-sm text-negative">{error}</p>}
           <button type="submit" className="btn w-full" disabled={busy}>
             {busy ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
+        <p className="mt-6 text-center text-xs text-cream-faint">
+          Use the account provided by your department.
+        </p>
       </div>
     </main>
   );

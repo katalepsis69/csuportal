@@ -46,5 +46,11 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: false, closeErr: closeErr?.message, openErr: openErr?.message }, { status: 500 });
   }
 
+  // drafts whose eval period closed are removed (service-role RPC)
+  const { error: draftErr } = await supabase.rpc('rpc_clear_stale_drafts');
+  if (draftErr) {
+    return NextResponse.json({ ok: false, draftErr: draftErr.message }, { status: 500 });
+  }
+
   return NextResponse.json({ ok: true, at: nowIso });
 }

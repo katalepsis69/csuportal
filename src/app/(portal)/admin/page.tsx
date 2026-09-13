@@ -97,7 +97,7 @@ export default async function AdminPage({
             key={t.key}
             href={`/admin?tab=${t.key}`}
             className={`rounded-md px-3 py-1.5 text-sm ${
-              t.key === tab ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 hover:bg-slate-100'
+              t.key === tab ? 'bg-brand text-canvas' : 'bg-panel text-cream-muted hover:bg-panel2'
             }`}
           >
             {t.label}
@@ -110,7 +110,7 @@ export default async function AdminPage({
           <div className="card overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="border-b border-slate-200">
+                <tr className="border-b border-subtle">
                   <th className="th">AY / Term</th>
                   <th className="th">Current</th>
                   <th className="th">Period</th>
@@ -120,17 +120,17 @@ export default async function AdminPage({
               </thead>
               <tbody>
                 {sems.map((s) => (
-                  <tr key={s.id} className="border-b border-slate-100">
+                  <tr key={s.id} className="border-b border-subtle">
                     <td className="td font-medium">
                       {s.academic_year} · {s.term}
                     </td>
                     <td className="td">{s.is_current ? '✓' : ''}</td>
                     <td className="td">
-                      <span className={`badge ${s.is_open ? 'bg-green-100 text-green-700' : 'bg-slate-100 text-slate-500'}`}>
+                      <span className={`badge ${s.is_open ? 'bg-green-100 text-positive' : 'bg-panel2 text-cream-muted'}`}>
                         {s.is_open ? 'open' : 'closed'}
                       </span>
                     </td>
-                    <td className="td text-xs text-slate-500">
+                    <td className="td text-xs text-cream-muted">
                       {s.opens_at ? new Date(s.opens_at).toLocaleString() : '—'} →{' '}
                       {s.closes_at ? new Date(s.closes_at).toLocaleString() : '—'}
                     </td>
@@ -139,7 +139,7 @@ export default async function AdminPage({
                         {!s.is_current && (
                           <form action={setCurrentSemester}>
                             <input type="hidden" name="id" value={s.id} />
-                            <button type="submit" className="text-xs text-slate-600 hover:underline">
+                            <button type="submit" className="text-xs text-cream-muted hover:underline">
                               Set current
                             </button>
                           </form>
@@ -147,7 +147,7 @@ export default async function AdminPage({
                         <form action={togglePeriod}>
                           <input type="hidden" name="id" value={s.id} />
                           <input type="hidden" name="open" value={(!s.is_open).toString()} />
-                          <button type="submit" className="text-xs text-slate-600 hover:underline">
+                          <button type="submit" className="text-xs text-cream-muted hover:underline">
                             {s.is_open ? 'Close period' : 'Open period'}
                           </button>
                         </form>
@@ -158,7 +158,7 @@ export default async function AdminPage({
                 ))}
                 {sems.length === 0 && (
                   <tr>
-                    <td className="td text-slate-400">No semesters yet</td>
+                    <td className="td text-cream-faint">No semesters yet</td>
                   </tr>
                 )}
               </tbody>
@@ -203,7 +203,7 @@ export default async function AdminPage({
           <div className="card overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="border-b border-slate-200">
+                <tr className="border-b border-subtle">
                   <th className="th">Code</th>
                   <th className="th">Name</th>
                   <th className="th"></th>
@@ -211,7 +211,7 @@ export default async function AdminPage({
               </thead>
               <tbody>
                 {(programs ?? []).map((p) => (
-                  <tr key={p.id} className="border-b border-slate-100">
+                  <tr key={p.id} className="border-b border-subtle">
                     <td className="td font-medium">{p.code}</td>
                     <td className="td">{p.name}</td>
                     <td className="td">
@@ -243,7 +243,7 @@ export default async function AdminPage({
           <div className="card overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="border-b border-slate-200">
+                <tr className="border-b border-subtle">
                   <th className="th">Program</th>
                   <th className="th">Year</th>
                   <th className="th">Section</th>
@@ -252,7 +252,7 @@ export default async function AdminPage({
               </thead>
               <tbody>
                 {secs.map((s) => (
-                  <tr key={s.id} className="border-b border-slate-100">
+                  <tr key={s.id} className="border-b border-subtle">
                     <td className="td font-medium">{s.program?.code}</td>
                     <td className="td">{s.year_level}</td>
                     <td className="td">{s.name}</td>
@@ -301,7 +301,7 @@ export default async function AdminPage({
           <div className="card overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="border-b border-slate-200">
+                <tr className="border-b border-subtle">
                   <th className="th">Code</th>
                   <th className="th">Name</th>
                   <th className="th"></th>
@@ -309,7 +309,7 @@ export default async function AdminPage({
               </thead>
               <tbody>
                 {(subjects ?? []).map((s) => (
-                  <tr key={s.id} className="border-b border-slate-100">
+                  <tr key={s.id} className="border-b border-subtle">
                     <td className="td font-medium">{s.code}</td>
                     <td className="td">{s.name}</td>
                     <td className="td">
@@ -341,7 +341,7 @@ export default async function AdminPage({
           <div className="card overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="border-b border-slate-200">
+                <tr className="border-b border-subtle">
                   <th className="th">Semester</th>
                   <th className="th">Section</th>
                   <th className="th">Subject</th>
@@ -351,7 +351,7 @@ export default async function AdminPage({
               </thead>
               <tbody>
                 {assigns.map((a) => (
-                  <tr key={a.id} className="border-b border-slate-100">
+                  <tr key={a.id} className="border-b border-subtle">
                     <td className="td">
                       {a.semester?.academic_year} {a.semester?.term}
                     </td>
@@ -367,7 +367,7 @@ export default async function AdminPage({
                 ))}
                 {assigns.length === 0 && (
                   <tr>
-                    <td className="td text-slate-400">No assignments yet</td>
+                    <td className="td text-cream-faint">No assignments yet</td>
                   </tr>
                 )}
               </tbody>
@@ -429,7 +429,7 @@ export default async function AdminPage({
           <div className="card overflow-x-auto">
             <table className="table">
               <thead>
-                <tr className="border-b border-slate-200">
+                <tr className="border-b border-subtle">
                   <th className="th">#</th>
                   <th className="th">Category</th>
                   <th className="th">Question</th>
@@ -439,10 +439,10 @@ export default async function AdminPage({
               </thead>
               <tbody>
                 {(questions ?? []).map((q) => (
-                  <tr key={q.id} className="border-b border-slate-100">
+                  <tr key={q.id} className="border-b border-subtle">
                     <td className="td">{q.sort_order}</td>
                     <td className="td">
-                      <span className="rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-600">
+                      <span className="rounded bg-panel2 px-1.5 py-0.5 text-xs text-cream-muted">
                         {q.category}
                       </span>
                     </td>
@@ -453,7 +453,7 @@ export default async function AdminPage({
                         <form action={toggleQuestion}>
                           <input type="hidden" name="id" value={q.id} />
                           <input type="hidden" name="active" value={(!q.active).toString()} />
-                          <button type="submit" className="text-xs text-slate-600 hover:underline">
+                          <button type="submit" className="text-xs text-cream-muted hover:underline">
                             {q.active ? 'Deactivate' : 'Activate'}
                           </button>
                         </form>
@@ -516,7 +516,7 @@ export default async function AdminPage({
               <button type="submit" className="btn">Enroll</button>
             </div>
           </form>
-          <p className="mt-4 text-xs text-slate-400">
+          <p className="mt-4 text-xs text-cream-faint">
             {qs.length} sections · {assigns.length} classes · {(students ?? []).length} students enrolled via
             this form
           </p>

@@ -56,14 +56,14 @@ export default async function HistoryPage({
     <div className="space-y-6">
       <div>
         <h1 className="text-xl font-semibold">Evaluation History</h1>
-        <nav className="mt-1 flex flex-wrap items-center gap-1 text-sm text-slate-500">
-          <Link href="/dean/history" className="hover:text-slate-900">
+        <nav className="mt-1 flex flex-wrap items-center gap-1 text-sm text-cream-muted">
+          <Link href="/dean/history" className="hover:text-cream">
             Academic years
           </Link>
           {ay && (
             <>
               <span>›</span>
-              <Link href={qs({ term: '', subject: '', faculty: '' })} className="hover:text-slate-900">
+              <Link href={qs({ term: '', subject: '', faculty: '' })} className="hover:text-cream">
                 {ay}
               </Link>
             </>
@@ -71,7 +71,7 @@ export default async function HistoryPage({
           {term && (
             <>
               <span>›</span>
-              <Link href={qs({ subject: '', faculty: '' })} className="hover:text-slate-900">
+              <Link href={qs({ subject: '', faculty: '' })} className="hover:text-cream">
                 {term} semester
               </Link>
             </>
@@ -79,7 +79,7 @@ export default async function HistoryPage({
           {subject && (
             <>
               <span>›</span>
-              <Link href={qs({ faculty: '' })} className="hover:text-slate-900">
+              <Link href={qs({ faculty: '' })} className="hover:text-cream">
                 Subject {String(rows[0]?.code ?? subject).slice(0, 8)}
               </Link>
             </>
@@ -87,7 +87,7 @@ export default async function HistoryPage({
           {faculty && (
             <>
               <span>›</span>
-              <span className="text-slate-900">Faculty detail</span>
+              <span className="text-cream">Faculty detail</span>
             </>
           )}
         </nav>
@@ -97,7 +97,7 @@ export default async function HistoryPage({
         <div className="card overflow-x-auto">
           <table className="table">
             <thead>
-              <tr className="border-b border-slate-200">
+              <tr className="border-b border-subtle">
                 {level === 'years' && <th className="th">Academic year</th>}
                 {level === 'terms' && <th className="th">Semester</th>}
                 {(level === 'subjects' || level === 'faculty') && <th className="th">Code</th>}
@@ -120,17 +120,17 @@ export default async function HistoryPage({
                   href = qs({ faculty: String(r.faculty_id) });
                 }
                 return (
-                  <tr key={i} className="border-b border-slate-100">
+                  <tr key={i} className="border-b border-subtle">
                     {level === 'years' && (
                       <td className="td">
-                        <Link href={href!} className="font-medium text-slate-900 hover:underline">
+                        <Link href={href!} className="font-medium text-cream hover:underline">
                           {String(r.academic_year)}
                         </Link>
                       </td>
                     )}
                     {level === 'terms' && (
                       <td className="td">
-                        <Link href={href!} className="font-medium text-slate-900 hover:underline">
+                        <Link href={href!} className="font-medium text-cream hover:underline">
                           {String(r.term)} semester
                         </Link>
                       </td>
@@ -139,7 +139,7 @@ export default async function HistoryPage({
                       <>
                         <td className="td font-medium">{String(r.code)}</td>
                         <td className="td">
-                          <Link href={href!} className="text-slate-900 hover:underline">
+                          <Link href={href!} className="text-cream hover:underline">
                             {String(r.name)}
                           </Link>
                         </td>
@@ -149,7 +149,7 @@ export default async function HistoryPage({
                       <>
                         <td className="td font-medium">{String(r.code)}</td>
                         <td className="td">
-                          <Link href={href!} className="text-slate-900 hover:underline">
+                          <Link href={href!} className="text-cream hover:underline">
                             {String(r.full_name)} · {String(r.section_name)}
                           </Link>
                         </td>
@@ -164,7 +164,7 @@ export default async function HistoryPage({
               })}
               {rows.length === 0 && detail.per_question.length === 0 && (
                 <tr>
-                  <td className="td text-slate-400">No data at this level yet</td>
+                  <td className="td text-cream-faint">No data at this level yet</td>
                 </tr>
               )}
             </tbody>
@@ -177,9 +177,9 @@ export default async function HistoryPage({
             <table className="table">
               <tbody>
                 {detail.per_question.map((r, i) => (
-                  <tr key={i} className="border-b border-slate-100">
+                  <tr key={i} className="border-b border-subtle">
                     <td className="td">
-                      <span className="mr-2 rounded bg-slate-100 px-1.5 py-0.5 text-xs text-slate-500">
+                      <span className="mr-2 rounded bg-panel2 px-1.5 py-0.5 text-xs text-cream-muted">
                         {String(r.category)}
                       </span>
                       {String(r.text)}
@@ -196,17 +196,17 @@ export default async function HistoryPage({
             <h2 className="mb-3 text-sm font-semibold">Comments</h2>
             <div className="space-y-3">
               {detail.comments.map((r, i) => (
-                <div key={i} className="rounded-md border border-slate-100 bg-slate-50 px-4 py-3">
-                  <p className="text-sm text-slate-700">{String(r.comment)}</p>
-                  <p className="mt-1 text-xs text-slate-400">
+                <div key={i} className="rounded-md border border-subtle bg-bg2 px-4 py-3">
+                  <p className="text-sm text-cream-dim">{String(r.comment)}</p>
+                  <p className="mt-1 text-xs text-cream-faint">
                     {new Date(String(r.at)).toLocaleDateString()} ·{' '}
                     <span
                       className={
                         r.label === 'positive'
-                          ? 'text-green-600'
+                          ? 'text-positive'
                           : r.label === 'negative'
-                            ? 'text-red-600'
-                            : 'text-slate-400'
+                            ? 'text-negative'
+                            : 'text-cream-faint'
                       }
                     >
                       {String(r.label ?? 'neutral')}
@@ -214,7 +214,7 @@ export default async function HistoryPage({
                   </p>
                 </div>
               ))}
-              {rows.length === 0 && <p className="text-sm text-slate-400">No comments</p>}
+              {rows.length === 0 && <p className="text-sm text-cream-faint">No comments</p>}
             </div>
           </div>
         </div>
