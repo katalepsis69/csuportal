@@ -1,0 +1,36 @@
+name: Database backup
+
+# Supabase free tier has NO automatic backups (daily backups are Pro-only).
+# This pg_dump is the PRIMARY backup. Runs daily at 01:10 UTC (Vercel cron
+# fires at 01:00 — offset avoids overlap). Artifacts are kept 90 days;
+# download one and store it somewhere permanent monthly.
+#
+# Required repo secret:
+#   DATABASE_URL_DIRECT — the Supabase session/direct connection string
+#   (port 5432 or the direct DB URL — NOT the 6543 transaction pooler,
+#   pg_dump wants a dedicated session).
+
+on:
+  schedule:
+    - cron: '10 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  pg_dump:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump database
+        env:
+          DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
+        run: |
+          if [ -z "$DATABASE_URL_DIRECT" ]; then
+            echo "DATABASE_URL_DIRECT secret not set — nothing to do"; exit 1
+          fi
+          pg_dump "$DATABASE_URL_DIRECT" --no-owner --no-privileges -Fc -f "backup-$(date +%F).dump"
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.run_id }}
+          path: backup-*.dump
+          retention-days: 90

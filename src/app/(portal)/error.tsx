@@ -1,0 +1,23 @@
+'use client';
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error & { digest?: string };
+  reset: () => void;
+}) {
+  return (
+    <div className="card max-w-md text-center">
+      <h1 className="text-lg font-semibold">Something went wrong</h1>
+      <p className="mt-2 text-sm text-slate-500">
+        {error.digest
+          ? `Unexpected error (ref: ${error.digest}). Try again — if it keeps happening, contact the admin.`
+          : 'Unexpected error. Try again — if it keeps happening, contact the admin.'}
+      </p>
+      <button type="button" onClick={reset} className="btn mt-4">
+        Try again
+      </button>
+    </div>
+  );
+}
