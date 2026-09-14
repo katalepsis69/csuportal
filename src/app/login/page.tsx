@@ -191,127 +191,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Left Column: Refined Editorial Showcase (Quote + Dashboard Preview) */}
-      <section className="md:col-span-6 hidden md:flex flex-col justify-between p-8 lg:p-12 xl:p-16 border-r border-subtle relative overflow-hidden bg-gradient-to-b from-panel/40 via-canvas to-canvas">
-        {/* Ambient warm glow */}
-        <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 rounded-full bg-brand/10 blur-3xl" />
-
-        {/* Top Branding (Official Logo + CSU CETC) */}
-        <div className="relative z-10 flex items-center gap-3.5">
-          <img
-            src="/csu-cetc-logo.png"
-            alt="Cotabato State University - CETC Logo"
-            className="h-14 w-14 object-contain shrink-0 drop-shadow-md"
-          />
-          <div>
-            <div
-              className="text-2xl font-extrabold tracking-[0.03em] leading-tight"
-              style={{ fontFamily: 'var(--font-display)' }}
-            >
-              CSU <span className="text-brand">CETC</span>
-            </div>
-            <p className="text-xs text-cream-muted tracking-wide mt-0.5">
-              Cotabato State University · College of Engineering, Technology and Computing
-            </p>
-          </div>
-        </div>
-
-        {/* Middle Showcase: Editorial Quote + 5-Star + Realistic Dashboard Preview */}
-        <div className="relative z-10 my-auto py-6 space-y-6 max-w-xl">
-          {/* Quote & Stars */}
-          <div className="space-y-2.5">
-            <div className="flex items-center gap-1 text-gold-text text-sm" aria-label="5 out of 5 stars">
-              <span>★</span>
-              <span>★</span>
-              <span>★</span>
-              <span>★</span>
-              <span>★</span>
-              <span className="text-xs text-cream-muted ml-2 font-medium">Student Verified</span>
-            </div>
-            <p className="text-lg xl:text-xl font-medium text-cream leading-snug">
-              “Objective student feedback is the cornerstone of academic excellence and continuous curriculum innovation at Cotabato State University.”
-            </p>
-            <p className="text-xs text-cream-muted">
-              — <span className="text-cream font-semibold">Faculty Evaluation Committee</span>, CSU CETC
-            </p>
-          </div>
-
-          {/* High-Fidelity Portal Dashboard Preview Mockup */}
-          <div className="rounded-2xl border border-subtle bg-bg2/90 shadow-2xl overflow-hidden backdrop-blur-sm">
-            {/* Window bar */}
-            <div className="flex items-center justify-between border-b border-subtle bg-panel/70 px-4 py-2.5">
-              <div className="flex items-center gap-1.5">
-                <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
-                <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
-                <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
-                <span className="ml-2 text-[11px] font-mono text-cream-muted">portal.csu.edu.ph/student</span>
-              </div>
-              <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-brand-text border border-subtle">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-                AY 2026–2027 Active
-              </span>
-            </div>
-
-            {/* Mockup Dashboard Content */}
-            <div className="p-4 space-y-3.5">
-              {/* Stats Bar */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                  <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Enrolled</span>
-                  <div className="text-base font-bold text-cream">6 Subjects</div>
-                </div>
-                <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                  <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Completed</span>
-                  <div className="text-base font-bold text-positive">4 Evaluated</div>
-                </div>
-                <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                  <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Pending</span>
-                  <div className="text-base font-bold text-gold-text">2 Left</div>
-                </div>
-              </div>
-
-              {/* Progress bar */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-[11px]">
-                  <span className="text-cream-dim">Semester Evaluation Progress</span>
-                  <span className="text-brand-text font-bold">66%</span>
-                </div>
-                <div className="h-2 w-full rounded-full bg-panel overflow-hidden">
-                  <div className="h-full rounded-full bg-brand transition-all" style={{ width: '66%' }} />
-                </div>
-              </div>
-
-              {/* Subject Rows Preview */}
-              <div className="space-y-1.5 pt-1">
-                <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
-                  <div className="truncate">
-                    <span className="font-bold text-cream">IT211</span>
-                    <span className="text-cream-muted ml-1.5">Web Systems & Tech · Engr. Jose Rizal Jr.</span>
-                  </div>
-                  <span className="badge badge-positive shrink-0 text-[10px]">Completed ✓</span>
-                </div>
-
-                <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
-                  <div className="truncate">
-                    <span className="font-bold text-cream">IT201</span>
-                    <span className="text-cream-muted ml-1.5">Data Structures · Prof. Maria Santos</span>
-                  </div>
-                  <span className="badge badge-gold shrink-0 text-[10px]">Pending ⏳</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer */}
-        <div className="relative z-10 text-xs text-cream-faint border-t border-subtle pt-4 flex items-center justify-between">
-          <span>Faculty Evaluation System</span>
-          <span>© Cotabato State University</span>
-        </div>
-      </section>
-
-      {/* Right Column: Authentication Form Panel (Always on the RIGHT SIDE) */}
-      <section className="md:col-span-6 flex items-center justify-center p-4 sm:p-8 xl:p-12">
+      {/* Left Column: Authentication Form Panel (LEFT SIDE) */}
+      <section className="md:col-span-6 flex items-center justify-center p-4 sm:p-8 xl:p-12 border-b md:border-b-0 md:border-r border-subtle relative bg-canvas">
         <div className="w-full max-w-[440px]">
           <div className="card space-y-5 transition-all duration-200 shadow-xl">
             {/* Brand in card */}
@@ -675,6 +556,125 @@ export default function LoginPage() {
               )}
             </form>
           </div>
+        </div>
+      </section>
+
+      {/* Right Column: Refined Editorial Showcase (Quote + Dashboard Preview) */}
+      <section className="md:col-span-6 hidden md:flex flex-col justify-between p-8 lg:p-12 xl:p-16 relative overflow-hidden bg-gradient-to-b from-panel/40 via-canvas to-canvas">
+        {/* Ambient warm glow */}
+        <div className="pointer-events-none absolute -top-32 -right-32 w-80 h-80 rounded-full bg-brand/10 blur-3xl" />
+
+        {/* Top Branding (Official Logo + CSU CETC) */}
+        <div className="relative z-10 flex items-center gap-3.5">
+          <img
+            src="/csu-cetc-logo.png"
+            alt="Cotabato State University - CETC Logo"
+            className="h-14 w-14 object-contain shrink-0 drop-shadow-md"
+          />
+          <div>
+            <div
+              className="text-2xl font-extrabold tracking-[0.03em] leading-tight"
+              style={{ fontFamily: 'var(--font-display)' }}
+            >
+              CSU <span className="text-brand">CETC</span>
+            </div>
+            <p className="text-xs text-cream-muted tracking-wide mt-0.5">
+              Cotabato State University · College of Engineering, Technology and Computing
+            </p>
+          </div>
+        </div>
+
+        {/* Middle Showcase: Editorial Quote + 5-Star + Realistic Dashboard Preview */}
+        <div className="relative z-10 my-auto py-6 space-y-6 max-w-xl">
+          {/* Quote & Stars */}
+          <div className="space-y-2.5">
+            <div className="flex items-center gap-1 text-gold-text text-sm" aria-label="5 out of 5 stars">
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+              <span>★</span>
+              <span className="text-xs text-cream-muted ml-2 font-medium">Student Verified</span>
+            </div>
+            <p className="text-lg xl:text-xl font-medium text-cream leading-snug">
+              “Objective student feedback is the cornerstone of academic excellence and continuous curriculum innovation at Cotabato State University.”
+            </p>
+            <p className="text-xs text-cream-muted">
+              — <span className="text-cream font-semibold">Faculty Evaluation Committee</span>, CSU CETC
+            </p>
+          </div>
+
+          {/* High-Fidelity Portal Dashboard Preview Mockup */}
+          <div className="rounded-2xl border border-subtle bg-bg2/90 shadow-2xl overflow-hidden backdrop-blur-sm">
+            {/* Window bar */}
+            <div className="flex items-center justify-between border-b border-subtle bg-panel/70 px-4 py-2.5">
+              <div className="flex items-center gap-1.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
+                <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
+                <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
+                <span className="ml-2 text-[11px] font-mono text-cream-muted">portal.csu.edu.ph/student</span>
+              </div>
+              <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-brand-text border border-subtle">
+                <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+                AY 2026–2027 Active
+              </span>
+            </div>
+
+            {/* Mockup Dashboard Content */}
+            <div className="p-4 space-y-3.5">
+              {/* Stats Bar */}
+              <div className="grid grid-cols-3 gap-2">
+                <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
+                  <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Enrolled</span>
+                  <div className="text-base font-bold text-cream">6 Subjects</div>
+                </div>
+                <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
+                  <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Completed</span>
+                  <div className="text-base font-bold text-positive">4 Evaluated</div>
+                </div>
+                <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
+                  <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Pending</span>
+                  <div className="text-base font-bold text-gold-text">2 Left</div>
+                </div>
+              </div>
+
+              {/* Progress bar */}
+              <div className="space-y-1">
+                <div className="flex justify-between text-[11px]">
+                  <span className="text-cream-dim">Semester Evaluation Progress</span>
+                  <span className="text-brand-text font-bold">66%</span>
+                </div>
+                <div className="h-2 w-full rounded-full bg-panel overflow-hidden">
+                  <div className="h-full rounded-full bg-brand transition-all" style={{ width: '66%' }} />
+                </div>
+              </div>
+
+              {/* Subject Rows Preview */}
+              <div className="space-y-1.5 pt-1">
+                <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
+                  <div className="truncate">
+                    <span className="font-bold text-cream">IT211</span>
+                    <span className="text-cream-muted ml-1.5">Web Systems & Tech · Engr. Jose Rizal Jr.</span>
+                  </div>
+                  <span className="badge badge-positive shrink-0 text-[10px]">Completed ✓</span>
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
+                  <div className="truncate">
+                    <span className="font-bold text-cream">IT201</span>
+                    <span className="text-cream-muted ml-1.5">Data Structures · Prof. Maria Santos</span>
+                  </div>
+                  <span className="badge badge-gold shrink-0 text-[10px]">Pending ⏳</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="relative z-10 text-xs text-cream-faint border-t border-subtle pt-4 flex items-center justify-between">
+          <span>Faculty Evaluation System</span>
+          <span>© Cotabato State University</span>
         </div>
       </section>
     </main>
