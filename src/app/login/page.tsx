@@ -42,7 +42,7 @@ export default function LoginPage() {
     setTouched((prev) => ({ ...prev, [field]: true }));
   }
 
-  // Real-time field errors
+  // Real-time field validation
   const isStudentIdValid =
     mode === 'login' || mode === 'forgot'
       ? studentId.trim().includes('@') || /^\d{4}-\d{4}$/.test(studentId.trim())
@@ -75,7 +75,7 @@ export default function LoginPage() {
           return;
         }
         if (!isStudentIdValid) {
-          setError('Student ID must be in format YYYY-XXXX (e.g. 2026-0001).');
+          setError('Please enter a valid Student ID (e.g. 2026-0001).');
           setBusy(false);
           return;
         }
@@ -117,7 +117,7 @@ export default function LoginPage() {
         }
       } else if (mode === 'login') {
         if (!studentId.trim()) {
-          setError('Please enter your Student ID or institutional email.');
+          setError('Please enter your Student ID or email.');
           setBusy(false);
           return;
         }
@@ -144,7 +144,7 @@ export default function LoginPage() {
         }
       } else if (mode === 'forgot') {
         if (!studentId.trim()) {
-          setError('Please enter your Student ID or institutional email.');
+          setError('Please enter your Student ID or email.');
           setBusy(false);
           return;
         }
@@ -170,9 +170,9 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-[100dvh] w-full flex flex-col lg:grid lg:grid-cols-12 bg-canvas text-cream selection:bg-brand/30">
-      {/* Mobile Masthead (< 1024px) */}
-      <div className="lg:hidden flex flex-col items-center pt-7 pb-4 px-6 text-center border-b border-subtle bg-panel/30">
+    <main className="min-h-[100dvh] w-full flex flex-col md:grid md:grid-cols-12 bg-canvas text-cream selection:bg-brand/30">
+      {/* Mobile Masthead (< 768px) */}
+      <div className="md:hidden flex flex-col items-center pt-6 pb-4 px-6 text-center border-b border-subtle bg-panel/30">
         <div className="flex items-center gap-3">
           <img
             src="/csu-cetc-logo.png"
@@ -191,17 +191,17 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Left Column: Refined Editorial Showcase (Reference: Image 4) */}
-      <section className="lg:col-span-6 xl:col-span-6 hidden lg:flex flex-col justify-between p-10 xl:p-14 border-r border-subtle relative overflow-hidden bg-gradient-to-b from-panel/40 via-canvas to-canvas">
+      {/* Left Column: Refined Editorial Showcase (Quote + Dashboard Preview) */}
+      <section className="md:col-span-6 hidden md:flex flex-col justify-between p-8 lg:p-12 xl:p-16 border-r border-subtle relative overflow-hidden bg-gradient-to-b from-panel/40 via-canvas to-canvas">
         {/* Ambient warm glow */}
         <div className="pointer-events-none absolute -top-32 -left-32 w-80 h-80 rounded-full bg-brand/10 blur-3xl" />
 
-        {/* Top Branding (Image 1 Logo + CSU CETC) */}
+        {/* Top Branding (Official Logo + CSU CETC) */}
         <div className="relative z-10 flex items-center gap-3.5">
           <img
             src="/csu-cetc-logo.png"
             alt="Cotabato State University - CETC Logo"
-            className="h-12 w-12 object-contain shrink-0 drop-shadow"
+            className="h-14 w-14 object-contain shrink-0 drop-shadow-md"
           />
           <div>
             <div
@@ -216,10 +216,10 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Middle Showcase: Editorial Quote + 5-Star + Dashboard Mockup */}
-        <div className="relative z-10 my-auto py-8 space-y-6 max-w-xl">
-          {/* Quote & Stars (Reference Image 4) */}
-          <div className="space-y-3">
+        {/* Middle Showcase: Editorial Quote + 5-Star + Realistic Dashboard Preview */}
+        <div className="relative z-10 my-auto py-6 space-y-6 max-w-xl">
+          {/* Quote & Stars */}
+          <div className="space-y-2.5">
             <div className="flex items-center gap-1 text-gold-text text-sm" aria-label="5 out of 5 stars">
               <span>★</span>
               <span>★</span>
@@ -236,7 +236,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* High-Fidelity Portal Dashboard Preview Mockup (Reference Image 4) */}
+          {/* High-Fidelity Portal Dashboard Preview Mockup */}
           <div className="rounded-2xl border border-subtle bg-bg2/90 shadow-2xl overflow-hidden backdrop-blur-sm">
             {/* Window bar */}
             <div className="flex items-center justify-between border-b border-subtle bg-panel/70 px-4 py-2.5">
@@ -303,39 +303,57 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Footer info */}
+        {/* Footer */}
         <div className="relative z-10 text-xs text-cream-faint border-t border-subtle pt-4 flex items-center justify-between">
           <span>Faculty Evaluation System</span>
           <span>© Cotabato State University</span>
         </div>
       </section>
 
-      {/* Right Column: Authentication Card Panel (Stable Layout, Auto Error, Auto Format) */}
-      <section className="lg:col-span-6 xl:col-span-6 flex items-center justify-center p-4 sm:p-8 xl:p-12">
+      {/* Right Column: Authentication Form Panel (Always on the RIGHT SIDE) */}
+      <section className="md:col-span-6 flex items-center justify-center p-4 sm:p-8 xl:p-12">
         <div className="w-full max-w-[440px]">
-          <div className="card space-y-5 transition-all duration-200">
+          <div className="card space-y-5 transition-all duration-200 shadow-xl">
+            {/* Brand in card */}
+            <div className="flex items-center gap-3 pb-1 border-b border-subtle/60">
+              <img
+                src="/csu-cetc-logo.png"
+                alt="CSU CETC"
+                className="h-10 w-10 object-contain shrink-0 drop-shadow"
+              />
+              <div>
+                <div
+                  className="text-lg font-extrabold tracking-wide leading-tight"
+                  style={{ fontFamily: 'var(--font-display)' }}
+                >
+                  CSU <span className="text-brand">CETC</span>
+                </div>
+                <p className="text-[11px] text-cream-muted">Faculty Evaluation Portal</p>
+              </div>
+            </div>
+
             {/* Header & Subtitle */}
-            <div className="text-center space-y-1">
+            <div className="space-y-1">
               <h2
                 className="text-2xl font-bold tracking-tight text-cream"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 {mode === 'signup'
-                  ? 'Create student account'
+                  ? 'Create account'
                   : mode === 'forgot'
-                  ? 'Reset your password'
+                  ? 'Reset password'
                   : 'Log in'}
               </h2>
               <p className="text-xs text-cream-muted">
                 {mode === 'signup'
-                  ? 'Enter your student credentials to register for evaluation.'
+                  ? 'Enter your student credentials to register.'
                   : mode === 'forgot'
-                  ? 'Enter your Student ID or institutional email to receive reset instructions.'
+                  ? 'Enter your Student ID or email to receive reset instructions.'
                   : 'Welcome back! Please enter your details.'}
               </p>
             </div>
 
-            {/* Segmented Control (kept at consistent height) */}
+            {/* Segmented Control */}
             {mode !== 'forgot' && (
               <div className="grid grid-cols-2 rounded-lg bg-bg2 p-1 border border-subtle">
                 <button
@@ -415,16 +433,11 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Student ID (Auto formatted YYYY-XXXX, red asterisk) */}
+              {/* Student ID (Auto-formatted YYYY-XXXX, red asterisk, no format badge) */}
               <div>
-                <label className="label flex items-center justify-between" htmlFor="studentId">
-                  <span>
-                    {mode === 'signup' ? 'Student ID' : 'Student ID or Email'}{' '}
-                    <span className="text-negative">*</span>
-                  </span>
-                  {mode === 'signup' && (
-                    <span className="text-[10px] text-cream-faint font-mono">Format: YYYY-XXXX</span>
-                  )}
+                <label className="label" htmlFor="studentId">
+                  {mode === 'signup' ? 'Student ID' : 'Student ID or Email'}{' '}
+                  <span className="text-negative">*</span>
                 </label>
                 <input
                   id="studentId"
@@ -446,8 +459,8 @@ export default function LoginPage() {
                 {touched.studentId && !isStudentIdValid && (
                   <p className="text-[11px] text-negative mt-1">
                     {mode === 'signup'
-                      ? 'Student ID must be in format YYYY-XXXX (e.g. 2026-0001).'
-                      : 'Please enter a valid Student ID (YYYY-XXXX) or institutional email.'}
+                      ? 'Enter a valid Student ID (e.g. 2026-0001).'
+                      : 'Please enter a valid Student ID (2026-0001) or institutional email.'}
                   </p>
                 )}
               </div>
@@ -455,10 +468,8 @@ export default function LoginPage() {
               {/* Email Address (Sign up only) */}
               {mode === 'signup' && (
                 <div>
-                  <label className="label flex items-center justify-between" htmlFor="email">
-                    <span>
-                      Email Address <span className="text-negative">*</span>
-                    </span>
+                  <label className="label" htmlFor="email">
+                    Email Address <span className="text-negative">*</span>
                   </label>
                   <input
                     id="email"
@@ -479,14 +490,12 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Program & Year Level (Sign up only, compact 2-col) */}
+              {/* Degree Program & Year Level (Sign up only) */}
               {mode === 'signup' && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="label flex items-center justify-between" htmlFor="programCode">
-                      <span>
-                        Degree Program <span className="text-negative">*</span>
-                      </span>
+                    <label className="label" htmlFor="programCode">
+                      Degree Program <span className="text-negative">*</span>
                     </label>
                     <select
                       id="programCode"
@@ -500,10 +509,8 @@ export default function LoginPage() {
                   </div>
 
                   <div>
-                    <label className="label flex items-center justify-between" htmlFor="yearLevel">
-                      <span>
-                        Year Level <span className="text-negative">*</span>
-                      </span>
+                    <label className="label" htmlFor="yearLevel">
+                      Year Level <span className="text-negative">*</span>
                     </label>
                     <select
                       id="yearLevel"
@@ -605,7 +612,7 @@ export default function LoginPage() {
                 </div>
               )}
 
-              {/* Submit Action */}
+              {/* Submit Button */}
               <button type="submit" className="btn w-full mt-2" disabled={busy}>
                 {busy
                   ? mode === 'signup'
@@ -620,7 +627,7 @@ export default function LoginPage() {
                   : 'Sign in'}
               </button>
 
-              {/* Secondary links (Reference Image 4) */}
+              {/* Footer Switcher Links */}
               {mode === 'login' && (
                 <p className="text-center text-xs text-cream-muted pt-2">
                   Don&apos;t have an account?{' '}
