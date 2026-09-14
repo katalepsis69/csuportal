@@ -9,6 +9,13 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  compress: true,
+  poweredByHeader: false,
+  productionBrowserSourceMaps: false,
+  // ponytail: tree-shake heavy client libs, no new deps
+  experimental: {
+    optimizePackageImports: ["recharts", "motion", "@react-pdf/renderer"],
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

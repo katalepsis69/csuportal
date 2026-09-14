@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SignaturePad, { type Strokes } from '@/components/SignaturePad';
-import { classifyComment, type SentimentResult } from '@/lib/sentiment';
 import { saveDraft, submitEvaluation } from '@/lib/actions/evaluation';
 import { IconFloppyDisk, IconStar } from '@/components/icons';
+import type { SentimentResult } from '@/lib/sentiment';
 
 type Question = { id: string; text: string; category: string };
 
@@ -55,11 +55,21 @@ export default function EvalForm({
   const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // silent client-side sentiment — never shown, never blocks submit
+  // silent client-side sentiment — lazy-loaded, never shown, never blocks submit
+  // ponytail: dynamic import keeps ~136MB WASM out of initial bundle
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
-      setSentiment(await classifyComment(comment));
+      if (comment.trim().length < 3) {
+        setSentiment(null);
+        return;
+      }
+      try {
+        const { classifyComment } = await import('@/lib/sentiment');
+        setSentiment(await classifyComment(comment));
+      } catch {
+        setSentiment(null);
+      }
     }, 700);
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
