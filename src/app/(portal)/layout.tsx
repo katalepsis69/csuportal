@@ -31,7 +31,7 @@ export default async function PortalLayout({ children }: { children: React.React
             style={{ fontFamily: 'var(--font-display)' }}
           >
             <img src="/csu-cetc-logo.png" alt="CSU CETC" className="h-7 w-7 object-contain" />
-            <span>CSU<span className="text-brand">-CETC</span></span>
+            <span>CSU <span className="text-brand">CETC</span></span>
           </Link>
 
           <TopNav role={profile.role} />

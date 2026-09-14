@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* CETC-LSC design tokens — see design-system/cetc-lsc/MASTER.md */
+/* CSU CETC design tokens — Cotabato State University */
 :root {
   color-scheme: dark;
   --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;

@@ -13,7 +13,7 @@ import {
   YAxis,
 } from 'recharts';
 
-/* CETC-LSC chart tokens (MASTER.md) */
+/* CSU CETC chart tokens */
 const SENTIMENT_COLORS: Record<string, string> = {
   positive: '#6FA86F',
   neutral: '#B58A3C',

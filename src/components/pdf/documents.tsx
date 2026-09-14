@@ -53,11 +53,11 @@ function Shell({ title, subtitle, children }: { title: string; subtitle: string;
       <Page size="A4" style={styles.page}>
         <Text style={[styles.title, styles.bold]}>{title}</Text>
         <Text style={styles.subtitle}>
-          CETC Faculty Evaluation Portal · {subtitle} · Generated {generated()}
+          Cotabato State University · CSU CETC Faculty Evaluation Portal · {subtitle} · Generated {generated()}
         </Text>
         {children}
         <Text style={styles.footer} fixed>
-          CETC Faculty Evaluation Portal — confidential
+          Cotabato State University · College of Engineering, Technology and Computing — Confidential
         </Text>
       </Page>
     </Document>

@@ -85,7 +85,6 @@ export default async function AdminPage({
     subject: { code: string; name: string } | null;
     faculty: { full_name: string } | null;
   }[];
-  const qs = (sections ?? []) as unknown as { id: string; name: string }[];
 
   return (
     <div className="space-y-6">
@@ -517,7 +516,7 @@ export default async function AdminPage({
             </div>
           </form>
           <p className="mt-4 text-xs text-cream-faint">
-            {qs.length} sections · {assigns.length} classes · {(students ?? []).length} students enrolled via
+            {secs.length} sections · {assigns.length} classes · {(students ?? []).length} students enrolled via
             this form
           </p>
         </div>
