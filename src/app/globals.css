@@ -136,23 +136,6 @@ body {
     @apply rounded-md bg-bg2 px-1.5 py-0.5 text-xs font-semibold text-cream-muted;
   }
 
-  .side-section-h {
-    @apply mt-5 mb-2 ml-3 text-[11px] font-semibold tracking-[0.08em] text-cream-faint uppercase first:mt-1;
-  }
-  .side-link {
-    @apply mb-1 flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm text-cream-dim transition-colors duration-150 hover:bg-[rgba(245,240,232,0.05)] hover:text-cream;
-  }
-  .side-link.active {
-    @apply bg-[rgba(216,106,18,0.15)] font-semibold text-brand-text ring-1 ring-[rgba(216,106,18,0.3)];
-  }
-
-  .nav-link {
-    @apply border-b-2 border-transparent pb-1 text-sm font-medium text-cream-muted transition-colors duration-200 hover:text-cream;
-  }
-  .nav-link.active {
-    @apply border-brand text-cream;
-  }
-
   .success-banner {
     @apply rounded-lg border border-[rgba(130,187,130,0.4)] bg-[rgba(130,187,130,0.12)] px-4 py-3 text-sm text-positive;
   }

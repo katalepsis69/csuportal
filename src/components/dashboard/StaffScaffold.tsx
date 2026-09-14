@@ -1,9 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import type { Role } from '@/lib/auth';
+import React from 'react';
 
 // --- Pure SVG Line Icons (1.5px stroke, zero emojis, Web Interface Guidelines compliant) ---
 
@@ -74,12 +71,25 @@ export function IconDotsLine({ className = 'h-4 w-4' }: { className?: string }) 
   );
 }
 
-export function IconHelpLine({ className = 'h-5 w-5' }: { className?: string }) {
+export function IconClipboardLine({ className = 'h-5 w-5' }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="10" />
-      <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-      <line x1="12" y1="17" x2="12.01" y2="17" />
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <path d="M12 11h4" />
+      <path d="M12 16h4" />
+      <path d="M8 11h.01" />
+      <path d="M8 16h.01" />
+    </svg>
+  );
+}
+
+export function IconSignOutLine({ className = 'h-5 w-5' }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+      <polyline points="16 17 21 12 16 7" />
+      <line x1="21" y1="12" x2="9" y2="12" />
     </svg>
   );
 }
@@ -174,7 +184,6 @@ export function StaffStatCard({
 
 // --- Main Scaffold Layout ---
 export function StaffScaffold({
-  role,
   breadcrumb = ['CSU CETC Portal', 'Dashboard'],
   title,
   subtitle,
@@ -182,7 +191,6 @@ export function StaffScaffold({
   metrics,
   children,
 }: {
-  role: Role;
   breadcrumb?: string[];
   title: string;
   subtitle: string;
@@ -190,89 +198,21 @@ export function StaffScaffold({
   metrics?: StatMetric[];
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-
-  const navLinks = [
-    { href: role === 'admin' ? '/admin' : role === 'dean' ? '/dean' : '/faculty', label: 'Dashboard', icon: <IconGaugeLine /> },
-    { href: '/admin?tab=users', label: 'Users Directory', icon: <IconUsersLine />, roleOnly: ['admin'] },
-    { href: '/dean/history', label: 'History & Archive', icon: <IconBookLine />, roleOnly: ['dean', 'admin'] },
-    { href: '/reports', label: 'Reports & PDF', icon: <IconChartLine />, roleOnly: ['dean', 'admin'] },
-    { href: '/admin?tab=semesters', label: 'System Control', icon: <IconGearLine />, roleOnly: ['admin'] },
-  ].filter((item) => !item.roleOnly || item.roleOnly.includes(role));
-
   return (
-    <div className="flex gap-4 lg:gap-6 min-h-[calc(100vh-5rem)]">
-      {/* Left Floating Pill Rail Navigation */}
-      <aside className="hidden md:flex flex-col justify-between items-center w-14 rounded-2xl border border-subtle bg-bg2/90 py-4 shadow-xl shrink-0 self-start sticky top-20">
-        <div className="flex flex-col items-center gap-4">
-          <img src="/csu-cetc-logo.png" alt="CSU CETC" className="h-7 w-7 object-contain drop-shadow" />
-          <div className="h-px w-8 bg-subtle/80 my-1" />
-          {navLinks.map((link) => {
-            const active = pathname === link.href || (link.href.includes('?') && pathname + window?.location?.search === link.href);
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                title={link.label}
-                aria-label={link.label}
-                className={`flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200 ${
-                  active
-                    ? 'bg-brand text-canvas shadow-sm font-bold'
-                    : 'text-cream-muted hover:text-cream hover:bg-panel'
-                }`}
-              >
-                {link.icon}
-              </Link>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-col items-center gap-3 pt-4 border-t border-subtle/80 w-full">
-          <Link
-            href="/login"
-            title="Portal Switch"
-            aria-label="Switch Portal"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-cream-muted hover:text-cream hover:bg-panel transition-colors"
-          >
-            <IconHelpLine className="h-4 w-4" />
-          </Link>
-        </div>
-      </aside>
-
-      {/* Main Scaffold Content Area */}
-      <div className="flex-1 min-w-0 space-y-6">
-        {/* Top Utility Bar (Breadcrumbs, Search Hint, Active Period Pill) */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl border border-subtle bg-bg2/90 px-4 py-3 shadow-md">
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-cream-muted">
-            {breadcrumb.map((crumb, idx) => (
-              <React.Fragment key={crumb}>
-                {idx > 0 && <span className="text-cream-faint">/</span>}
-                <span className={idx === breadcrumb.length - 1 ? 'font-semibold text-cream' : 'text-cream-muted'}>
-                  {crumb}
-                </span>
-              </React.Fragment>
-            ))}
-          </nav>
-
-          {/* Right Utility Badges */}
-          <div className="flex items-center gap-3">
-            {/* Keyboard Search Hint */}
-            <div className="hidden lg:flex items-center gap-2 rounded-lg bg-panel px-2.5 py-1 text-xs text-cream-muted border border-subtle/80">
-              <IconSearchLine className="h-3.5 w-3.5" />
-              <span>Search portal</span>
-              <kbd className="rounded bg-bg2 px-1.5 py-0.5 text-[10px] font-mono text-cream-dim border border-subtle">
-                ⌘ K
-              </kbd>
-            </div>
-
-            {/* Academic Term Indicator */}
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-panel px-3 py-1 text-xs font-semibold text-brand-text border border-subtle">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-              AY 2026–2027 Active
-            </span>
-          </div>
-        </div>
+    <div className="min-w-0 space-y-6">
+      {/* Top Utility Bar (Breadcrumb) */}
+      <div className="rounded-2xl border border-subtle bg-bg2/90 px-4 py-3 shadow-md">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-cream-muted">
+          {breadcrumb.map((crumb, idx) => (
+            <React.Fragment key={crumb}>
+              {idx > 0 && <span className="text-cream-faint">/</span>}
+              <span className={idx === breadcrumb.length - 1 ? 'font-semibold text-cream' : 'text-cream-muted'}>
+                {crumb}
+              </span>
+            </React.Fragment>
+          ))}
+        </nav>
+      </div>
 
         {/* Action Header Banner */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -298,7 +238,6 @@ export function StaffScaffold({
         <div className="rounded-2xl border border-subtle bg-bg2/95 shadow-xl overflow-hidden">
           {children}
         </div>
-      </div>
     </div>
   );
 }

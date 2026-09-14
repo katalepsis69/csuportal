@@ -88,7 +88,6 @@ export default async function FacultyPage({
 
   return (
     <StaffScaffold
-      role="faculty"
       breadcrumb={['CSU CETC Portal', 'Faculty Space', 'My Evaluation Results']}
       title="Teaching Performance & Feedback"
       subtitle={`Student evaluation summaries and classroom appraisal for ${semesterLabel}.`}

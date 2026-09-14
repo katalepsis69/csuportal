@@ -104,7 +104,6 @@ export default async function DeanPage({
 
   return (
     <StaffScaffold
-      role="dean"
       breadcrumb={['CSU CETC Portal', 'Academic Leadership', 'Faculty Appraisal & Rankings']}
       title="Dean's Executive Analytics"
       subtitle={`Performance appraisal summary and faculty rankings for ${label}.`}

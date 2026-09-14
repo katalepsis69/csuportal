@@ -143,7 +143,6 @@ export default async function AdminPage({
 
   return (
     <StaffScaffold
-      role="admin"
       breadcrumb={['CSU CETC Portal', 'Administration', tab === 'users' ? 'Users Directory' : 'System Setup']}
       title="Administration & System Setup"
       subtitle="Manage user accounts, faculty assignments, curriculum structure, and evaluation periods."
