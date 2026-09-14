@@ -10,8 +10,8 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: 'CETC-LSC Faculty Evaluation Portal',
-  description: 'Faculty evaluation system for the CETC department.',
+  title: 'CSU-CETC Faculty Evaluation Portal',
+  description: 'Faculty evaluation system for the College of Engineering, Technology and Computing - Cotabato State University.',
 };
 
 export default function RootLayout({

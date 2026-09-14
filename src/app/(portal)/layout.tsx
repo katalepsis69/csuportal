@@ -27,11 +27,13 @@ export default async function PortalLayout({ children }: { children: React.React
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 py-3.5">
           <Link
             href="/"
-            className="text-[22px] font-extrabold tracking-[0.03em]"
+            className="flex items-center gap-2.5 text-[22px] font-extrabold tracking-[0.03em]"
             style={{ fontFamily: 'var(--font-display)' }}
           >
-            CETC<span className="text-brand">-LSC</span>
+            <img src="/csu-cetc-logo.png" alt="CSU CETC" className="h-7 w-7 object-contain" />
+            <span>CSU<span className="text-brand">-CETC</span></span>
           </Link>
+
           <TopNav role={profile.role} />
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2.5 rounded-full border border-subtle bg-panel px-3 py-1.5 text-[13px]">
