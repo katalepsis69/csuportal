@@ -171,7 +171,7 @@ export default async function ReportsPage({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Reports</h1>
         {pdf && <PdfDownloadButton type={pdf.type} data={pdf.data} filename={pdf.filename} />}

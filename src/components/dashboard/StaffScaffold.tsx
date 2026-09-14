@@ -124,7 +124,7 @@ export function Sparkline({
   const lastPoint = coords[coords.length - 1];
 
   return (
-    <svg className="h-8 w-24 overflow-visible shrink-0" viewBox={`0 0 ${width} ${height}`} fill="none" aria-hidden="true">
+    <svg className="h-7 w-20 overflow-visible shrink-0" viewBox={`0 0 ${width} ${height}`} fill="none" aria-hidden="true">
       <path d={pathD} stroke={color} strokeWidth="1.75" strokeLinecap="round" />
       <circle cx={lastPoint.x} cy={lastPoint.y} r="3" fill={color} />
     </svg>
@@ -150,18 +150,18 @@ export function StaffStatCard({
 }) {
   const color = metric.color ?? '#D86A12';
   return (
-    <div className="rounded-2xl border border-subtle bg-bg2/95 p-4 sm:p-5 shadow-md hover:border-brand/40 transition-all duration-200">
+    <div className="rounded-xl border border-subtle bg-bg2/95 p-3 shadow-md hover:border-brand/40 transition-all duration-200">
       <div className="flex items-center justify-between">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-panel border border-subtle text-cream-dim">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-panel border border-subtle text-cream-dim">
           {metric.icon ?? <IconUsersLine className="h-4 w-4" />}
         </div>
         <Sparkline color={color} points={metric.sparkline} />
       </div>
 
-      <div className="mt-4">
+      <div className="mt-2.5">
         <p className="text-xs font-semibold uppercase tracking-wider text-cream-muted">{metric.label}</p>
         <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-2xl sm:text-3xl font-bold tracking-tight text-cream font-mono tabular-nums">
+          <span className="text-xl sm:text-2xl font-bold tracking-tight text-cream font-mono tabular-nums">
             {metric.value}
           </span>
           {metric.trend && (
@@ -199,9 +199,9 @@ export function StaffScaffold({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-w-0 space-y-6">
+    <div className="min-w-0 space-y-3">
       {/* Top Utility Bar (Breadcrumb) */}
-      <div className="rounded-2xl border border-subtle bg-bg2/90 px-4 py-3 shadow-md">
+      <div className="rounded-xl border border-subtle bg-bg2/90 px-3 py-2 shadow-md">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-cream-muted">
           {breadcrumb.map((crumb, idx) => (
             <React.Fragment key={crumb}>
@@ -215,9 +215,9 @@ export function StaffScaffold({
       </div>
 
         {/* Action Header Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-cream" style={{ fontFamily: 'var(--font-display)' }}>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-cream" style={{ fontFamily: 'var(--font-display)' }}>
               {title}
             </h1>
             <p className="text-xs sm:text-sm text-cream-muted mt-0.5">{subtitle}</p>
@@ -227,7 +227,7 @@ export function StaffScaffold({
 
         {/* 4 Stat Metric Cards */}
         {metrics && metrics.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {metrics.map((m, i) => (
               <StaffStatCard key={i} metric={m} />
             ))}

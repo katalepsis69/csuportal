@@ -62,19 +62,19 @@ body {
     font-family: var(--font-display);
   }
   .page-subtitle {
-    @apply mb-7 text-sm text-cream-muted;
+    @apply mb-3 text-sm text-cream-muted;
   }
   .panel-title {
     @apply mb-1 text-base font-bold;
   }
   .panel-subtitle {
-    @apply mb-5 text-[13px] text-cream-muted;
+    @apply mb-3 text-[13px] text-cream-muted;
   }
   .stat-label {
-    @apply mb-2 text-xs font-semibold tracking-[0.06em] text-cream-muted uppercase;
+    @apply mb-1 text-xs font-semibold tracking-[0.06em] text-cream-muted uppercase;
   }
   .stat-value {
-    @apply text-[28px] leading-none font-extrabold;
+    @apply text-2xl leading-none font-extrabold;
     font-family: var(--font-display);
   }
 
@@ -96,7 +96,7 @@ body {
   }
 
   .card {
-    @apply rounded-xl border border-subtle bg-panel p-5 transition-all duration-200;
+    @apply rounded-xl border border-subtle bg-panel p-3.5 transition-all duration-200;
   }
   .card-hover:hover {
     @apply -translate-y-0.5 border-[rgba(216,106,18,0.4)];
@@ -106,10 +106,10 @@ body {
     @apply w-full border-collapse;
   }
   .th {
-    @apply px-3 py-2 text-left text-xs font-semibold tracking-wide text-cream-muted uppercase;
+    @apply px-3 py-1.5 text-left text-xs font-semibold tracking-wide text-cream-muted uppercase;
   }
   .td {
-    @apply px-3 py-2.5 text-sm whitespace-nowrap text-cream-dim;
+    @apply px-3 py-2 text-sm whitespace-nowrap text-cream-dim;
   }
 
   .badge,

@@ -138,20 +138,20 @@ export default async function DeanPage({
         </div>
       }
     >
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Faculty Ranking Roster Table */}
         <DeanFacultyTable faculty={facultyRows} semesterLabel={label} />
 
         {/* Charts & Categorical Breakdown */}
-        <div className="grid gap-6 lg:grid-cols-2 p-4 sm:p-6 border-t border-subtle/80 bg-panel/20">
-          <div className="rounded-xl border border-subtle bg-bg2 p-4">
+        <div className="grid gap-3 lg:grid-cols-2 p-3 sm:p-4 border-t border-subtle/80 bg-panel/20">
+          <div className="rounded-xl border border-subtle bg-bg2 p-3">
             <h2 className="text-sm font-semibold text-cream mb-3">Faculty Overall Score Comparison</h2>
             <AvgBar
               data={(overview.faculty ?? []).map((f) => ({ name: f.full_name.split(' ')[0], value: f.overall }))}
             />
           </div>
 
-          <div className="rounded-xl border border-subtle bg-bg2 p-4">
+          <div className="rounded-xl border border-subtle bg-bg2 p-3">
             <h2 className="text-sm font-semibold text-cream mb-3">Evaluation Criteria Averages</h2>
             <AvgBar
               data={(overview.per_criterion ?? []).map((c) => ({ name: c.category, value: c.avg_rating }))}
@@ -160,7 +160,7 @@ export default async function DeanPage({
         </div>
 
         {/* Sentiment Analysis Distribution */}
-        <div className="p-4 sm:p-6 border-t border-subtle/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="p-3 sm:p-4 border-t border-subtle/80 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div>
             <h3 className="text-sm font-semibold text-cream">Student Comment Sentiment</h3>
             <p className="text-xs text-cream-muted mt-0.5">Automated multilingual student feedback sentiment classification.</p>

@@ -53,7 +53,7 @@ export default async function HistoryPage({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       <div>
         <h1 className="text-xl font-semibold">Evaluation History</h1>
         <nav className="mt-1 flex flex-wrap items-center gap-1 text-sm text-cream-muted">
@@ -194,7 +194,7 @@ export default async function HistoryPage({
           </div>
           <div className="card">
             <h2 className="mb-3 text-sm font-semibold">Comments</h2>
-            <div className="space-y-3">
+            <div className="space-y-2">
               {detail.comments.map((r, i) => (
                 <div key={i} className="rounded-md border border-subtle bg-bg2 px-4 py-3">
                   <p className="text-sm text-cream-dim">{String(r.comment)}</p>

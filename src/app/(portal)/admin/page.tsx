@@ -148,9 +148,9 @@ export default async function AdminPage({
       subtitle="Manage user accounts, faculty assignments, curriculum structure, and evaluation periods."
       metrics={adminMetrics}
     >
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Navigation Tabs Bar */}
-        <div className="flex flex-wrap items-center gap-1.5 p-3 sm:p-4 border-b border-subtle/80 bg-panel/40 overflow-x-auto">
+        <div className="flex flex-wrap items-center gap-1.5 p-2.5 sm:p-3 border-b border-subtle/80 bg-panel/40 overflow-x-auto">
           {TABS.map((t) => (
             <Link
               key={t.key}
@@ -171,7 +171,7 @@ export default async function AdminPage({
 
         {/* Tab 2: Semesters / Period */}
         {tab === 'semesters' && (
-          <div className="p-4 sm:p-6 space-y-6">
+          <div className="p-3 sm:p-4 space-y-3">
             <div className="card overflow-x-auto">
               <h2 className="mb-3 text-sm font-semibold">Semesters</h2>
               <table className="table">
@@ -256,7 +256,7 @@ export default async function AdminPage({
 
         {/* Tab 3: Programs */}
         {tab === 'programs' && (
-          <div className="p-4 sm:p-6 space-y-6">
+          <div className="p-3 sm:p-4 space-y-3">
             <div className="card overflow-x-auto">
               <table className="table">
                 <thead>
@@ -291,7 +291,7 @@ export default async function AdminPage({
 
         {/* Tab 4: Sections */}
         {tab === 'sections' && (
-          <div className="p-4 sm:p-6 space-y-6">
+          <div className="p-3 sm:p-4 space-y-3">
             <div className="card overflow-x-auto">
               <table className="table">
                 <thead>
@@ -335,7 +335,7 @@ export default async function AdminPage({
 
         {/* Tab 5: Subjects */}
         {tab === 'subjects' && (
-          <div className="p-4 sm:p-6 space-y-6">
+          <div className="p-3 sm:p-4 space-y-3">
             <div className="card overflow-x-auto">
               <table className="table">
                 <thead>
@@ -370,7 +370,7 @@ export default async function AdminPage({
 
         {/* Tab 6: Assignments */}
         {tab === 'assignments' && (
-          <div className="p-4 sm:p-6 space-y-6">
+          <div className="p-3 sm:p-4 space-y-3">
             <div className="card overflow-x-auto">
               <table className="table">
                 <thead>
@@ -440,7 +440,7 @@ export default async function AdminPage({
 
         {/* Tab 7: Questions */}
         {tab === 'questions' && (
-          <div className="p-4 sm:p-6 space-y-6">
+          <div className="p-3 sm:p-4 space-y-3">
             <div className="card overflow-x-auto">
               <table className="table">
                 <thead>
@@ -504,7 +504,7 @@ export default async function AdminPage({
 
         {/* Tab 8: Enrollments */}
         {tab === 'enrollments' && (
-          <div className="p-4 sm:p-6 space-y-6">
+          <div className="p-3 sm:p-4 space-y-3">
             <div className="card">
               <h2 className="mb-3 text-sm font-semibold">Enroll student in subject</h2>
               <form action={createEnrollment} className="grid gap-3 sm:grid-cols-3">

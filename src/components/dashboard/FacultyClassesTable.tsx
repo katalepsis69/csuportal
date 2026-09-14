@@ -31,9 +31,9 @@ export function FacultyClassesTable({
   }, [classes, search]);
 
   return (
-    <div className="space-y-4">
+    <div>
       {/* Table Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 border-b border-subtle/80 bg-panel/30">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 border-b border-subtle/80 bg-panel/30">
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-cream">Assigned Teaching Loads</span>
           <span className="rounded-full bg-panel px-2.5 py-0.5 text-xs font-mono text-cream-muted border border-subtle tabular-nums">
@@ -59,18 +59,18 @@ export function FacultyClassesTable({
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-subtle bg-panel/20 text-cream-muted uppercase tracking-wider font-semibold">
-              <th className="py-3 px-4">Subject</th>
-              <th className="py-3 px-4">Section</th>
-              <th className="py-3 px-4">Student Submissions</th>
-              <th className="py-3 px-4">Class Rating</th>
-              <th className="py-3 px-4">Evaluation Status</th>
+              <th className="py-2 px-3">Subject</th>
+              <th className="py-2 px-3">Section</th>
+              <th className="py-2 px-3">Student Submissions</th>
+              <th className="py-2 px-3">Class Rating</th>
+              <th className="py-2 px-3">Evaluation Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-subtle/60">
             {filtered.map((c, i) => (
               <tr key={i} className="hover:bg-panel/40 transition-colors">
                 {/* Subject Code & Name */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <div>
                     <span className="font-bold text-cream font-mono text-sm mr-2">{c.subject_code}</span>
                     <span className="text-cream-dim font-medium">{c.subject_name}</span>
@@ -78,19 +78,19 @@ export function FacultyClassesTable({
                 </td>
 
                 {/* Section */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <span className="rounded-md bg-panel px-2 py-0.5 text-xs font-semibold text-cream-muted border border-subtle">
                     {c.section_name}
                   </span>
                 </td>
 
                 {/* Student Evals */}
-                <td className="py-3.5 px-4 whitespace-nowrap tabular-nums text-cream-dim">
+                <td className="py-2.5 px-3 whitespace-nowrap tabular-nums text-cream-dim">
                   <span className="font-semibold text-cream">{c.evals}</span> evaluations received
                 </td>
 
                 {/* Class Rating */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <div className="flex items-center gap-1.5">
                     <span className="font-bold text-sm text-cream font-mono tabular-nums">
                       {c.avg_rating != null ? c.avg_rating.toFixed(2) : '—'}
@@ -100,7 +100,7 @@ export function FacultyClassesTable({
                 </td>
 
                 {/* Status */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/30">
                     <span className="h-1.5 w-1.5 rounded-full bg-positive" />
                     Active Term
@@ -111,7 +111,7 @@ export function FacultyClassesTable({
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-cream-muted text-xs">
+                <td colSpan={5} className="py-6 text-center text-cream-muted text-xs">
                   No assigned teaching subjects found for this semester.
                 </td>
               </tr>

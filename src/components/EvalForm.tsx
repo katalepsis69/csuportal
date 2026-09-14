@@ -138,7 +138,7 @@ export default function EvalForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-3">
       <div className="card">
         <h2 className="panel-title">
           {subjectCode} — {subjectName}
@@ -149,10 +149,10 @@ export default function EvalForm({
         </p>
       </div>
 
-      <div className="card space-y-5">
+      <div className="card space-y-3">
         <h3 className="text-sm font-bold">Rate your instructor</h3>
         {questions.map((q) => (
-          <div key={q.id} className="border-b border-subtle pb-4 last:border-0 last:pb-0">
+          <div key={q.id} className="border-b border-subtle pb-3 last:border-0 last:pb-0">
             <p className="mb-2 text-sm text-cream-dim">
               <span className="chip mr-2">{q.category}</span>
               {q.text}

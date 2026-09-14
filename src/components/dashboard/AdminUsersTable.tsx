@@ -62,9 +62,9 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div>
       {/* Table Toolbar Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 border-b border-subtle/80 bg-panel/30">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 border-b border-subtle/80 bg-panel/30">
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-cream">All Accounts</span>
           <span className="rounded-full bg-panel px-2.5 py-0.5 text-xs font-mono text-cream-muted border border-subtle tabular-nums">
@@ -117,19 +117,19 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-subtle bg-panel/20 text-cream-muted uppercase tracking-wider font-semibold">
-              <th className="py-3 px-4">User</th>
-              <th className="py-3 px-4">Identifier / Email</th>
-              <th className="py-3 px-4">Role</th>
-              <th className="py-3 px-4">Program</th>
-              <th className="py-3 px-4">Status</th>
-              <th className="py-3 px-4 text-right">Actions</th>
+              <th className="py-2 px-3">User</th>
+              <th className="py-2 px-3">Identifier / Email</th>
+              <th className="py-2 px-3">Role</th>
+              <th className="py-2 px-3">Program</th>
+              <th className="py-2 px-3">Status</th>
+              <th className="py-2 px-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-subtle/60">
             {filtered.map((u) => (
               <tr key={u.id} className="hover:bg-panel/40 transition-colors">
                 {/* User column (Avatar + Name) */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-panel border border-subtle text-xs font-bold text-cream font-mono">
                       {getInitials(u.full_name)}
@@ -144,26 +144,26 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
                 </td>
 
                 {/* Email / Identifier */}
-                <td className="py-3.5 px-4 font-mono text-cream-dim text-xs whitespace-nowrap">
+                <td className="py-2.5 px-3 font-mono text-cream-dim text-xs whitespace-nowrap">
                   {u.email ?? (u.student_no ? `${u.student_no}@student.cetc.edu` : 'No email registered')}
                 </td>
 
                 {/* Role Badge */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${getRoleBadge(u.role)}`}>
                     {u.role}
                   </span>
                 </td>
 
                 {/* Program Code */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <span className="font-semibold text-cream-dim">
                     {u.program_code ?? (u.role === 'student' ? 'BSIT' : 'Academic Dept')}
                   </span>
                 </td>
 
                 {/* Status Badge */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/30">
                     <span className="h-1.5 w-1.5 rounded-full bg-positive" />
                     Active
@@ -171,7 +171,7 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
                 </td>
 
                 {/* Actions Dropdown / Delete */}
-                <td className="py-3.5 px-4 text-right whitespace-nowrap relative">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap relative">
                   <div className="inline-flex items-center gap-2">
                     <form action={adminDelete}>
                       <input type="hidden" name="table" value="profiles" />
@@ -224,7 +224,7 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={6} className="py-8 text-center text-cream-muted text-xs">
+                <td colSpan={6} className="py-6 text-center text-cream-muted text-xs">
                   No user records match your search query or filters.
                 </td>
               </tr>

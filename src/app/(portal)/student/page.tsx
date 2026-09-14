@@ -22,7 +22,7 @@ export default async function StudentPage({
   const done = dash.subjects.filter((s) => s.completed);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {submitted === '1' && (
         <div className="success-banner">
           Evaluation submitted. Thank you!
@@ -49,7 +49,7 @@ export default async function StudentPage({
       </div>
 
       {dash.subjects.length > 0 && (
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-3">
           <div className="card card-hover flex items-center gap-4">
             <IconHourglass className="h-8 w-8 shrink-0 text-gold" />
             <div>

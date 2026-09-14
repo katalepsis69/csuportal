@@ -34,10 +34,10 @@ export function SentimentPie({
   ].filter((d) => d.value > 0);
 
   if (data.length === 0)
-    return <p className="py-8 text-center text-sm text-cream-faint">No data yet</p>;
+    return <p className="py-6 text-center text-sm text-cream-faint">No data yet</p>;
 
   return (
-    <ResponsiveContainer width="100%" height={220}>
+    <ResponsiveContainer width="100%" height={180}>
       <PieChart>
         <Pie data={data} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80}>
           {data.map((d) => (
@@ -60,7 +60,7 @@ export function SentimentPie({
 export function AvgBar({
   data,
   domainMax = 5,
-  height = 260,
+  height = 200,
 }: {
   data: { name: string; value: number | null }[];
   domainMax?: number;
@@ -68,13 +68,13 @@ export function AvgBar({
 }) {
   const rows = data.map((d) => ({ name: d.name, value: d.value ?? 0 }));
   if (rows.length === 0)
-    return <p className="py-8 text-center text-sm text-cream-faint">No data yet</p>;
+    return <p className="py-6 text-center text-sm text-cream-faint">No data yet</p>;
 
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={rows} margin={{ left: -20, right: 8, top: 8 }}>
         <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
-        <XAxis dataKey="name" tick={TICK} interval={0} angle={-15} textAnchor="end" height={60} />
+        <XAxis dataKey="name" tick={TICK} interval={0} angle={-15} textAnchor="end" height={50} />
         <YAxis domain={[0, domainMax]} tick={TICK} />
         <Tooltip
           cursor={{ fill: 'rgba(245,240,232,0.04)' }}

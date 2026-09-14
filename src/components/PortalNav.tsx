@@ -69,7 +69,7 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
   return (
     <>
       {/* Desktop slim rail — primary navigation */}
-      <aside className="sticky top-6 hidden h-fit w-14 shrink-0 flex-col items-center justify-between self-start rounded-2xl border border-subtle bg-bg2/90 py-4 shadow-xl md:flex">
+      <aside className="sticky top-3 hidden h-fit w-14 shrink-0 flex-col items-center justify-between self-start rounded-2xl border border-subtle bg-bg2/90 py-3 shadow-xl md:flex">
         <div className="flex flex-col items-center gap-3">
           <Link href="/" title="CSU CETC home" aria-label="CSU CETC home" className="flex h-9 w-9 items-center justify-center">
             <img src="/csu-cetc-logo.png" alt="" className="h-7 w-7 object-contain drop-shadow" />

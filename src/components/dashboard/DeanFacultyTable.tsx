@@ -48,9 +48,9 @@ export function DeanFacultyTable({
   }
 
   return (
-    <div className="space-y-4">
+    <div>
       {/* Table Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 sm:p-5 border-b border-subtle/80 bg-panel/30">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 sm:p-4 border-b border-subtle/80 bg-panel/30">
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-cream">Faculty Roster & Appraisal</span>
           <span className="rounded-full bg-panel px-2.5 py-0.5 text-xs font-mono text-cream-muted border border-subtle tabular-nums">
@@ -88,20 +88,20 @@ export function DeanFacultyTable({
         <table className="w-full text-left text-xs">
           <thead>
             <tr className="border-b border-subtle bg-panel/20 text-cream-muted uppercase tracking-wider font-semibold">
-              <th className="py-3 px-4">Faculty Member</th>
-              <th className="py-3 px-4">Department</th>
-              <th className="py-3 px-4">Subjects Handled</th>
-              <th className="py-3 px-4">Student Responses</th>
-              <th className="py-3 px-4">Overall Score</th>
-              <th className="py-3 px-4">Status</th>
-              <th className="py-3 px-4 text-right">Actions</th>
+              <th className="py-2 px-3">Faculty Member</th>
+              <th className="py-2 px-3">Department</th>
+              <th className="py-2 px-3">Subjects Handled</th>
+              <th className="py-2 px-3">Student Responses</th>
+              <th className="py-2 px-3">Overall Score</th>
+              <th className="py-2 px-3">Status</th>
+              <th className="py-2 px-3 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-subtle/60">
             {filtered.map((f) => (
               <tr key={f.id} className="hover:bg-panel/40 transition-colors">
                 {/* Faculty avatar + name */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-panel border border-subtle text-xs font-bold text-positive font-mono">
                       {getInitials(f.name)}
@@ -114,22 +114,22 @@ export function DeanFacultyTable({
                 </td>
 
                 {/* Department */}
-                <td className="py-3.5 px-4 whitespace-nowrap text-cream-dim font-medium">
+                <td className="py-2.5 px-3 whitespace-nowrap text-cream-dim font-medium">
                   {f.department ?? 'Computer Studies'}
                 </td>
 
                 {/* Subjects Handled */}
-                <td className="py-3.5 px-4 whitespace-nowrap tabular-nums text-cream-dim">
+                <td className="py-2.5 px-3 whitespace-nowrap tabular-nums text-cream-dim">
                   {f.subjectsCount} Subjects
                 </td>
 
                 {/* Responses */}
-                <td className="py-3.5 px-4 whitespace-nowrap tabular-nums text-cream-dim">
+                <td className="py-2.5 px-3 whitespace-nowrap tabular-nums text-cream-dim">
                   <span className="font-semibold text-cream">{f.evaluationsReceived}</span> evaluations
                 </td>
 
                 {/* Mean score */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <div className="flex items-center gap-1.5">
                     <span className="font-bold text-sm text-cream font-mono tabular-nums">
                       {f.overallRating != null ? f.overallRating.toFixed(2) : '—'}
@@ -139,7 +139,7 @@ export function DeanFacultyTable({
                 </td>
 
                 {/* Status Pill */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
+                <td className="py-2.5 px-3 whitespace-nowrap">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/30">
                     <span className="h-1.5 w-1.5 rounded-full bg-positive" />
                     Evaluated
@@ -147,7 +147,7 @@ export function DeanFacultyTable({
                 </td>
 
                 {/* Actions */}
-                <td className="py-3.5 px-4 text-right whitespace-nowrap relative">
+                <td className="py-2.5 px-3 text-right whitespace-nowrap relative">
                   <div className="inline-flex items-center gap-2">
                     <Link
                       href={`/reports?type=faculty_detailed&faculty=${f.id}`}
@@ -187,7 +187,7 @@ export function DeanFacultyTable({
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={7} className="py-8 text-center text-cream-muted text-xs">
+                <td colSpan={7} className="py-6 text-center text-cream-muted text-xs">
                   No faculty records found for the selected filter.
                 </td>
               </tr>

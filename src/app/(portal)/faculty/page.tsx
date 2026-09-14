@@ -116,13 +116,13 @@ export default async function FacultyPage({
         </div>
       }
     >
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Classes Table */}
         <FacultyClassesTable classes={classes} />
 
         {/* Question-level score bar chart */}
-        <div className="grid gap-6 lg:grid-cols-2 p-4 sm:p-6 border-t border-subtle/80 bg-panel/20">
-          <div className="rounded-xl border border-subtle bg-bg2 p-4">
+        <div className="grid gap-3 lg:grid-cols-2 p-3 sm:p-4 border-t border-subtle/80 bg-panel/20">
+          <div className="rounded-xl border border-subtle bg-bg2 p-3">
             <h2 className="text-sm font-semibold text-cream mb-3">Average Rating per Evaluation Question</h2>
             <AvgBar
               data={(overview.per_question ?? []).map((q) => ({
@@ -132,7 +132,7 @@ export default async function FacultyPage({
             />
           </div>
 
-          <div className="rounded-xl border border-subtle bg-bg2 p-4 flex flex-col justify-between">
+          <div className="rounded-xl border border-subtle bg-bg2 p-3 flex flex-col justify-between">
             <div>
               <h2 className="text-sm font-semibold text-cream mb-1">Student Feedback Sentiment</h2>
               <p className="text-xs text-cream-muted mb-4">
@@ -143,14 +143,14 @@ export default async function FacultyPage({
                     )}% negative`}
               </p>
             </div>
-            <div className="w-full h-40 flex items-center justify-center">
+            <div className="w-full h-32 flex items-center justify-center">
               <SentimentPie counts={overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 }} />
             </div>
           </div>
         </div>
 
         {/* Anonymous Student Comments Roster */}
-        <div className="p-4 sm:p-6 border-t border-subtle/80 space-y-3">
+        <div className="p-3 sm:p-4 border-t border-subtle/80 space-y-3">
           <h3 className="text-sm font-semibold text-cream">Anonymous Student Comments ({overview.comments?.length ?? 0})</h3>
           <div className="grid gap-2.5 sm:grid-cols-2">
             {(overview.comments ?? []).slice(0, 10).map((c, i) => (
