@@ -126,8 +126,10 @@ export function FacultyInspectorDrawer({
                 ? { duration: 0 }
                 : { type: 'spring', stiffness: 300, damping: 30 }
             }
-            className="w-screen max-w-[440px] flex flex-col glass-panel border-l border-subtle bg-panel/95 backdrop-blur-2xl shadow-2xl overflow-y-auto"
+            className="w-screen max-w-[440px] flex flex-col glass-panel border-l border-subtle/80 bg-panel/95 backdrop-blur-2xl drawer-shadow overflow-y-auto relative"
           >
+            {/* Specular Left Edge Reflection */}
+            <div className="absolute inset-y-0 left-0 w-[1px] bg-gradient-to-b from-transparent via-white/25 to-transparent pointer-events-none z-20" />
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-subtle/80 sticky top-0 bg-panel/90 backdrop-blur-md z-10">
               <div className="flex items-center gap-2.5">

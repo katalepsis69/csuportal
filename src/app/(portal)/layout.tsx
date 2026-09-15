@@ -9,9 +9,23 @@ export default async function PortalLayout({ children }: { children: React.React
 
   return (
     <ThemeProvider>
-      <div className="flex w-full items-start gap-3 px-3 py-3 sm:px-4 sm:py-4 min-h-[100dvh]">
+      <div className="relative min-h-[100dvh] w-full overflow-x-hidden bg-canvas text-cream">
+        {/* Ambient Golden/Amber Glow Layer behind canvas (Stitch Luxury Depth) */}
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none" aria-hidden="true">
+          <div className="absolute -top-40 left-1/4 w-[650px] h-[520px] bg-brand/12 rounded-full blur-[140px]" />
+          <div className="absolute top-1/2 right-1/4 w-[500px] h-[500px] bg-gold/10 rounded-full blur-[160px]" />
+          <div className="absolute bottom-0 left-1/3 w-[450px] h-[350px] bg-brand/8 rounded-full blur-[120px]" />
+        </div>
+
+        {/* Executive Frosted Navigation (Hover-rail on desktop, hamburger drawer on mobile) */}
         <RailNav role={profile.role} fullName={profile.full_name} />
-        <main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main>
+
+        {/* Main Content Area (Offset by desktop slim rail width) */}
+        <div className="relative z-10 md:pl-[84px] transition-all duration-300">
+          <main className="min-w-0 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+            {children}
+          </main>
+        </div>
       </div>
     </ThemeProvider>
   );
