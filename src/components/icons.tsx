@@ -130,3 +130,35 @@ export function IconStar({ className = 'h-5 w-5' }: IconProps) {
     </svg>
   );
 }
+
+export function IconSun({ className = 'h-5 w-5' }: IconProps) {
+  return (
+    <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className={className}>
+      <circle cx="128" cy="128" r="60" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="128" y1="28" x2="128" y2="44" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="128" y1="212" x2="128" y2="228" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="28" y1="128" x2="44" y2="128" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="212" y1="128" x2="228" y2="128" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="57.28" y1="57.28" x2="68.59" y2="68.59" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="187.41" y1="187.41" x2="198.72" y2="198.72" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="57.28" y1="198.72" x2="68.59" y2="187.41" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+      <line x1="187.41" y1="68.59" x2="198.72" y2="57.28" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+    </svg>
+  );
+}
+
+export function IconMoon({ className = 'h-5 w-5' }: IconProps) {
+  return (
+    <svg viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" className={className}>
+      <path
+        d="M216.71,152.6A96,96,0,1,1,103.4,39.29,8,8,0,0,1,112,48a88,88,0,0,0,96,96A8,8,0,0,1,216.71,152.6Z"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="16"
+      />
+    </svg>
+  );
+}
+
