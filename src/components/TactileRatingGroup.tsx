@@ -37,17 +37,27 @@ export function TactileRatingGroup({
   }
 
   return (
-    <div className="space-y-1.5 pt-1">
-      {/* Recessed 3D tactile rating strip */}
+    <div className="bg-inset-well/90 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] border border-subtle/40 rounded-xl p-2.5">
+      {/* Top scale anchors */}
+      <div className="flex items-center justify-between text-[11px] font-mono text-cream-muted px-1 mb-2 select-none">
+        <span>1: Poor / Strongly Disagree</span>
+        {value ? (
+          <span className="font-semibold text-brand transition-all">
+            {ANCHORS[value]}
+          </span>
+        ) : null}
+        <span>5: Outstanding / Strongly Agree</span>
+      </div>
+
+      {/* 5-Button Tactile Grid */}
       <div
         id={`rating-group-${questionId}`}
         role="radiogroup"
         aria-label={`Rating for: ${questionText}`}
-        className="flex w-full items-stretch rounded-xl bg-inset-well p-1 border border-subtle/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.35)]"
+        className="grid grid-cols-5 gap-2"
       >
         {[1, 2, 3, 4, 5].map((n) => {
           const isSelected = value === n;
-          const isPast = value != null && value >= n;
 
           return (
             <button
@@ -59,33 +69,16 @@ export function TactileRatingGroup({
               tabIndex={value === n || (value == null && n === 1) ? 0 : -1}
               onClick={() => onChange(n)}
               onKeyDown={(e) => handleKeyDown(e, n)}
-              className={`group relative flex-1 flex flex-col items-center justify-center py-2.5 sm:py-3 px-2 rounded-lg font-mono text-sm sm:text-base font-bold transition-all duration-150 ease-out cursor-pointer select-none ${
+              className={`py-2.5 sm:py-3 rounded-lg font-mono text-sm sm:text-base font-bold transition-all duration-150 cursor-pointer select-none active:scale-[0.98] ${
                 isSelected
-                  ? 'bg-brand text-white shadow-[inset_0_2px_4px_rgba(0,0,0,0.4),0_0_16px_rgba(216,106,18,0.45)] ring-1 ring-brand-light/60 translate-y-[1px]'
-                  : isPast
-                  ? 'bg-brand/20 text-brand-text hover:bg-brand/30 border border-brand/20'
-                  : 'bg-panel/85 text-cream-muted hover:bg-panel hover:text-cream border border-subtle/40 active:translate-y-[1px]'
+                  ? 'bg-brand text-white font-extrabold shadow-[inset_0_2px_6px_rgba(0,0,0,0.5),0_0_16px_rgba(216,106,18,0.4)] border border-brand-light ring-1 ring-brand/50'
+                  : 'bg-panel border border-subtle/50 text-cream-dim hover:bg-panel2 hover:text-cream shadow-[0_2px_4px_rgba(0,0,0,0.3)] hover:border-brand/40'
               }`}
             >
-              <span className="tabular-nums transition-transform duration-150 group-active:scale-95">
-                {n}
-              </span>
+              {n}
             </button>
           );
         })}
-      </div>
-
-      {/* Semantic scale anchor labels */}
-      <div className="flex items-center justify-between px-1 text-[11px] font-medium text-cream-faint select-none">
-        <span>1: Poor</span>
-        {value ? (
-          <span className="font-semibold text-brand-text transition-all">
-            {ANCHORS[value]}
-          </span>
-        ) : (
-          <span className="hidden sm:inline text-cream-faint">Select a rating (1 to 5)</span>
-        )}
-        <span>5: Outstanding</span>
       </div>
     </div>
   );
