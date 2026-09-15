@@ -26,35 +26,35 @@ export function EvaluationProgressCapsule({
   const isComplete = ratedCount === totalCount && totalCount > 0;
 
   return (
-    <section className="sticky top-3 z-30 glass-panel bg-panel/90 backdrop-blur-xl border border-subtle/80 rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+    <section className="sticky top-3 z-30 bg-espresso-850/90 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4 mb-6 amber-glow-box">
       {/* Progress Info & Percentage */}
       <div className="w-full md:w-5/12 space-y-1.5">
         <div className="flex items-center justify-between text-xs font-mono">
-          <span className="font-display text-sm font-bold text-cream tabular-nums">
+          <span className="font-display text-sm font-bold text-white tabular-nums">
             {ratedCount} of {totalCount} Questions Rated
           </span>
-          <span className="text-brand font-bold tabular-nums">{percentage}% Completed</span>
+          <span className="text-amber-light font-bold tabular-nums">{percentage}% Completed</span>
         </div>
-        <div className="w-full bg-inset-well h-2 rounded-full overflow-hidden border border-subtle/50">
+        <div className="w-full bg-espresso-950 h-2 rounded-full overflow-hidden border border-white/10">
           <div
-            className="bg-gradient-to-r from-brand-light to-brand h-full rounded-full shadow-[0_0_12px_rgba(216,106,18,0.5)] transition-all duration-300 ease-out"
+            className="bg-gradient-to-r from-amber-glow to-amber-light h-full rounded-full shadow-[0_0_12px_rgba(216,106,18,0.5)] transition-all duration-300 ease-out"
             style={{ width: `${percentage}%` }}
           />
         </div>
-        <div className="flex items-center gap-1.5 text-[11px] text-cream-muted font-mono">
+        <div className="flex items-center gap-1.5 text-[11px] text-[#A1A1AA] font-mono">
           {savingDraft ? (
-            <span className="text-cream-muted animate-pulse flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-brand animate-ping" />
+            <span className="text-[#A1A1AA] animate-pulse flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-glow animate-ping" />
               Auto-saving draft…
             </span>
           ) : draftSaved ? (
-            <span className="text-gold-text font-medium flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
-              Draft auto-saved & encrypted
+            <span className="text-status-gold font-medium flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-status-gold" />
+              Draft auto-saved &amp; encrypted
             </span>
           ) : isComplete ? (
-            <span className="text-positive font-semibold flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-positive" />
+            <span className="text-status-sage font-semibold flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
               All criteria satisfied
             </span>
           ) : (
@@ -72,17 +72,17 @@ export function EvaluationProgressCapsule({
               href={`#${cat.id}`}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium shrink-0 transition-all ${
                 cat.completed
-                  ? 'bg-panel2 text-cream border-positive/40 hover:border-positive'
-                  : 'bg-panel2/60 text-cream-muted border-subtle hover:border-brand/40 hover:text-cream'
+                  ? 'bg-espresso-800 text-white border-status-sage/40 hover:border-status-sage'
+                  : 'bg-espresso-800/60 text-[#A1A1AA] border-white/10 hover:border-amber-glow/40 hover:text-white'
               }`}
             >
               <span
                 className={`h-1.5 w-1.5 rounded-full ${
-                  cat.completed ? 'bg-positive' : 'bg-brand'
+                  cat.completed ? 'bg-status-sage' : 'bg-amber-glow'
                 }`}
               />
-              <span className="truncate max-w-[130px]">{cat.name}</span>
-              <span className="text-[10px] font-mono text-cream-faint">({cat.count})</span>
+              <span className="truncate max-w-[150px]">{cat.name}</span>
+              <span className="text-[10px] font-mono text-[#A1A1AA]/60">({cat.count})</span>
             </a>
           ))}
         </div>

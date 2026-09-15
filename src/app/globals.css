@@ -28,6 +28,18 @@
   --negative-fill: #c62828;
   --subtle: rgba(45, 31, 23, 0.09);
   --inset-well: #efeae1;
+  --espresso-950: #0c0a08;
+  --espresso-900: #120e0b;
+  --espresso-850: #17130f;
+  --espresso-800: #1f1a15;
+  --espresso-750: #26201a;
+  --espresso-700: #2e2720;
+  --espresso-600: #3d342c;
+  --amber-glow: #d86a12;
+  --amber-light: #f48e36;
+  --status-sage: #6fa86f;
+  --status-gold: #b58a3c;
+  --status-crimson: #c9615a;
 }
 
 .dark {
@@ -39,22 +51,34 @@
   --panel: rgba(28, 22, 18, 0.70);
   --panel2: rgba(38, 28, 22, 0.85);
   --bg2: #18130f;
-  --text-primary: #f7f2eb;
+  --text-primary: #ededed;
   --text-dim: #d1c7ba;
-  --text-muted: #9e9182;
+  --text-muted: #a1a1aa;
   --text-faint: #706456;
   --brand: #d86a12;
-  --brand-text: #f09a5a;
-  --brand-light: #e8873f;
+  --brand-text: #f48e36;
+  --brand-light: #f48e36;
   --brand-hover: #c25e0f;
   --gold: #b58a3c;
   --gold-text: #cda45c;
-  --positive: #82bb82;
+  --positive: #6fa86f;
   --positive-fill: #6fa86f;
   --negative: #c9615a;
   --negative-fill: #b0453d;
-  --subtle: rgba(245, 240, 232, 0.08);
-  --inset-well: #100c09;
+  --subtle: rgba(255, 255, 255, 0.08);
+  --inset-well: #110d0a;
+  --espresso-950: #0c0a08;
+  --espresso-900: #120e0b;
+  --espresso-850: #17130f;
+  --espresso-800: #1f1a15;
+  --espresso-750: #26201a;
+  --espresso-700: #2e2720;
+  --espresso-600: #3d342c;
+  --amber-glow: #d86a12;
+  --amber-light: #f48e36;
+  --status-sage: #6fa86f;
+  --status-gold: #b58a3c;
+  --status-crimson: #c9615a;
 }
 
 @theme {
@@ -84,6 +108,18 @@
   --color-negative-fill: var(--negative-fill);
   --color-subtle: var(--subtle);
   --color-inset-well: var(--inset-well);
+  --color-espresso-950: var(--espresso-950);
+  --color-espresso-900: var(--espresso-900);
+  --color-espresso-850: var(--espresso-850);
+  --color-espresso-800: var(--espresso-800);
+  --color-espresso-750: var(--espresso-750);
+  --color-espresso-700: var(--espresso-700);
+  --color-espresso-600: var(--espresso-600);
+  --color-amber-glow: var(--amber-glow);
+  --color-amber-light: var(--amber-light);
+  --color-status-sage: var(--status-sage);
+  --color-status-gold: var(--status-gold);
+  --color-status-crimson: var(--status-crimson);
 }
 
 body {

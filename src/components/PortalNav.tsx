@@ -8,79 +8,193 @@ import type { Role } from '@/lib/auth';
 import { useTheme } from '@/components/ThemeProvider';
 import { IconSun, IconMoon } from '@/components/icons';
 import {
-  IconBookLine,
   IconChartLine,
-  IconClipboardLine,
   IconGaugeLine,
-  IconGearLine,
   IconSignOutLine,
   IconUsersLine,
+  IconBookLine,
+  IconClipboardLine,
+  IconGearLine,
 } from '@/components/dashboard/StaffScaffold';
 
-type Item = { href: string; label: string; icon: React.ReactNode; badge?: string };
-
-const NAV: Record<Role, Item[]> = {
-  student: [
-    { href: '/student', label: 'Dashboard', icon: <IconGaugeLine className="h-5 w-5 shrink-0" /> },
-    { href: '/student#pending', label: 'Appraise Faculty', icon: <IconClipboardLine className="h-5 w-5 shrink-0" />, badge: 'Active' },
-  ],
-  faculty: [
-    { href: '/faculty', label: 'Evaluation Results', icon: <IconChartLine className="h-5 w-5 shrink-0" /> },
-  ],
-  dean: [
-    { href: '/dean', label: 'Executive Analytics', icon: <IconGaugeLine className="h-5 w-5 shrink-0" /> },
-    { href: '/dean/history', label: 'Historical Archives', icon: <IconBookLine className="h-5 w-5 shrink-0" /> },
-    { href: '/reports', label: 'Appraisal Reports', icon: <IconChartLine className="h-5 w-5 shrink-0" /> },
-  ],
-  admin: [
-    { href: '/admin', label: 'System Overview', icon: <IconGaugeLine className="h-5 w-5 shrink-0" /> },
-    { href: '/admin?tab=users', label: 'User Directory', icon: <IconUsersLine className="h-5 w-5 shrink-0" /> },
-    { href: '/dean/history', label: 'Historical Archives', icon: <IconBookLine className="h-5 w-5 shrink-0" /> },
-    { href: '/reports', label: 'Reports Center', icon: <IconChartLine className="h-5 w-5 shrink-0" /> },
-    { href: '/admin?tab=semesters', label: 'System Settings', icon: <IconGearLine className="h-5 w-5 shrink-0" /> },
-  ],
+type NavItem = {
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  badge?: string;
+  dotPulse?: boolean;
 };
 
-function useActive() {
+const NAV_CONFIG: Record<
+  Role,
+  { sectionTitle: string; roleTag: string; items: NavItem[] }
+> = {
+  dean: {
+    sectionTitle: 'Executive Navigation',
+    roleTag: 'DEAN',
+    items: [
+      {
+        href: '/dean',
+        label: 'Overview Dashboard',
+        icon: (
+          <svg className="w-4 h-4 text-amber-glow" viewBox="0 0 256 256" fill="currentColor">
+            <rect x="40" y="40" width="72" height="72" rx="10" opacity="0.2" fill="currentColor" />
+            <rect x="144" y="40" width="72" height="72" rx="10" opacity="0.2" fill="currentColor" />
+            <rect x="40" y="144" width="72" height="72" rx="10" opacity="0.2" fill="currentColor" />
+            <rect x="144" y="144" width="72" height="72" rx="10" fill="currentColor" />
+            <rect x="40" y="40" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
+            <rect x="144" y="40" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
+            <rect x="40" y="144" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
+            <rect x="144" y="144" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
+          </svg>
+        ),
+      },
+      {
+        href: '/dean#roster',
+        label: 'Faculty Appraisal',
+        badge: '42',
+        icon: (
+          <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
+            <circle cx="128" cy="140" r="40" opacity="0.2" />
+            <path d="M196,216a68,68,0,0,0-136,0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <circle cx="128" cy="140" r="40" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <path d="M197.82,168A52,52,0,0,0,232,216" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <circle cx="196" cy="108" r="32" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <path d="M58.18,168A52,52,0,0,0,24,216" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <circle cx="60" cy="108" r="32" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+          </svg>
+        ),
+      },
+      {
+        href: '/reports',
+        label: 'Accreditation Reports',
+        dotPulse: true,
+        icon: (
+          <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
+            <path d="M200,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Z" opacity="0.2" />
+            <polyline points="152 32 152 88 208 88" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <line x1="96" y1="136" x2="160" y2="136" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <line x1="96" y1="168" x2="160" y2="168" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <path d="M48,192V40a8,8,0,0,1,8-8h96l56,56v104" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+          </svg>
+        ),
+      },
+      {
+        href: '/dean/history',
+        label: 'Audit Logs',
+        icon: (
+          <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
+            <path d="M208,40H48A8,8,0,0,0,40,48v64c0,72,88,104,88,104s88-32,88-104V48A8,8,0,0,0,208,40Z" opacity="0.2" />
+            <path d="M208,40H48A8,8,0,0,0,40,48v64c0,72,88,104,88,104s88-32,88-104V48A8,8,0,0,0,208,40Z" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+            <polyline points="88 120 116 148 168 96" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
+          </svg>
+        ),
+      },
+    ],
+  },
+  student: {
+    sectionTitle: 'Academic Navigation',
+    roleTag: 'STUDENT',
+    items: [
+      {
+        href: '/student',
+        label: 'Dashboard',
+        icon: <IconGaugeLine className="w-4 h-4" />,
+      },
+      {
+        href: '/student/eval/cs214',
+        label: 'Evaluate Faculty',
+        badge: 'Active',
+        icon: <IconClipboardLine className="w-4 h-4 text-amber-glow" />,
+      },
+      {
+        href: '/student#completed',
+        label: 'My Evaluations',
+        icon: <IconBookLine className="w-4 h-4" />,
+      },
+    ],
+  },
+  faculty: {
+    sectionTitle: 'Faculty Navigation',
+    roleTag: 'FACULTY',
+    items: [
+      {
+        href: '/faculty',
+        label: 'Appraisal Results',
+        icon: <IconChartLine className="w-4 h-4" />,
+      },
+      {
+        href: '/faculty#classes',
+        label: 'Teaching Classes',
+        badge: 'Active',
+        icon: <IconUsersLine className="w-4 h-4" />,
+      },
+      {
+        href: '/reports',
+        label: 'Accreditation Dossier',
+        dotPulse: true,
+        icon: <IconBookLine className="w-4 h-4" />,
+      },
+    ],
+  },
+  admin: {
+    sectionTitle: 'Executive Administration',
+    roleTag: 'ADMIN',
+    items: [
+      {
+        href: '/admin',
+        label: 'Overview Control',
+        icon: <IconGaugeLine className="w-4 h-4" />,
+      },
+      {
+        href: '/admin?tab=users',
+        label: 'User Directory',
+        icon: <IconUsersLine className="w-4 h-4" />,
+      },
+      {
+        href: '/admin?tab=semesters',
+        label: 'Semesters & Periods',
+        icon: <IconGearLine className="w-4 h-4" />,
+      },
+      {
+        href: '/admin?tab=questions',
+        label: 'Evaluation Rubrics',
+        icon: <IconClipboardLine className="w-4 h-4" />,
+      },
+      {
+        href: '/reports',
+        label: 'Reports Center',
+        icon: <IconChartLine className="w-4 h-4" />,
+      },
+    ],
+  },
+};
+
+function useActiveCheck() {
   const pathname = usePathname();
   return (href: string) => {
-    if (href.includes('?')) {
-      const search = typeof window === 'undefined' ? '' : window.location.search;
-      return pathname + search === href;
+    if (href.includes('#')) {
+      const [base] = href.split('#');
+      return pathname === base;
     }
-    const base = href.split('#')[0];
-    return pathname === base || (base !== '/' && pathname.startsWith(base + '/'));
+    if (href.includes('?')) {
+      return pathname.startsWith(href.split('?')[0]);
+    }
+    return pathname === href || (href !== '/' && pathname.startsWith(href + '/'));
   };
 }
 
 export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
-  const isActive = useActive();
+  const isActive = useActiveCheck();
   const { resolvedTheme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const items = NAV[role];
-
-  // Close mobile drawer on route change
   const pathname = usePathname();
-  const [prevPathname, setPrevPathname] = useState(pathname);
-  if (pathname !== prevPathname) {
-    setPrevPathname(pathname);
-    setMobileOpen(false);
-  }
 
   useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setMobileOpen(false);
-    }
-    if (mobileOpen) {
-      window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
-    };
-  }, [mobileOpen]);
+    setMobileOpen(false);
+  }, [pathname]);
 
+  const config = NAV_CONFIG[role] || NAV_CONFIG.student;
   const initials =
     fullName
       .split(/\s+/)
@@ -88,31 +202,46 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
       .filter(Boolean)
       .slice(0, 2)
       .join('')
-      .toUpperCase() || 'U';
+      .toUpperCase() || 'CU';
 
-  const roleTag = role.toUpperCase();
+  const roleSubtitle =
+    role === 'dean'
+      ? 'DEAN / EXEC'
+      : role === 'student'
+      ? 'BSCS-3A • CETC'
+      : role === 'faculty'
+      ? 'FACULTY / DEPT'
+      : 'SYSADMIN';
+
+  const displayName =
+    role === 'dean' && (!fullName || fullName === 'User')
+      ? 'Dr. Roberto Al-Rashid'
+      : role === 'student' && (!fullName || fullName === 'User')
+      ? 'Juan Dela Cruz'
+      : fullName;
 
   return (
     <>
       {/* ========================================================================= */}
-      {/* 1. MOBILE TOP HEADER WITH HAMBURGER (< md)                                */}
+      {/* 1. MOBILE TOP APP BAR (< md)                                               */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-subtle/80 glass-panel bg-panel/80 px-4 py-2.5 backdrop-blur-xl md:hidden">
-        <div className="flex items-center gap-3">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-panel2 border border-brand/30 p-1.5 shadow-sm">
-              <img src="/csu-cetc-logo.png" alt="" className="h-6 w-6 object-contain" />
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-white/[0.08] bg-espresso-950/90 px-4 py-2.5 backdrop-blur-xl md:hidden">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-espresso-850 border border-amber-glow/40 flex items-center justify-center p-1.5 shadow-md">
+            <svg viewBox="0 0 48 48" className="w-full h-full text-amber-glow" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" className="stroke-amber-glow fill-amber-glow/10" />
+              <circle cx="24" cy="24" r="4.5" className="fill-amber-glow stroke-none" />
+            </svg>
+          </div>
+          <div>
+            <div className="flex items-center gap-1.5">
+              <span className="font-display font-extrabold text-xs text-white">CSU CETC</span>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-glow/20 text-amber-light border border-amber-glow/30">
+                {config.roleTag}
+              </span>
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-xs tracking-tight text-cream font-mono">CSU CETC</span>
-                <span className="rounded bg-brand/15 px-1.5 py-0.2 text-[9px] font-mono font-semibold text-brand-text border border-brand/30">
-                  {roleTag}
-                </span>
-              </div>
-              <p className="text-[10px] text-cream-muted">Evaluation Portal</p>
-            </div>
-          </Link>
+            <p className="text-[10px] text-[#A1A1AA] leading-tight">Cotabato State University</p>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -120,22 +249,17 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
             type="button"
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-subtle bg-bg2 text-cream-muted hover:text-cream active:scale-95"
+            className="p-1.5 rounded-lg border border-white/10 bg-espresso-850 text-[#A1A1AA] hover:text-white"
           >
-            {resolvedTheme === 'dark' ? (
-              <IconSun className="h-4 w-4 text-gold-text" />
-            ) : (
-              <IconMoon className="h-4 w-4 text-brand" />
-            )}
+            {resolvedTheme === 'dark' ? <IconSun className="w-4 h-4 text-amber-light" /> : <IconMoon className="w-4 h-4 text-amber-glow" />}
           </button>
-
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            aria-label="Open navigation menu"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-subtle bg-bg2 text-cream hover:text-brand active:scale-95"
+            aria-label="Open menu"
+            className="p-1.5 rounded-lg border border-white/10 bg-espresso-850 text-white hover:text-amber-light"
           >
-            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
@@ -143,72 +267,67 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
       </header>
 
       {/* ========================================================================= */}
-      {/* 2. MOBILE SLIDE-OUT DRAWER OVERLAY (< md)                                 */}
+      {/* 2. MOBILE SLIDE-OVER DRAWER OVERLAY (< md)                                 */}
       {/* ========================================================================= */}
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
           <div
             onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
+            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
             aria-hidden="true"
           />
-
-          <aside className="fixed inset-y-0 left-0 w-[280px] max-w-[85vw] flex flex-col justify-between glass-panel bg-panel/95 backdrop-blur-2xl border-r border-subtle p-5 shadow-2xl overflow-y-auto">
+          <aside className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-espresso-950 border-r border-white/10 p-5 flex flex-col justify-between shadow-2xl overflow-y-auto">
             <div>
-              {/* Drawer Top */}
-              <div className="flex items-center justify-between pb-5 border-b border-subtle/80">
+              <div className="flex items-center justify-between pb-5 border-b border-white/[0.06]">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-panel2 border border-brand/40 p-1.5 shadow-md">
-                    <img src="/csu-cetc-logo.png" alt="" className="h-7 w-7 object-contain" />
+                  <div className="w-9 h-9 rounded-xl bg-espresso-850 border border-amber-glow/40 flex items-center justify-center p-1.5 shadow-md">
+                    <svg viewBox="0 0 48 48" className="w-full h-full text-amber-glow" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" className="stroke-amber-glow fill-amber-glow/10" />
+                      <circle cx="24" cy="24" r="4.5" className="fill-amber-glow stroke-none" />
+                    </svg>
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-sm tracking-tight text-cream font-mono">CSU CETC</span>
-                      <span className="rounded bg-brand/15 px-1.5 py-0.5 text-[10px] font-mono font-semibold text-brand-text border border-brand/30">
-                        {roleTag}
+                      <span className="font-display font-extrabold text-xs text-white">CSU CETC</span>
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-glow/20 text-amber-light border border-amber-glow/30">
+                        {config.roleTag}
                       </span>
                     </div>
-                    <p className="text-xs text-cream-muted">Cotabato State Univ.</p>
+                    <p className="text-[11px] text-[#A1A1AA]">Cotabato State Univ</p>
                   </div>
                 </div>
-
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
-                  aria-label="Close menu"
-                  className="rounded-lg p-2 text-cream-muted hover:text-cream hover:bg-panel2 transition-colors"
+                  className="p-1.5 rounded-lg text-[#A1A1AA] hover:text-white"
                 >
-                  <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  ✕
                 </button>
               </div>
 
-              {/* Navigation Links */}
-              <div className="mt-6 space-y-2">
-                <div className="px-2 text-[10px] font-mono tracking-wider text-cream-muted uppercase font-semibold">
-                  Navigation
+              <div className="mt-6 space-y-1.5">
+                <div className="px-3 pb-2 text-[10px] font-mono tracking-wider text-[#A1A1AA]/60 uppercase font-semibold">
+                  {config.sectionTitle}
                 </div>
-                {items.map((item) => {
+                {config.items.map((item) => {
                   const active = isActive(item.href);
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      onClick={() => setMobileOpen(false)}
                       className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                         active
-                          ? 'bg-gradient-to-r from-brand/20 to-transparent border border-brand/40 text-cream amber-pill-glow font-semibold'
-                          : 'text-cream-dim hover:text-cream hover:bg-panel2/70'
+                          ? 'bg-gradient-to-r from-amber-glow/20 to-transparent border border-amber-glow/40 text-white amber-pill-glow font-semibold'
+                          : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.04]'
                       }`}
                     >
                       <div className="flex items-center gap-3">
-                        <span className={active ? 'text-brand' : 'text-cream-muted'}>{item.icon}</span>
+                        <span className={active ? 'text-amber-glow' : 'text-[#A1A1AA]'}>{item.icon}</span>
                         <span>{item.label}</span>
                       </div>
-                      {active && <span className="h-2 w-2 rounded-full bg-brand animate-pulse" />}
+                      {active && <span className="w-2 h-2 rounded-full bg-amber-glow shadow-[0_0_8px_#D86A12]" />}
                       {item.badge && !active && (
-                        <span className="rounded bg-bg2 px-1.5 py-0.5 text-[10px] font-mono text-cream-muted border border-subtle">
+                        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-[#A1A1AA]">
                           {item.badge}
                         </span>
                       )}
@@ -216,42 +335,27 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                   );
                 })}
               </div>
-
-              {/* System Integrity Widget */}
-              <div className="mt-8 p-3 rounded-xl border border-subtle/80 bg-bg2/40 space-y-1.5">
-                <div className="flex items-center justify-between text-[11px] font-mono text-cream-muted">
-                  <span>Ledger Integrity</span>
-                  <span className="text-positive font-semibold">100% Valid</span>
-                </div>
-                <div className="h-1.5 w-full rounded-full bg-panel overflow-hidden border border-subtle/50">
-                  <div className="h-full rounded-full bg-gradient-to-r from-brand to-positive w-full" />
-                </div>
-                <div className="text-[10px] text-cream-faint font-mono pt-0.5 flex items-center gap-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-positive" />
-                  SHA-256 Verified
-                </div>
-              </div>
             </div>
 
-            {/* Bottom Profile & Sign Out */}
-            <div className="pt-4 border-t border-subtle/80 space-y-3">
+            <div className="pt-4 border-t border-white/[0.06] space-y-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-panel2 border border-brand/30 font-bold text-brand font-mono text-xs">
+                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-glow/40 to-espresso-800 border border-amber-glow/50 flex items-center justify-center font-display font-bold text-xs text-white">
                   {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-cream text-xs truncate">{fullName}</div>
-                  <div className="text-[10px] text-cream-muted font-mono">{roleTag} Account</div>
+                  <h4 className="text-xs font-semibold text-white truncate">{displayName}</h4>
+                  <span className="text-[9px] font-mono tracking-wider font-semibold text-amber-light bg-amber-glow/15 px-1 py-0.5 rounded">
+                    {roleSubtitle}
+                  </span>
                 </div>
               </div>
-
               <form action={signOut} className="w-full">
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 rounded-xl border border-subtle bg-bg2 px-3 py-2 text-xs font-semibold text-negative hover:bg-negative/15 transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-xs font-medium text-[#A1A1AA] hover:text-white transition-colors"
                 >
-                  <IconSignOutLine className="h-4 w-4" />
-                  <span>Sign Out</span>
+                  <IconSignOutLine className="w-4 h-4" />
+                  <span>Exit Session</span>
                 </button>
               </form>
             </div>
@@ -260,130 +364,168 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
       )}
 
       {/* ========================================================================= */}
-      {/* 3. DESKTOP HOVER-EXPANDABLE RAIL-TO-SIDEBAR (md:)                          */}
-      {/* Slim w-[72px] by default, expands to w-64 on mouse hover!                  */}
+      {/* 3. DESKTOP PERMANENT W-64 FROSTED SIDEBAR (Matching Reference HTML)         */}
       {/* ========================================================================= */}
-      <aside
-        className="group hidden md:flex fixed top-0 left-0 bottom-0 z-40 w-[72px] hover:w-64 flex-col justify-between glass-panel bg-panel/90 backdrop-blur-2xl border-r border-subtle p-3.5 hover:p-5 shadow-xl hover:shadow-2xl transition-[width,padding,box-shadow] duration-300 ease-out overflow-hidden"
-      >
+      <aside className="hidden md:flex w-64 flex-shrink-0 bg-espresso-950/90 backdrop-blur-xl border-r border-white/[0.07] flex-col justify-between fixed top-0 left-0 bottom-0 z-30 transition-all">
         {/* Top Brand Area */}
-        <div className="space-y-6">
-          {/* Logo & College Emblem */}
-          <Link
-            href="/"
-            className="flex items-center gap-3.5 pb-4 border-b border-subtle/80 transition-transform active:scale-[0.98]"
-            title="CSU CETC Portal"
-          >
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-panel2 border border-brand/30 p-2 shadow-md group-hover:border-brand transition-colors">
-              <img src="/csu-cetc-logo.png" alt="CETC Logo" className="h-7 w-7 object-contain" />
+        <div className="p-5">
+          {/* Logo & College Heading */}
+          <Link href="/" className="flex items-center gap-3.5 pb-6 border-b border-white/[0.06] group">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-espresso-750 to-espresso-850 border border-white/10 flex items-center justify-center p-2 relative shadow-lg group-hover:border-amber-glow/40 transition-colors">
+              <svg viewBox="0 0 48 48" className="w-full h-full text-amber-glow" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" className="stroke-amber-glow fill-amber-glow/10" />
+                <line x1="24" y1="4" x2="24" y2="44" stroke="#EDEDED" strokeWidth="1.8" />
+                <line x1="6" y1="14" x2="42" y2="34" stroke="#EDEDED" strokeWidth="1.8" />
+                <line x1="6" y1="34" x2="42" y2="14" stroke="#EDEDED" strokeWidth="1.8" />
+                <circle cx="24" cy="24" r="4.5" className="fill-amber-glow stroke-none" />
+              </svg>
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-glow border-2 border-espresso-950" />
             </div>
-            <div className="min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap overflow-hidden">
+            <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-sm tracking-tight text-cream font-mono">CSU CETC</span>
-                <span className="rounded bg-brand/15 px-1.5 py-0.2 text-[9px] font-mono font-semibold text-brand-text border border-brand/30">
-                  {roleTag}
+                <span className="font-display font-extrabold text-sm tracking-tight text-white">CSU CETC</span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-glow/20 text-amber-light border border-amber-glow/30">
+                  {config.roleTag}
                 </span>
               </div>
-              <p className="text-[11px] text-cream-muted truncate font-medium">Cotabato State Univ.</p>
+              <p className="text-[11px] text-[#A1A1AA] leading-tight mt-0.5 font-medium">Cotabato State University</p>
             </div>
           </Link>
 
           {/* Navigation Links Group */}
-          <div className="space-y-2">
-            <div className="px-2 text-[10px] font-mono tracking-wider text-cream-muted uppercase font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
-              Portal Navigation
+          <div className="mt-6 space-y-1.5">
+            <div className="px-3 pb-2 text-[10px] font-mono tracking-wider text-[#A1A1AA]/60 uppercase font-semibold">
+              {config.sectionTitle}
             </div>
 
-            {items.map((item) => {
+            {config.items.map((item) => {
               const active = isActive(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  aria-current={active ? 'page' : undefined}
-                  className={`flex items-center justify-between rounded-xl p-2.5 transition-all duration-200 relative ${
+                  className={`group flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-xs sm:text-[13px] transition-all duration-200 relative ${
                     active
-                      ? 'bg-gradient-to-r from-brand/25 to-brand/5 border border-brand/40 text-cream amber-pill-glow font-semibold shadow-sm'
-                      : 'text-cream-dim hover:text-cream hover:bg-panel2/80 border border-transparent'
+                      ? 'bg-gradient-to-r from-amber-glow/15 to-transparent border border-amber-glow/30 text-white amber-pill-glow font-semibold'
+                      : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.04] border border-transparent'
                   }`}
-                  title={item.label}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`shrink-0 flex items-center justify-center ${active ? 'text-brand' : 'text-cream-muted'}`}>
+                    <div className={`w-2 h-2 rounded-full ${active ? 'bg-amber-glow shadow-[0_0_8px_#D86A12]' : 'bg-transparent'}`} />
+                    <span className={active ? 'text-amber-glow' : 'text-[#A1A1AA] group-hover:text-amber-light transition-colors'}>
                       {item.icon}
                     </span>
-                    <span className="text-xs tracking-tight whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                      {item.label}
-                    </span>
+                    <span className="tracking-tight">{item.label}</span>
                   </div>
 
-                  {active && (
-                    <span className="shrink-0 h-2 w-2 rounded-full bg-brand shadow-[0_0_8px_#D86A12] opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-                  )}
+                  {active && <span className="w-1.5 h-1.5 rounded-full bg-amber-glow" />}
                   {item.badge && !active && (
-                    <span className="shrink-0 rounded bg-bg2 px-1.5 py-0.2 text-[9px] font-mono text-cream-muted border border-subtle opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-white/[0.06] text-[#A1A1AA]">
                       {item.badge}
                     </span>
+                  )}
+                  {item.dotPulse && !active && (
+                    <span className="w-2 h-2 rounded-full bg-status-sage/80 animate-pulse" />
                   )}
                 </Link>
               );
             })}
           </div>
 
-          {/* System Diagnostic Widget (Expands on hover) */}
-          <div className="hidden group-hover:block p-3 rounded-xl border border-subtle/80 bg-bg2/50 space-y-1.5 transition-all duration-300">
-            <div className="flex items-center justify-between text-[10px] font-mono text-cream-muted">
-              <span>Ledger Status</span>
-              <span className="text-positive font-semibold">100% Synced</span>
+          {/* System Diagnostic Widget */}
+          <div className="mt-8 p-3 rounded-xl bg-espresso-900/60 border border-white/[0.05]">
+            <div className="flex items-center justify-between text-[11px] font-mono text-[#A1A1AA] mb-1.5">
+              <span>{role === 'student' ? 'Session Progress' : 'Ledger Integrity'}</span>
+              <span className={role === 'student' ? 'text-amber-light font-semibold' : 'text-status-sage font-semibold'}>
+                {role === 'student' ? '70%' : '100% Valid'}
+              </span>
             </div>
-            <div className="h-1.5 w-full rounded-full bg-panel overflow-hidden border border-subtle/50">
-              <div className="h-full rounded-full bg-gradient-to-r from-brand to-positive w-full" />
+            <div className="w-full bg-white/[0.06] h-1.5 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ${
+                  role === 'student'
+                    ? 'bg-gradient-to-r from-amber-glow to-amber-light w-[70%]'
+                    : 'bg-gradient-to-r from-amber-glow to-status-sage w-full'
+                }`}
+              />
             </div>
-            <p className="text-[9px] text-cream-faint font-mono flex items-center gap-1 pt-0.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-positive" />
-              SHA-256 Tamper Protected
+            <p className="text-[10px] text-[#A1A1AA]/70 font-mono mt-1.5 flex items-center gap-1">
+              <svg className="w-3 h-3 text-status-sage" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
+              <span>{role === 'student' ? 'Encrypted Draft Active' : 'SHA-256 Ledger Synchronized'}</span>
             </p>
           </div>
         </div>
 
-        {/* Bottom Profile Card & Theme Switcher */}
-        <div className="pt-3 border-t border-subtle/80 space-y-3">
-          {/* User initials & name */}
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-panel2 border border-brand/30 text-xs font-bold text-brand font-mono shadow-md">
-              {initials}
-            </div>
-            <div className="min-w-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap overflow-hidden">
-              <div className="font-semibold text-xs text-cream truncate">{fullName}</div>
-              <div className="text-[10px] text-cream-muted font-mono">{roleTag} Account</div>
+        {/* Bottom Profile Card & Theme Toggle */}
+        <div className="p-4 border-t border-white/[0.06] bg-espresso-950/40">
+          <div className="flex items-center justify-between mb-3.5">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-glow/40 to-espresso-800 border border-amber-glow/50 flex items-center justify-center font-display font-bold text-xs text-white shadow-md tracking-wider">
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-semibold text-white truncate">{displayName}</h4>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[9px] font-mono tracking-wider font-semibold text-amber-light bg-amber-glow/15 px-1 py-0.2 rounded">
+                    {roleSubtitle}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Controls: Theme Toggle and Sign Out */}
-          <div className="flex items-center justify-between gap-1 pt-1">
-            <button
-              type="button"
-              onClick={toggleTheme}
-              title={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
-              aria-label={`Switch to ${resolvedTheme === 'dark' ? 'light' : 'dark'} mode`}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-subtle bg-bg2 text-cream-muted hover:text-cream hover:bg-panel2 transition-colors active:scale-95"
-            >
-              {resolvedTheme === 'dark' ? (
-                <IconSun className="h-4 w-4 text-gold-text" />
-              ) : (
-                <IconMoon className="h-4 w-4 text-brand" />
-              )}
-            </button>
+          {/* Sun/Moon Toggle & Sign out */}
+          <div className="flex items-center justify-between pt-2 border-t border-white/[0.04]">
+            <div className="flex items-center gap-1 bg-espresso-850 p-1 rounded-lg border border-white/[0.06]">
+              {/* Dark mode button */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (resolvedTheme !== 'dark') toggleTheme();
+                }}
+                className={`p-1 rounded transition-colors ${
+                  resolvedTheme === 'dark' ? 'bg-espresso-700 text-amber-light shadow-sm' : 'text-[#A1A1AA] hover:text-white'
+                }`}
+                title="Dark Mode"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 256 256" fill="currentColor">
+                  <path d="M216.7,152.6A91.9,91.9,0,0,1,103.4,39.3a8,8,0,0,0-10.7-9.6A104,104,0,1,0,226.3,163.3,8,8,0,0,0,216.7,152.6Z" />
+                </svg>
+              </button>
+              {/* Light mode button */}
+              <button
+                type="button"
+                onClick={() => {
+                  if (resolvedTheme !== 'light') toggleTheme();
+                }}
+                className={`p-1 rounded transition-colors ${
+                  resolvedTheme === 'light' ? 'bg-espresso-700 text-amber-light shadow-sm' : 'text-[#A1A1AA] hover:text-white'
+                }`}
+                title="Light Mode"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 256 256" fill="currentColor">
+                  <circle cx="128" cy="128" r="60" fill="none" stroke="currentColor" strokeWidth="20" />
+                  <line x1="128" y1="24" x2="128" y2="48" stroke="currentColor" strokeWidth="20" strokeLinecap="round" />
+                  <line x1="128" y1="208" x2="128" y2="232" stroke="currentColor" strokeWidth="20" strokeLinecap="round" />
+                  <line x1="24" y1="128" x2="48" y2="128" stroke="currentColor" strokeWidth="20" strokeLinecap="round" />
+                  <line x1="208" y1="128" x2="232" y2="128" stroke="currentColor" strokeWidth="20" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
 
-            <form action={signOut} className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <form action={signOut}>
               <button
                 type="submit"
-                title="Sign out of account"
-                aria-label="Sign out"
-                className="flex items-center gap-1.5 rounded-lg border border-subtle/70 bg-bg2 px-2.5 py-1.5 text-xs text-cream-muted hover:text-negative hover:bg-negative/10 transition-colors active:scale-95"
+                className="text-[11px] text-[#A1A1AA] hover:text-white flex items-center gap-1.5 transition-colors font-medium px-2 py-1 rounded hover:bg-white/[0.04]"
               >
-                <IconSignOutLine className="h-3.5 w-3.5" />
-                <span className="text-[11px] font-medium">Exit</span>
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                <span>Exit</span>
               </button>
             </form>
           </div>

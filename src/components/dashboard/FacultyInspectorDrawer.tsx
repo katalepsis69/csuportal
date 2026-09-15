@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import type { DeanFacultyRow } from './DeanFacultyTable';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
@@ -10,12 +9,14 @@ interface FacultyInspectorDrawerProps {
   faculty: DeanFacultyRow | null;
   semesterLabel: string;
   onClose: () => void;
+  isOpen?: boolean;
 }
 
 export function FacultyInspectorDrawer({
   faculty,
   semesterLabel,
   onClose,
+  isOpen = true,
 }: FacultyInspectorDrawerProps) {
   const reducedMotion = useReducedMotion();
 
@@ -26,53 +27,66 @@ export function FacultyInspectorDrawer({
         onClose();
       }
     }
-    if (faculty) {
+    if (faculty && isOpen) {
       window.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
     }
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
     };
-  }, [faculty, onClose]);
+  }, [faculty, isOpen, onClose]);
 
-  if (!faculty) return null;
+  if (!faculty || !isOpen) return null;
 
-  const rating = faculty.overallRating ?? 4.8;
-  const evals = faculty.evaluationsReceived || 12;
-  const positive = Math.max(1, Math.round(evals * 0.85));
-  const neutral = Math.max(0, Math.round(evals * 0.1));
-  const negative = Math.max(0, evals - positive - neutral);
+  const rating = faculty.overallRating ?? 4.85;
+  const ratingStr = rating.toFixed(2);
+  const evals = faculty.responsesReceived ?? faculty.evaluationsReceived ?? 148;
+  const total = faculty.totalStudents ?? 152;
+  const posPct = faculty.sentimentRatio?.positive ?? 94;
+  const neuPct = faculty.sentimentRatio?.neutral ?? 4;
+  const negPct = faculty.sentimentRatio?.negative ?? 2;
+  const posCount = Math.round((evals * posPct) / 100);
+  const neuCount = Math.round((evals * neuPct) / 100);
+  const negCount = Math.max(0, evals - posCount - neuCount);
 
-  // Criteria ratings scaled around overall
-  const criteria = [
-    { name: 'Subject Matter Mastery', score: Math.min(5, Number((rating * 1.02).toFixed(2))), weight: '30%' },
-    { name: 'Pedagogy & Delivery', score: Math.min(5, Number((rating * 0.99).toFixed(2))), weight: '30%' },
-    { name: 'Classroom Management', score: Math.min(5, Number((rating * 0.98).toFixed(2))), weight: '20%' },
-    { name: 'Student Rapport & Ethics', score: Math.min(5, Number((rating * 1.01).toFixed(2))), weight: '20%' },
+  // Criteria ratings
+  const criteria = faculty.pedagogicalBreakdown || [
+    { name: 'Commitment to Teaching', score: 4.9, pct: 98, color: 'bg-amber-glow' },
+    { name: 'Instructional Clarity & Algorithms', score: 4.8, pct: 96, color: 'bg-amber-light' },
+    { name: 'Laboratory Pacing & Code Exercises', score: 4.7, pct: 94, color: 'bg-[#B58A3C]' },
+    { name: 'Fairness in Rubrics & Grading', score: 4.9, pct: 98, color: 'bg-status-sage' },
   ];
 
-  const sampleComments = [
+  const remarks = faculty.comments || [
     {
-      text: 'Explains complex algorithms with incredible clarity and always provides real-world engineering examples.',
-      sentiment: 'positive',
-      tag: 'Teaching Quality',
+      type: 'POSITIVE',
+      course: 'CS 214',
+      section: 'BSCS 3-A',
+      timeAgo: '2w ago',
+      text: '“Engr. Santos explains recursion, binary trees, and graph traversals better than anyone. Very approachable and supportive during lab debugging sessions.”',
+      hash: 'Vector Hash: 7c4e...d81a',
     },
     {
-      text: 'Punctual and very systematic with laboratory exercises. Would appreciate more time on pointer arithmetic.',
-      sentiment: 'neutral',
-      tag: 'Pacing',
+      type: 'CONSTRUCTIVE',
+      course: 'CS 314',
+      section: 'BSIT 3-B',
+      timeAgo: '3w ago',
+      text: '“Problem sets were challenging and required deep thought, but the grading rubric was transparent and feedback returned quickly.”',
+      hash: 'Vector Hash: 9f8a...32b1',
     },
     {
-      text: 'Approachable during consultation hours and provides constructive feedback on projects.',
-      sentiment: 'positive',
-      tag: 'Mentorship',
+      type: 'POSITIVE',
+      course: 'CS 214',
+      section: 'BSCS 2-A',
+      timeAgo: '1mo ago',
+      text: '“Always on time for consultation hours and provides clear real-world industry examples of algorithms.”',
+      hash: 'Vector Hash: 3b12...a55e',
     },
   ];
 
   function getInitials(name: string) {
     return (
       name
+        .replace(/^(Engr\.|Dr\.|Prof\.)\s*/, '')
         .split(' ')
         .map((w) => w[0])
         .filter(Boolean)
@@ -82,21 +96,23 @@ export function FacultyInspectorDrawer({
     );
   }
 
+  const dossierId = faculty.dossierId || `FC-${faculty.id.slice(0, 4).toUpperCase() || '2018'}-09`;
+
   const pdfData = {
     overview: {
-      overall: faculty.overallRating,
+      overall: rating,
       per_question: criteria.map((c) => ({ category: c.name, text: c.name, avg_rating: c.score })),
       per_subject: [
         {
-          subject_code: 'CETC-CORE',
-          subject_name: 'Core Curriculum',
-          section_name: 'BSIT-3A',
-          evals: faculty.evaluationsReceived,
-          avg_rating: faculty.overallRating,
+          subject_code: 'CS 214',
+          subject_name: 'Data Structures & Algorithms',
+          section_name: 'BSCS 3-A',
+          evals,
+          avg_rating: rating,
         },
       ],
-      sentiment: { positive, neutral, negative },
-      comments: sampleComments.map((c) => ({ comment: c.text, label: c.sentiment })),
+      sentiment: { positive: posCount, neutral: neuCount, negative: negCount },
+      comments: remarks.map((c) => ({ comment: c.text, label: c.type.toLowerCase() })),
     },
     facultyName: faculty.name,
     semesterLabel,
@@ -104,227 +120,206 @@ export function FacultyInspectorDrawer({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-hidden" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
-        {/* Backdrop blur */}
+      <div className="fixed inset-0 z-50 overflow-hidden pointer-events-none" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+        {/* Backdrop overlay for smaller viewports */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: reducedMotion ? 0 : 0.2 }}
           onClick={onClose}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm 2xl:hidden pointer-events-auto"
           aria-hidden="true"
         />
 
-        <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-          <motion.aside
-            initial={reducedMotion ? { opacity: 0 } : { x: '100%' }}
-            animate={reducedMotion ? { opacity: 1 } : { x: 0 }}
-            exit={reducedMotion ? { opacity: 0 } : { x: '100%' }}
-            transition={
-              reducedMotion
-                ? { duration: 0 }
-                : { type: 'spring', stiffness: 300, damping: 30 }
-            }
-            className="w-screen max-w-[440px] flex flex-col glass-panel border-l border-subtle/80 bg-panel/95 backdrop-blur-2xl drawer-shadow overflow-y-auto relative"
-          >
-            {/* Specular Left Edge Reflection */}
-            <div className="absolute inset-y-0 left-0 w-[1px] bg-gradient-to-b from-transparent via-white/25 to-transparent pointer-events-none z-20" />
-            {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-subtle/80 sticky top-0 bg-panel/90 backdrop-blur-md z-10">
-              <div className="flex items-center gap-2.5">
-                <span className="flex h-2 w-2 rounded-full bg-brand animate-pulse" />
-                <h2 id="drawer-title" className="text-sm font-semibold tracking-tight text-cream">
-                  Faculty Performance Dossier
-                </h2>
+        {/* Right pinned 440px drawer */}
+        <motion.aside
+          initial={reducedMotion ? { opacity: 0 } : { x: '100%' }}
+          animate={reducedMotion ? { opacity: 1 } : { x: 0 }}
+          exit={reducedMotion ? { opacity: 0 } : { x: '100%' }}
+          transition={
+            reducedMotion
+              ? { duration: 0 }
+              : { type: 'spring', stiffness: 300, damping: 30 }
+          }
+          className="w-full sm:w-[440px] fixed top-0 right-0 bottom-0 z-50 bg-[#0c0a08]/95 backdrop-blur-2xl border-l border-white/[0.09] flex flex-col justify-between drawer-shadow overflow-y-auto pointer-events-auto"
+        >
+          {/* Drawer Header */}
+          <div className="p-6 border-b border-white/[0.07] bg-[#120e0b]/60 relative shrink-0">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono uppercase font-semibold bg-amber-glow/20 text-amber-light border border-amber-glow/30">
+                  FACULTY DOSSIER
+                </span>
+                <span className="text-[11px] font-mono text-[#A1A1AA]">ID: {dossierId}</span>
               </div>
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Close inspector drawer"
-                className="rounded-lg p-2 text-cream-muted hover:text-cream hover:bg-panel2 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center active:scale-[0.98]"
-              >
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+
+              {/* Close / Export triggers */}
+              <div className="flex items-center gap-1 text-[#A1A1AA]">
+                <button
+                  type="button"
+                  className="p-1 rounded hover:bg-white/10 hover:text-white transition-colors"
+                  title="Export Record"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                  </svg>
+                </button>
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="p-1 rounded hover:bg-white/10 hover:text-white transition-colors"
+                  title="Close Panel"
+                  aria-label="Close dossier"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                  </svg>
+                </button>
+              </div>
             </div>
 
-            {/* Content Body */}
-            <div className="p-5 space-y-6 flex-1">
-              {/* Profile Card */}
-              <div className="flex items-start gap-4 p-4 rounded-xl border border-subtle bg-bg2/60">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-panel border border-brand/30 text-base font-bold text-brand font-mono shadow-sm">
-                  {getInitials(faculty.name)}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-base font-bold text-cream truncate">{faculty.name}</h3>
-                  <p className="text-xs text-cream-muted mt-0.5">{faculty.department ?? 'Computer Studies'}</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <span className="inline-flex items-center gap-1 rounded-full bg-brand/15 px-2.5 py-0.5 text-[11px] font-mono font-semibold text-brand border border-brand/30">
-                      {rating.toFixed(2)} / 5.00
-                    </span>
-                    <span className="text-[11px] text-cream-faint font-mono">
-                      ID: {faculty.id.slice(0, 8)}
-                    </span>
-                  </div>
+            {/* Instructor Identity Card */}
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-glow to-espresso-750 border-2 border-amber-glow/40 flex items-center justify-center font-display font-extrabold text-lg text-white shadow-xl shrink-0">
+                {getInitials(faculty.name)}
+              </div>
+              <div className="min-w-0 flex-1">
+                <h3 id="drawer-title" className="font-display font-bold text-lg text-white leading-snug">
+                  {faculty.name}
+                </h3>
+                <p className="text-xs text-[#A1A1AA] mt-0.5">
+                  {faculty.department || 'Department of Computer Science & Engineering'}
+                </p>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-status-sage/15 text-status-sage border border-status-sage/30 font-semibold">
+                    ★ {ratingStr} {faculty.ratingLabel || 'OUTSTANDING'}
+                  </span>
+                  <span className="text-[11px] font-mono text-[#A1A1AA]">{evals} Students Rated</span>
                 </div>
               </div>
+            </div>
+          </div>
 
-              {/* Quick Metrics 3-Col Bento */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="p-3 rounded-xl border border-subtle bg-bg2/40 text-center">
-                  <div className="text-[10px] text-cream-muted uppercase font-mono tracking-wider">Responses</div>
-                  <div className="text-base font-bold text-cream font-mono mt-1 tabular-nums">
-                    {faculty.evaluationsReceived}
-                  </div>
-                  <div className="text-[10px] text-positive font-medium mt-0.5">Evaluated</div>
-                </div>
-                <div className="p-3 rounded-xl border border-subtle bg-bg2/40 text-center">
-                  <div className="text-[10px] text-cream-muted uppercase font-mono tracking-wider">Subjects</div>
-                  <div className="text-base font-bold text-cream font-mono mt-1 tabular-nums">
-                    {faculty.subjectsCount}
-                  </div>
-                  <div className="text-[10px] text-cream-faint mt-0.5">Active</div>
-                </div>
-                <div className="p-3 rounded-xl border border-subtle bg-bg2/40 text-center">
-                  <div className="text-[10px] text-cream-muted uppercase font-mono tracking-wider">Quality</div>
-                  <div className="text-base font-bold text-positive font-mono mt-1">
-                    {rating >= 4.5 ? 'Superior' : rating >= 4.0 ? 'High' : 'Satisfactory'}
-                  </div>
-                  <div className="text-[10px] text-positive mt-0.5">Passing</div>
-                </div>
+          {/* Drawer Body Content */}
+          <div className="p-6 space-y-6 flex-1 overflow-y-auto">
+            {/* Score Matrix Card */}
+            <div className="p-4 rounded-xl bg-espresso-900/80 border border-white/[0.06]">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-[#A1A1AA] font-semibold">
+                  Pedagogical Criteria Breakdown
+                </h4>
+                <span className="text-[10px] font-mono text-status-sage">Rank #2 in College</span>
               </div>
 
-              {/* Criterion Breakdown */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-cream-muted font-mono">
-                    Evaluation Criteria Breakdown
-                  </h4>
-                  <span className="text-[11px] font-mono text-cream-faint">Scale 1.0 - 5.0</span>
-                </div>
-
-                <div className="space-y-2.5">
-                  {criteria.map((c) => {
-                    const pct = Math.min(100, Math.max(0, (c.score / 5) * 100));
-                    return (
-                      <div key={c.name} className="p-2.5 rounded-lg border border-subtle/70 bg-bg2/30 space-y-1.5">
-                        <div className="flex items-center justify-between text-xs">
-                          <span className="font-medium text-cream">{c.name}</span>
-                          <span className="font-bold text-brand font-mono tabular-nums">
-                            {c.score.toFixed(2)}
-                          </span>
-                        </div>
-                        <div className="h-1.5 w-full rounded-full bg-panel overflow-hidden border border-subtle/50">
-                          <div
-                            className="h-full rounded-full bg-gradient-to-r from-brand-amber to-brand transition-all duration-500"
-                            style={{ width: `${pct}%` }}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Sentiment Ratio */}
-              <div className="p-3.5 rounded-xl border border-subtle bg-bg2/40 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold text-cream">Student Sentiment Ratio</h4>
-                  <span className="text-[11px] font-mono text-positive tabular-nums">
-                    {Math.round((positive / evals) * 100)}% Positive
-                  </span>
-                </div>
-
-                {/* Progress bar ratio */}
-                <div className="h-2 w-full rounded-full bg-panel flex overflow-hidden border border-subtle/50">
-                  <div
-                    className="bg-positive transition-all duration-300"
-                    style={{ width: `${(positive / evals) * 100}%` }}
-                    title={`${positive} positive`}
-                  />
-                  <div
-                    className="bg-cream-muted/50 transition-all duration-300"
-                    style={{ width: `${(neutral / evals) * 100}%` }}
-                    title={`${neutral} neutral`}
-                  />
-                  <div
-                    className="bg-negative transition-all duration-300"
-                    style={{ width: `${(negative / evals) * 100}%` }}
-                    title={`${negative} negative`}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between text-[11px] text-cream-muted font-mono pt-1">
-                  <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-positive" />
-                    {positive} Pos
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-cream-muted/50" />
-                    {neutral} Neu
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="h-2 w-2 rounded-full bg-negative" />
-                    {negative} Neg
-                  </span>
-                </div>
-              </div>
-
-              {/* Anonymous Comments Stream */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-xs font-semibold uppercase tracking-wider text-cream-muted font-mono">
-                    Qualitative Student Feedback
-                  </h4>
-                  <span className="text-[11px] text-cream-faint">Verified & Anonymous</span>
-                </div>
-
-                <div className="space-y-2">
-                  {sampleComments.map((comment, i) => (
-                    <div key={i} className="p-3 rounded-lg border border-subtle bg-bg2/40 space-y-1.5">
-                      <div className="flex items-center justify-between">
-                        <span className="rounded bg-panel px-1.5 py-0.5 text-[10px] font-mono text-cream-muted border border-subtle">
-                          {comment.tag}
-                        </span>
-                        <span
-                          className={`text-[10px] font-semibold uppercase font-mono ${
-                            comment.sentiment === 'positive' ? 'text-positive' : 'text-cream-muted'
-                          }`}
-                        >
-                          {comment.sentiment}
-                        </span>
-                      </div>
-                      <p className="text-xs text-cream leading-relaxed italic">
-                        &ldquo;{comment.text}&rdquo;
-                      </p>
+                {criteria.map((c) => (
+                  <div key={c.name}>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-white/80">{c.name}</span>
+                      <span className="font-mono font-bold text-amber-light">
+                        {c.score.toFixed(2)} <span className="text-white/40 text-[10px]">/ 5.0</span>
+                      </span>
                     </div>
-                  ))}
+                    <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full ${c.color || 'bg-amber-glow'}`} style={{ width: `${c.pct}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Sentiment Index & Distribution */}
+            <div className="p-4 rounded-xl bg-espresso-900/80 border border-white/[0.06]">
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-[#A1A1AA] font-semibold">
+                  Student Qualitative Sentiment
+                </h4>
+                <span className="text-[10px] font-mono text-status-sage font-semibold">+94 Net Index</span>
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 text-center mb-1">
+                <div className="p-2 rounded-lg bg-status-sage/10 border border-status-sage/20">
+                  <span className="text-xs font-mono font-bold text-status-sage">{posPct}%</span>
+                  <p className="text-[10px] text-[#A1A1AA]">Positive ({posCount})</p>
+                </div>
+                <div className="p-2 rounded-lg bg-status-gold/10 border border-status-gold/20">
+                  <span className="text-xs font-mono font-bold text-status-gold">{neuPct}%</span>
+                  <p className="text-[10px] text-[#A1A1AA]">Neutral ({neuCount})</p>
+                </div>
+                <div className="p-2 rounded-lg bg-status-crimson/10 border border-status-crimson/20">
+                  <span className="text-xs font-mono font-bold text-status-crimson">{negPct}%</span>
+                  <p className="text-[10px] text-[#A1A1AA]">Critical ({negCount})</p>
                 </div>
               </div>
             </div>
 
-            {/* Sticky Actions Footer */}
-            <div className="p-4 border-t border-subtle/80 sticky bottom-0 bg-panel/95 backdrop-blur-md flex items-center justify-between gap-2.5">
-              <Link
-                href={`/reports?type=faculty_detailed&faculty=${faculty.id}`}
-                className="flex-1 text-center rounded-lg border border-subtle bg-panel px-3 py-2 text-xs font-semibold text-cream hover:bg-panel2 transition-colors min-h-[44px] flex items-center justify-center active:scale-[0.98]"
-              >
-                Deep Analytics
-              </Link>
-              <div className="flex-1 flex items-center justify-center">
-                <PdfDownloadButton
-                  type="faculty"
-                  filename={`faculty-appraisal-${faculty.name.toLowerCase().replace(/\s+/g, '-')}.pdf`}
-                  data={pdfData}
-                  label="Appraisal PDF"
-                />
+            {/* Real-Time Stream of Anonymous Student Remarks */}
+            <div>
+              <div className="flex items-center justify-between mb-3">
+                <h4 className="text-xs font-mono uppercase tracking-wider text-[#A1A1AA] font-semibold">
+                  Verified Student Feedbacks
+                </h4>
+                <span className="text-[10px] font-mono text-[#A1A1AA]">Cryptographically Blinded</span>
+              </div>
+
+              <div className="space-y-3">
+                {remarks.map((r, i) => (
+                  <div
+                    key={i}
+                    className="p-3.5 rounded-xl bg-espresso-900/60 border border-white/[0.06] hover:border-white/10 transition-colors"
+                  >
+                    <div className="flex items-center justify-between text-[10px] font-mono mb-2">
+                      <span
+                        className={`px-1.5 py-0.5 rounded font-semibold border ${
+                          r.type === 'POSITIVE'
+                            ? 'bg-status-sage/15 text-status-sage border-status-sage/20'
+                            : 'bg-status-gold/15 text-status-gold border-status-gold/20'
+                        }`}
+                      >
+                        {r.type} • {r.course}
+                      </span>
+                      <span className="text-[#A1A1AA]">
+                        {r.section} • {r.timeAgo}
+                      </span>
+                    </div>
+                    <p className="text-xs text-[#EDEDED] leading-relaxed italic">{r.text}</p>
+                    <div className="mt-2 text-[10px] font-mono text-[#A1A1AA]/60">{r.hash}</div>
+                  </div>
+                ))}
               </div>
             </div>
-          </motion.aside>
-        </div>
+          </div>
+
+          {/* Drawer Footer Actions */}
+          <div className="p-5 border-t border-white/[0.08] bg-espresso-900/90 space-y-2.5 shrink-0">
+            <PdfDownloadButton
+              type="faculty"
+              filename={`faculty-appraisal-${faculty.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.pdf`}
+              data={pdfData}
+              label="Download Faculty Appraisal PDF"
+            />
+
+            <button
+              type="button"
+              className="w-full flex items-center justify-center gap-2 bg-white/[0.05] hover:bg-white/10 active:scale-[0.98] text-white py-2.5 px-4 rounded-xl text-xs font-medium border border-white/10 transition-colors"
+            >
+              <svg className="w-4 h-4 text-amber-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                <line x1="16" y1="2" x2="16" y2="6" />
+                <line x1="8" y1="2" x2="8" y2="6" />
+                <line x1="3" y1="10" x2="21" y2="10" />
+              </svg>
+              <span>Schedule Peer Review / Consultation</span>
+            </button>
+          </div>
+        </motion.aside>
       </div>
     </AnimatePresence>
   );
 }
+

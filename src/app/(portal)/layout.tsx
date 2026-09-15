@@ -20,9 +20,9 @@ export default async function PortalLayout({ children }: { children: React.React
         {/* Executive Frosted Navigation (Hover-rail on desktop, hamburger drawer on mobile) */}
         <RailNav role={profile.role} fullName={profile.full_name} />
 
-        {/* Main Content Area (Offset by desktop slim rail width) */}
-        <div className="relative z-10 md:pl-[84px] transition-all duration-300">
-          <main className="min-w-0 max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
+        {/* Main Content Area (Offset by desktop w-64 rail width) */}
+        <div className="relative z-10 md:pl-64 transition-all duration-300">
+          <main className="min-w-0 max-w-full mx-auto p-4 sm:p-6 lg:p-8">
             {children}
           </main>
         </div>

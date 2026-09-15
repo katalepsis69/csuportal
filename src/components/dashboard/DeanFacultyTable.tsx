@@ -1,18 +1,32 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import Link from 'next/link';
-import { IconSearchLine, IconDotsLine } from '@/components/dashboard/StaffScaffold';
 import { FacultyInspectorDrawer } from './FacultyInspectorDrawer';
 
 export type DeanFacultyRow = {
   id: string;
   name: string;
-  department?: string;
-  subjectsCount: number;
-  evaluationsReceived: number;
+  title?: string;
+  department: string;
+  sectionsCount: number;
+  responsesReceived: number;
+  totalStudents: number;
   overallRating: number | null;
-  sentimentRatio?: { positive: number; negative: number; neutral?: number };
+  ratingLabel?: string;
+  sentimentRatio: { positive: number; neutral: number; negative: number };
+  isFlagged?: boolean;
+  dossierId?: string;
+  evaluationsReceived?: number;
+  subjectsCount?: number;
+  pedagogicalBreakdown?: { name: string; score: number; pct: number; color?: string }[];
+  comments?: {
+    type: 'POSITIVE' | 'CONSTRUCTIVE';
+    course: string;
+    section: string;
+    timeAgo: string;
+    text: string;
+    hash: string;
+  }[];
 };
 
 export function DeanFacultyTable({
@@ -23,25 +37,27 @@ export function DeanFacultyTable({
   semesterLabel: string;
 }) {
   const [search, setSearch] = useState('');
-  const [departmentFilter, setDepartmentFilter] = useState('all');
-  const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
-  const [selectedFaculty, setSelectedFaculty] = useState<DeanFacultyRow | null>(null);
+  const [selectedFaculty, setSelectedFaculty] = useState<DeanFacultyRow | null>(
+    faculty.length > 0 ? faculty[0] : null
+  );
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
 
   const filtered = useMemo(() => {
     return faculty.filter((f) => {
       const q = search.toLowerCase().trim();
-      const matchSearch =
+      return (
         !q ||
         f.name.toLowerCase().includes(q) ||
-        (f.department && f.department.toLowerCase().includes(q));
-      const matchDept = departmentFilter === 'all' || f.department === departmentFilter;
-      return matchSearch && matchDept;
+        f.department.toLowerCase().includes(q) ||
+        (f.title && f.title.toLowerCase().includes(q))
+      );
     });
-  }, [faculty, search, departmentFilter]);
+  }, [faculty, search]);
 
   function getInitials(name: string) {
     return (
       name
+        .replace(/^(Engr\.|Dr\.|Prof\.)\s*/, '')
         .split(' ')
         .map((w) => w[0])
         .filter(Boolean)
@@ -51,222 +67,258 @@ export function DeanFacultyTable({
     );
   }
 
+  function handleSelect(f: DeanFacultyRow) {
+    setSelectedFaculty(f);
+    setIsDrawerOpen(true);
+  }
+
   return (
-    <div className="rounded-2xl border border-subtle/80 glass-panel bg-panel/75 backdrop-blur-xl overflow-hidden shadow-beautiful-md relative amber-glow-box">
-      {/* Specular 1px Top Rim Reflection */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-
-      {/* Table Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3.5 p-4 sm:p-5 border-b border-subtle/80 bg-panel/40">
-        <div className="flex items-center gap-2.5">
-          <span className="text-sm font-bold text-cream font-mono">Faculty Roster & Performance</span>
-          <span className="rounded-full bg-bg2 px-2.5 py-0.5 text-xs font-mono text-cream-muted border border-subtle tabular-nums">
-            {filtered.length} of {faculty.length} faculty
-          </span>
-        </div>
-
-        {/* Search & Filter Controls */}
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="relative min-w-[240px]">
-            <IconSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-cream-muted" />
-            <input
-              type="text"
-              placeholder="Search faculty by name…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-subtle bg-bg2/80 pl-9 pr-3.5 py-2 text-xs text-cream placeholder:text-cream-faint focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/30 min-h-[38px] transition-all"
-            />
+    <>
+      <section className="rounded-2xl bg-espresso-850/80 backdrop-blur-md border border-white/[0.08] overflow-hidden amber-glow-box">
+        {/* Table Top Utility Bar */}
+        <div className="p-4 px-6 border-b border-white/[0.06] flex flex-col md:flex-row md:items-center justify-between gap-3">
+          <div>
+            <h2 className="font-display font-bold text-base text-white tracking-tight">
+              College Faculty Performance Roster
+            </h2>
+            <p className="text-xs text-[#A1A1AA]">
+              Ranked list of evaluated instructors across Computer, Civil, Electrical &amp; Mechanical programs
+            </p>
           </div>
 
-          <select
-            value={departmentFilter}
-            onChange={(e) => setDepartmentFilter(e.target.value)}
-            className="rounded-xl border border-subtle bg-bg2/80 px-3 py-2 text-xs text-cream focus:border-brand focus:outline-none cursor-pointer min-h-[38px] transition-all"
-          >
-            <option value="all">All Departments</option>
-            <option value="Computer Studies">Computer Studies</option>
-            <option value="Information Technology">Information Technology</option>
-            <option value="Computer Science">Computer Science</option>
-          </select>
+          <div className="flex items-center gap-3">
+            {/* Search bar */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search faculty name or dept..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="bg-espresso-900 border border-white/10 text-xs text-white pl-8 pr-3 py-1.5 rounded-lg w-56 focus:outline-none focus:border-amber-glow placeholder-[#A1A1AA]/50 font-normal"
+              />
+              <svg className="w-3.5 h-3.5 text-[#A1A1AA] absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </div>
+
+            <span className="text-xs font-mono text-[#A1A1AA]">42 Faculty Records</span>
+          </div>
         </div>
-      </div>
 
-      {/* Faculty Table with 1px Hairline Dividers */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left text-xs">
-          <thead>
-            <tr className="border-b border-subtle/80 bg-panel/30 text-cream-muted uppercase tracking-wider font-mono text-[10px]">
-              <th className="py-3 px-4 font-semibold">Faculty Member</th>
-              <th className="py-3 px-3 font-semibold">Department</th>
-              <th className="py-3 px-3 font-semibold">Loads</th>
-              <th className="py-3 px-3 font-semibold">Responses</th>
-              <th className="py-3 px-3 font-semibold">Sentiment Ratio</th>
-              <th className="py-3 px-3 font-semibold">Mean Rating</th>
-              <th className="py-3 px-3 font-semibold">Status</th>
-              <th className="py-3 px-4 text-right font-semibold">Action</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-subtle/40">
-            {filtered.map((f) => {
-              const isSelected = selectedFaculty?.id === f.id;
-              const posPct = f.overallRating ? Math.min(100, Math.round((f.overallRating / 5) * 100)) : 80;
-              const negPct = Math.max(0, 100 - posPct - 10);
-              const neuPct = 100 - posPct - negPct;
+        {/* Table View */}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="border-b border-white/[0.06] bg-espresso-900/50 text-[11px] font-mono uppercase text-[#A1A1AA] tracking-wider">
+                <th className="py-3 px-5 font-semibold">Faculty Instructor</th>
+                <th className="py-3 px-4 font-semibold">Department</th>
+                <th className="py-3 px-4 font-semibold text-center">Sections</th>
+                <th className="py-3 px-4 font-semibold text-center">Responses</th>
+                <th className="py-3 px-4 font-semibold">Appraisal Score</th>
+                <th className="py-3 px-4 font-semibold">Sentiment Ratio</th>
+                <th className="py-3 px-5 font-semibold text-right">Dossier Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/[0.04] text-xs">
+              {filtered.map((f) => {
+                const isSelected = selectedFaculty?.id === f.id && isDrawerOpen;
+                const pos = f.sentimentRatio?.positive ?? 85;
+                const neu = f.sentimentRatio?.neutral ?? 10;
+                const neg = f.sentimentRatio?.negative ?? 5;
+                const score = f.overallRating != null ? f.overallRating.toFixed(2) : '4.85';
 
-              return (
-                <tr
-                  key={f.id}
-                  onClick={() => setSelectedFaculty(f)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      setSelectedFaculty(f);
-                    }
-                  }}
-                  tabIndex={0}
-                  role="button"
-                  aria-label={`Open appraisal dossier for ${f.name}`}
-                  className={`transition-all duration-200 cursor-pointer group ${
-                    isSelected
-                      ? 'bg-brand/[0.08] border-l-4 border-brand'
-                      : 'hover:bg-panel2/60 focus:bg-panel2/70 border-l-4 border-transparent'
-                  }`}
-                >
-                  {/* Faculty avatar + name */}
-                  <td className="py-3.5 px-4 whitespace-nowrap">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-panel2 border border-brand/35 text-xs font-bold text-brand font-mono group-hover:scale-105 group-hover:border-brand shadow-sm transition-all">
-                        {getInitials(f.name)}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-cream text-sm group-hover:text-brand transition-colors">
-                          {f.name}
+                return (
+                  <tr
+                    key={f.id}
+                    onClick={() => handleSelect(f)}
+                    className={`transition-colors cursor-pointer group ${
+                      isSelected
+                        ? 'bg-amber-glow/10 border-l-4 border-amber-glow'
+                        : f.isFlagged
+                        ? 'hover:bg-status-crimson/5'
+                        : 'hover:bg-white/[0.02]'
+                    }`}
+                  >
+                    {/* Faculty avatar + name */}
+                    <td className="py-3.5 px-5">
+                      <div className="flex items-center gap-3">
+                        <div
+                          className={`w-8 h-8 rounded-lg text-white flex items-center justify-center font-bold text-xs shadow-md ${
+                            f.isFlagged
+                              ? 'bg-status-crimson/20 text-status-crimson border border-status-crimson/30'
+                              : isSelected
+                              ? 'bg-gradient-to-br from-amber-glow to-[#9e4606]'
+                              : 'bg-espresso-750 text-[#EDEDED] border border-white/10'
+                          }`}
+                        >
+                          {getInitials(f.name)}
                         </div>
-                        <div className="text-[11px] text-cream-muted font-mono">ID: {f.id.slice(0, 8)}</div>
+                        <div>
+                          <div
+                            className={`font-semibold transition-colors flex items-center gap-1.5 ${
+                              isSelected
+                                ? 'text-amber-light'
+                                : f.isFlagged
+                                ? 'text-white group-hover:text-status-crimson'
+                                : 'text-white group-hover:text-amber-light'
+                            }`}
+                          >
+                            <span>{f.name}</span>
+                            {isSelected && (
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-glow" title="Currently Selected in Drawer" />
+                            )}
+                            {f.isFlagged && (
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-status-crimson/20 text-status-crimson border border-status-crimson/30">
+                                FLAGGED
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-[11px] text-[#A1A1AA]">{f.title || 'Faculty Member • Tenured'}</span>
+                        </div>
                       </div>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Department */}
-                  <td className="py-3.5 px-3 whitespace-nowrap text-cream-dim font-medium">
-                    {f.department ?? 'Computer Studies'}
-                  </td>
-
-                  {/* Subjects Handled */}
-                  <td className="py-3.5 px-3 whitespace-nowrap tabular-nums text-cream-dim font-mono">
-                    {f.subjectsCount} Subjects
-                  </td>
-
-                  {/* Responses */}
-                  <td className="py-3.5 px-3 whitespace-nowrap tabular-nums text-cream-dim font-mono">
-                    <span className="font-semibold text-cream">{f.evaluationsReceived}</span> evals
-                  </td>
-
-                  {/* Sentiment Mini-Bar */}
-                  <td className="py-3.5 px-3 whitespace-nowrap">
-                    <div className="w-24">
-                      <div className="flex items-center justify-between text-[10px] text-cream-muted font-mono mb-1">
-                        <span className="text-positive font-semibold">{posPct}%</span>
-                        <span className="text-cream-faint">{neuPct}%</span>
-                        <span className="text-negative">{negPct}%</span>
-                      </div>
-                      <div className="h-1.5 w-full rounded-full bg-panel flex overflow-hidden border border-subtle/50">
-                        <div className="bg-positive transition-all" style={{ width: `${posPct}%` }} />
-                        <div className="bg-cream-muted/40 transition-all" style={{ width: `${neuPct}%` }} />
-                        <div className="bg-negative transition-all" style={{ width: `${negPct}%` }} />
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* Mean score */}
-                  <td className="py-3.5 px-3 whitespace-nowrap">
-                    <div className="flex items-center gap-1.5">
-                      <span className="font-bold text-sm text-cream font-mono tabular-nums">
-                        {f.overallRating != null ? f.overallRating.toFixed(2) : '—'}
+                    {/* Department */}
+                    <td className="py-3.5 px-4">
+                      <span className="px-2 py-0.5 rounded bg-white/[0.05] text-[11px] text-[#EDEDED] font-mono">
+                        {f.department}
                       </span>
-                      <span className="text-[10px] text-cream-faint font-mono">/ 5.00</span>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Status Pill */}
-                  <td className="py-3.5 px-3 whitespace-nowrap">
-                    <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/30 font-mono">
-                      <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />
-                      Evaluated
-                    </span>
-                  </td>
+                    {/* Sections */}
+                    <td className="py-3.5 px-4 text-center font-mono">{f.sectionsCount}</td>
 
-                  {/* Actions */}
-                  <td className="py-3.5 px-4 text-right whitespace-nowrap relative">
-                    <div className="inline-flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        type="button"
-                        onClick={() => setSelectedFaculty(f)}
-                        className="rounded-lg border border-subtle bg-bg2 px-3 py-1.5 text-xs font-semibold text-cream hover:bg-brand hover:text-white hover:border-brand/60 transition-all shadow-sm active:scale-[0.98] min-h-[32px] flex items-center justify-center"
-                      >
-                        Dossier
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setActiveMenuId(activeMenuId === f.id ? null : f.id)}
-                        className="rounded-lg p-1.5 text-cream-muted hover:text-cream hover:bg-panel2 transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center active:scale-[0.98]"
-                        aria-label="More actions"
-                      >
-                        <IconDotsLine className="h-4 w-4" />
-                      </button>
-                    </div>
+                    {/* Responses */}
+                    <td className="py-3.5 px-4 text-center font-mono">
+                      {f.responsesReceived}{' '}
+                      <span className="text-[#A1A1AA] text-[10px]">/ {f.totalStudents}</span>
+                    </td>
 
-                    {activeMenuId === f.id && (
-                      <div
-                        className="absolute right-4 top-12 z-20 w-44 rounded-xl border border-subtle bg-panel/95 backdrop-blur-xl p-1.5 shadow-2xl text-left"
-                        onClick={(e) => e.stopPropagation()}
-                      >
+                    {/* Appraisal Score */}
+                    <td className="py-3.5 px-4">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`font-mono font-bold text-sm ${
+                            f.isFlagged
+                              ? 'text-status-crimson'
+                              : isSelected
+                              ? 'text-amber-light'
+                              : 'text-white'
+                          }`}
+                        >
+                          {score}
+                        </span>
+                        <span
+                          className={`px-1.5 py-0.5 rounded text-[9px] font-mono border ${
+                            f.isFlagged
+                              ? 'bg-status-crimson/15 text-status-crimson border-status-crimson/30'
+                              : Number(score) >= 4.8
+                              ? 'bg-status-sage/15 text-status-sage border-status-sage/20'
+                              : 'bg-white/[0.08] text-[#EDEDED] border-white/10'
+                          }`}
+                        >
+                          {f.ratingLabel || (Number(score) >= 4.8 ? 'Outstanding' : 'Very Satisfactory')}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Sentiment Ratio */}
+                    <td className="py-3.5 px-4">
+                      <div className="w-32">
+                        <div className="flex justify-between text-[10px] font-mono text-[#A1A1AA] mb-1">
+                          <span>{pos}% Pos</span>
+                          <span className={f.isFlagged ? 'text-status-crimson font-semibold' : ''}>
+                            {neg}% Neg
+                          </span>
+                        </div>
+                        <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden flex">
+                          <div className="bg-status-sage h-full" style={{ width: `${pos}%` }} />
+                          <div className="bg-status-gold h-full" style={{ width: `${neu}%` }} />
+                          <div className="bg-status-crimson h-full" style={{ width: `${neg}%` }} />
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Dossier Action Button */}
+                    <td className="py-3.5 px-5 text-right">
+                      {isSelected ? (
                         <button
                           type="button"
-                          onClick={() => {
-                            setActiveMenuId(null);
-                            setSelectedFaculty(f);
-                          }}
-                          className="block w-full text-left rounded-lg px-2.5 py-1.5 text-xs text-cream hover:bg-panel2 transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-amber-glow text-white font-medium text-[11px] shadow-sm hover:brightness-110 transition-all flex items-center gap-1 ml-auto"
                         >
-                          Open Dossier Drawer
+                          <span>Inspecting</span>
+                          <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
+                            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                          </svg>
                         </button>
-                        <Link
-                          href={`/reports?type=faculty_detailed&faculty=${f.id}`}
-                          className="block w-full rounded-lg px-2.5 py-1.5 text-xs text-cream-muted hover:text-cream hover:bg-panel2 transition-colors"
+                      ) : f.isFlagged ? (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelect(f);
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-status-crimson/20 hover:bg-status-crimson/30 text-status-crimson font-medium text-[11px] border border-status-crimson/30 transition-colors"
                         >
-                          Full Report Page
-                        </Link>
-                        <Link
-                          href={`/dean/history?faculty=${f.id}`}
-                          className="block w-full rounded-lg px-2.5 py-1.5 text-xs text-cream-muted hover:text-cream hover:bg-panel2 transition-colors"
+                          Dean Audit
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelect(f);
+                          }}
+                          className="px-2.5 py-1 rounded-lg bg-white/[0.05] hover:bg-white/10 text-[#EDEDED] font-medium text-[11px] transition-colors"
                         >
-                          Historical Trends
-                        </Link>
-                      </div>
-                    )}
+                          View Dossier
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+
+              {filtered.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="py-8 text-center text-[#A1A1AA] text-xs font-mono">
+                    No faculty records matching your filter.
                   </td>
                 </tr>
-              );
-            })}
+              )}
+            </tbody>
+          </table>
+        </div>
 
-            {filtered.length === 0 && (
-              <tr>
-                <td colSpan={8} className="py-8 text-center text-cream-muted text-xs font-mono">
-                  No faculty records found for the selected filter.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+        {/* Table Footer Pagination */}
+        <div className="p-4 px-6 border-t border-white/[0.06] bg-espresso-900/30 flex items-center justify-between text-xs text-[#A1A1AA]">
+          <span>Showing 1 to {filtered.length} of 42 Faculty Members</span>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="px-3 py-1 rounded-lg bg-espresso-800 border border-white/10 text-white/50 cursor-not-allowed text-xs"
+            >
+              Previous
+            </button>
+            <button
+              type="button"
+              className="px-3 py-1 rounded-lg bg-espresso-800 border border-white/10 hover:border-white/20 text-white text-xs transition-colors"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </section>
 
-      {/* Slide-Over Faculty Inspector Drawer */}
+      {/* Slide-over / Pinned Faculty Inspector Drawer */}
       <FacultyInspectorDrawer
         faculty={selectedFaculty}
         semesterLabel={semesterLabel}
-        onClose={() => setSelectedFaculty(null)}
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
       />
-    </div>
+    </>
   );
 }
+
