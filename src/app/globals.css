@@ -1,44 +1,103 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* CSU CETC design tokens — Cotabato State University */
 :root {
+  color-scheme: light;
+  --canvas: #f8f6f1;
+  --canvas-subtle: #f0ece3;
+  --glass-surface: rgba(255, 255, 255, 0.82);
+  --glass-border: rgba(45, 31, 23, 0.08);
+  --panel: #ffffff;
+  --panel2: #faf8f5;
+  --bg2: #f0ece3;
+  --text-primary: #251811;
+  --text-dim: #5c4a3e;
+  --text-muted: #827063;
+  --text-faint: #a69689;
+  --brand: #c25e0f;
+  --brand-text: #c25e0f;
+  --brand-light: #d86a12;
+  --brand-hover: #a34e0c;
+  --gold: #9e7528;
+  --gold-text: #9e7528;
+  --positive: #2e7d32;
+  --positive-fill: #2e7d32;
+  --negative: #c62828;
+  --negative-fill: #c62828;
+  --subtle: rgba(45, 31, 23, 0.09);
+  --inset-well: #efeae1;
+}
+
+.dark {
   color-scheme: dark;
-  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --canvas: #120e0b;
+  --canvas-subtle: #18130f;
+  --glass-surface: rgba(38, 26, 18, 0.72);
+  --glass-border: rgba(245, 240, 232, 0.08);
+  --panel: #221710;
+  --panel2: #2c1e15;
+  --bg2: #18130f;
+  --text-primary: #f7f2eb;
+  --text-dim: #d1c7ba;
+  --text-muted: #9e9182;
+  --text-faint: #706456;
+  --brand: #d86a12;
+  --brand-text: #f09a5a;
+  --brand-light: #e8873f;
+  --brand-hover: #c25e0f;
+  --gold: #b58a3c;
+  --gold-text: #cda45c;
+  --positive: #82bb82;
+  --positive-fill: #6fa86f;
+  --negative: #c9615a;
+  --negative-fill: #b0453d;
+  --subtle: rgba(245, 240, 232, 0.08);
+  --inset-well: #100c09;
 }
 
 @theme {
-  --color-canvas: #171310;
-  --color-bg2: #1f1a15;
-  --color-panel: #3a271b;
-  --color-panel2: #4a3427;
-  --color-cream: #f5f0e8;
-  --color-cream-dim: #c8beb0;
-  --color-cream-muted: #a99d8d;
-  --color-cream-faint: #8a7f71;
-  --color-brand: #d86a12;
-  --color-brand-text: #f09a5a;
-  --color-brand-light: #e8873f;
-  --color-brand-hover: #c25e0f;
-  --color-gold: #b58a3c;
-  --color-gold-text: #cda45c;
-  --color-positive: #82bb82;
-  --color-positive-fill: #6fa86f;
-  --color-negative: #c9615a;
-  --color-negative-fill: #b0453d;
-  --color-subtle: rgba(245, 240, 232, 0.1);
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  --color-canvas: var(--canvas);
+  --color-canvas-subtle: var(--canvas-subtle);
+  --color-glass-surface: var(--glass-surface);
+  --color-glass-border: var(--glass-border);
+  --color-panel: var(--panel);
+  --color-panel2: var(--panel2);
+  --color-bg2: var(--bg2);
+  --color-cream: var(--text-primary);
+  --color-cream-dim: var(--text-dim);
+  --color-cream-muted: var(--text-muted);
+  --color-cream-faint: var(--text-faint);
+  --color-brand: var(--brand);
+  --color-brand-text: var(--brand-text);
+  --color-brand-light: var(--brand-light);
+  --color-brand-hover: var(--brand-hover);
+  --color-gold: var(--gold);
+  --color-gold-text: var(--gold-text);
+  --color-positive: var(--positive);
+  --color-positive-fill: var(--positive-fill);
+  --color-negative: var(--negative);
+  --color-negative-fill: var(--negative-fill);
+  --color-subtle: var(--subtle);
+  --color-inset-well: var(--inset-well);
 }
 
 body {
-  background: var(--color-canvas);
-  color: var(--color-cream);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  transition: background-color 200ms ease-out, color 200ms ease-out;
 }
 
 ::selection {
   background: rgba(216, 106, 18, 0.35);
 }
 
-/* a11y: always-visible keyboard focus, brand orange */
+/* a11y: visible keyboard focus, brand molten amber ring */
 :focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(216, 106, 18, 0.45);
@@ -56,9 +115,27 @@ body {
   }
 }
 
+/* Beautiful Shadows & Elevation */
+.shadow-beautiful-sm {
+  box-shadow: 0px 2px 3px -1px rgba(0, 0, 0, 0.1), 0px 1px 0px 0px rgba(25, 28, 33, 0.02), 0px 0px 0px 1px rgba(25, 28, 33, 0.08);
+}
+.shadow-beautiful-md {
+  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 1px 1px -0.5px rgba(0, 0, 0, 0.06), 0px 3px 3px -1.5px rgba(0, 0, 0, 0.06), 0px 6px 6px -3px rgba(0, 0, 0, 0.06), 0px 12px 12px -6px rgba(0, 0, 0, 0.06), 0px 24px 24px -12px rgba(0, 0, 0, 0.06);
+}
+.shadow-beautiful-lg {
+  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06), 0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
+}
+
+.glass-panel {
+  background: var(--glass-surface);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid var(--glass-border);
+}
+
 @layer components {
   .page-title {
-    @apply text-[26px] leading-tight font-bold;
+    @apply text-[26px] leading-tight font-bold tracking-tight;
     font-family: var(--font-display);
   }
   .page-subtitle {
@@ -66,6 +143,7 @@ body {
   }
   .panel-title {
     @apply mb-1 text-base font-bold;
+    font-family: var(--font-display);
   }
   .panel-subtitle {
     @apply mb-3 text-[13px] text-cream-muted;
@@ -74,42 +152,42 @@ body {
     @apply mb-1 text-xs font-semibold tracking-[0.06em] text-cream-muted uppercase;
   }
   .stat-value {
-    @apply text-2xl leading-none font-extrabold;
+    @apply text-2xl leading-none font-extrabold tabular-nums;
     font-family: var(--font-display);
   }
 
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-bold text-canvas transition-all duration-200 hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-brand px-5 py-2.5 text-sm font-bold text-white transition-all duration-150 ease-out hover:bg-brand-hover active:scale-[0.98] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-outline {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-subtle bg-transparent px-4 py-2 text-sm font-semibold text-cream transition-all duration-200 hover:bg-[rgba(245,240,232,0.05)] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-subtle bg-glass-surface px-4 py-2 text-sm font-semibold text-cream transition-all duration-150 ease-out hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-danger {
-    @apply inline-flex cursor-pointer items-center rounded-md px-2 py-1 text-xs font-semibold text-negative transition-colors duration-150 hover:bg-[rgba(201,97,90,0.12)];
+    @apply inline-flex cursor-pointer items-center rounded-md px-2 py-1 text-xs font-semibold text-negative transition-colors duration-150 hover:bg-negative/10;
   }
 
   .input {
-    @apply w-full rounded-lg border border-subtle bg-bg2 px-3.5 py-2.5 text-sm text-cream outline-none transition-colors duration-200 placeholder:text-cream-faint focus:border-brand focus:ring-3 focus:ring-[rgba(216,106,18,0.2)];
+    @apply w-full rounded-lg border border-subtle bg-bg2 px-3.5 py-2.5 text-sm text-cream outline-none transition-colors duration-200 placeholder:text-cream-faint focus:border-brand focus:ring-3 focus:ring-brand/20;
   }
   .label {
     @apply mb-2 block text-xs font-semibold tracking-[0.05em] text-cream-muted uppercase;
   }
 
   .card {
-    @apply rounded-xl border border-subtle bg-panel p-3.5 transition-all duration-200;
+    @apply rounded-xl border border-subtle bg-panel p-3.5 transition-all duration-200 shadow-sm;
   }
   .card-hover:hover {
-    @apply -translate-y-0.5 border-[rgba(216,106,18,0.4)];
+    @apply -translate-y-0.5 border-brand/40 shadow-md;
   }
 
   .table {
     @apply w-full border-collapse;
   }
   .th {
-    @apply px-3 py-1.5 text-left text-xs font-semibold tracking-wide text-cream-muted uppercase;
+    @apply px-3 py-2 text-left text-xs font-semibold tracking-wide text-cream-muted uppercase border-b border-subtle;
   }
   .td {
-    @apply px-3 py-2 text-sm whitespace-nowrap text-cream-dim;
+    @apply px-3 py-2.5 text-sm whitespace-nowrap text-cream-dim border-b border-subtle/50;
   }
 
   .badge,
@@ -120,24 +198,24 @@ body {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold tracking-[0.03em] uppercase;
   }
   .badge-brand {
-    @apply bg-[rgba(216,106,18,0.15)] text-brand-text ring-1 ring-[rgba(216,106,18,0.4)];
+    @apply bg-brand/15 text-brand-text ring-1 ring-brand/40;
   }
   .badge-gold {
-    @apply bg-[rgba(181,138,60,0.15)] text-gold-text ring-1 ring-[rgba(181,138,60,0.4)];
+    @apply bg-gold/15 text-gold-text ring-1 ring-gold/40;
   }
   .badge-positive {
-    @apply bg-[rgba(130,187,130,0.15)] text-positive ring-1 ring-[rgba(130,187,130,0.4)];
+    @apply bg-positive/15 text-positive ring-1 ring-positive/40;
   }
   .badge-negative {
-    @apply bg-[rgba(201,97,90,0.15)] text-negative ring-1 ring-[rgba(201,97,90,0.4)];
+    @apply bg-negative/15 text-negative ring-1 ring-negative/40;
   }
 
   .chip {
-    @apply rounded-md bg-bg2 px-1.5 py-0.5 text-xs font-semibold text-cream-muted;
+    @apply rounded-md bg-bg2 px-2 py-0.5 text-xs font-semibold text-cream-muted border border-subtle;
   }
 
   .success-banner {
-    @apply rounded-lg border border-[rgba(130,187,130,0.4)] bg-[rgba(130,187,130,0.12)] px-4 py-3 text-sm text-positive;
+    @apply rounded-lg border border-positive/40 bg-positive/10 px-4 py-3 text-sm text-positive;
   }
 
   .comment-card {

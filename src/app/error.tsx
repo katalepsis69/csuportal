@@ -8,7 +8,7 @@ export default function Error({
   reset: () => void;
 }) {
   return (
-    <main className="flex min-h-screen flex-1 items-center justify-center p-6">
+    <main className="flex min-h-[100dvh] flex-1 items-center justify-center p-6">
       <div className="card max-w-md text-center">
         <h1 className="text-lg font-semibold">Something went wrong</h1>
         <p className="mt-2 text-sm text-cream-muted">
