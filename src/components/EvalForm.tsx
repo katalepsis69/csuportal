@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import SignaturePad, { type Strokes } from '@/components/SignaturePad';
 import { saveDraft, submitEvaluation } from '@/lib/actions/evaluation';
-import { IconFloppyDisk, IconStar } from '@/components/icons';
+import { IconFloppyDisk } from '@/components/icons';
+import { TactileRatingGroup } from '@/components/TactileRatingGroup';
+import { EvaluationProgressCapsule } from '@/components/EvaluationProgressCapsule';
 import type { SentimentResult } from '@/lib/sentiment';
 
 type Question = { id: string; text: string; category: string };
@@ -55,8 +57,7 @@ export default function EvalForm({
   const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // silent client-side sentiment — lazy-loaded, never shown, never blocks submit
-  // ponytail: dynamic import keeps ~136MB WASM out of initial bundle
+  // client-side sentiment — lazy-loaded
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(async () => {
@@ -76,7 +77,8 @@ export default function EvalForm({
     };
   }, [comment]);
 
-  const allRated = questions.every((q) => ratings[q.id]);
+  const ratedCount = questions.filter((q) => ratings[q.id] != null).length;
+  const allRated = questions.length > 0 && ratedCount === questions.length;
   const signed = strokes.length > 0 && strokes.some((s) => s.length > 0);
   const canSubmit = allRated && signed && !busy;
 
@@ -137,97 +139,178 @@ export default function EvalForm({
     }
   }
 
+  // Group questions by category
+  const categories = Array.from(new Set(questions.map((q) => q.category || 'General Criteria')));
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      <div className="card">
-        <h2 className="panel-title">
-          {subjectCode} — {subjectName}
-        </h2>
-        <p className="text-sm text-cream-muted">
-          Faculty: <span className="font-medium text-cream-dim">{facultyName}</span>
-          {closesAt && <> · Open until {new Date(closesAt).toLocaleString()}</>}
+    <form onSubmit={handleSubmit} className="space-y-4 max-w-4xl mx-auto pb-12">
+      {/* Course & Instructor Header Hero */}
+      <div className="card rounded-2xl p-4 sm:p-5 border border-subtle/80 shadow-beautiful-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <span className="text-xs font-mono uppercase tracking-wider text-brand font-bold">
+              Course Appraisal Rubric
+            </span>
+            <h1 className="text-xl sm:text-2xl font-bold font-display text-cream mt-0.5">
+              {subjectCode} — {subjectName}
+            </h1>
+          </div>
+          {closesAt && (
+            <span className="inline-flex items-center gap-1.5 self-start rounded-full bg-brand/15 px-3 py-1 text-xs font-medium text-brand-text border border-brand/30">
+              <span className="h-2 w-2 rounded-full bg-brand animate-pulse" />
+              Closes {new Date(closesAt).toLocaleDateString()}
+            </span>
+          )}
+        </div>
+        <p className="mt-2 text-sm text-cream-muted">
+          Evaluating Instructor: <span className="font-semibold text-cream">{facultyName}</span>
         </p>
       </div>
 
-      <div className="card space-y-3">
-        <h3 className="text-sm font-bold">Rate your instructor</h3>
-        {questions.map((q) => (
-          <div key={q.id} className="border-b border-subtle pb-3 last:border-0 last:pb-0">
-            <p className="mb-2 text-sm text-cream-dim">
-              <span className="chip mr-2">{q.category}</span>
-              {q.text}
-            </p>
-            <div className="flex gap-1" role="group" aria-label={`Rate: ${q.text}`}>
-              {[1, 2, 3, 4, 5].map((n) => {
-                const active = ratings[q.id] != null && ratings[q.id] >= n;
-                return (
-                  <button
-                    key={n}
-                    type="button"
-                    aria-label={`${n} of 5`}
-                    aria-pressed={ratings[q.id] === n}
-                    onClick={() => setRatings((r) => ({ ...r, [q.id]: n }))}
-                    className={`cursor-pointer rounded-md p-1 transition-transform duration-150 hover:scale-110 ${
-                      active ? 'text-gold' : 'text-cream-faint'
-                    }`}
-                  >
-                    <IconStar className="h-6 w-6" />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </div>
+      {/* Sticky Frosted Progress Capsule */}
+      <EvaluationProgressCapsule
+        ratedCount={ratedCount}
+        totalCount={questions.length}
+        savingDraft={savingDraft}
+        draftSaved={draftSaved}
+      />
 
-      <div className="card space-y-4">
+      {/* Category-Grouped Question Rubric */}
+      {categories.map((cat, catIdx) => {
+        const catQuestions = questions.filter((q) => (q.category || 'General Criteria') === cat);
+        const catRated = catQuestions.filter((q) => ratings[q.id] != null).length;
+        const catComplete = catRated === catQuestions.length;
+
+        return (
+          <section
+            key={cat}
+            className="card rounded-2xl p-4 sm:p-6 border border-subtle/80 shadow-beautiful-sm space-y-5"
+          >
+            {/* Category Header */}
+            <div className="flex items-center justify-between border-b border-subtle/60 pb-3">
+              <div className="flex items-center gap-2.5">
+                <span className="flex h-6 w-6 items-center justify-center rounded-md bg-brand/15 text-xs font-mono font-bold text-brand-text border border-brand/30">
+                  {catIdx + 1}
+                </span>
+                <h2 className="text-base font-bold font-display text-cream tracking-tight">
+                  {cat}
+                </h2>
+              </div>
+              <span
+                className={`text-xs font-mono px-2.5 py-0.5 rounded-full border tabular-nums ${
+                  catComplete
+                    ? 'bg-positive/15 text-positive border-positive/30 font-semibold'
+                    : 'bg-panel2 text-cream-muted border-subtle'
+                }`}
+              >
+                {catRated} / {catQuestions.length}
+              </span>
+            </div>
+
+            {/* Questions in Category */}
+            <div className="space-y-6">
+              {catQuestions.map((q, qIdx) => (
+                <div key={q.id} className="space-y-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-xs font-mono text-cream-faint">{catIdx + 1}.{qIdx + 1}</span>
+                    <p className="text-sm font-medium text-cream leading-relaxed max-w-prose">
+                      {q.text}
+                    </p>
+                  </div>
+                  <TactileRatingGroup
+                    questionId={q.id}
+                    questionText={q.text}
+                    value={ratings[q.id]}
+                    onChange={(r) => setRatings((prev) => ({ ...prev, [q.id]: r }))}
+                  />
+                </div>
+              ))}
+            </div>
+          </section>
+        );
+      })}
+
+      {/* Qualitative Feedback & Signature Area */}
+      <div className="card rounded-2xl p-4 sm:p-6 border border-subtle/80 shadow-beautiful-sm space-y-5">
         <div>
           <label className="label" htmlFor="comment">
-            Comments (optional, English or Tagalog)
+            Qualitative Observations & Constructive Remarks (Optional)
           </label>
           <textarea
             id="comment"
-            className="input min-h-24"
+            className="input min-h-24 leading-relaxed"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="What did you like? What can be improved?"
+            placeholder="Highlight instructional strengths or specific areas where teaching methodology could be enhanced…"
           />
+          {sentiment && (
+            <p className="mt-1.5 text-xs text-cream-faint flex items-center gap-1.5">
+              <span>Feedback tone:</span>
+              <span className="font-semibold text-gold-text capitalize">{sentiment.sentiment}</span>
+            </p>
+          )}
         </div>
+
         <div>
-          <label className="label">E-signature (required)</label>
-          <SignaturePad strokes={strokes} onChange={setStrokes} />
+          <label className="label">E-Signature Verification (Required)</label>
+          <div className="rounded-xl border border-subtle/80 bg-inset-well p-3">
+            <SignaturePad strokes={strokes} onChange={setStrokes} />
+          </div>
         </div>
-        <label className="flex items-center gap-2 text-sm text-cream-dim">
+
+        <label className="flex items-center gap-3 text-sm text-cream-dim select-none cursor-pointer pt-1">
           <input
             type="checkbox"
             checked={anonymous}
             onChange={(e) => setAnonymous(e.target.checked)}
-            className="h-4 w-4 accent-[#D86A12]"
+            className="h-4 w-4 rounded border-subtle bg-bg2 accent-[#D86A12] cursor-pointer"
           />
-          Submit anonymously (your name stays hidden from the faculty)
+          <span>Submit anonymously (identity cryptographically blinded from faculty)</span>
         </label>
       </div>
 
-      {error && <p className="text-sm text-negative">{error}</p>}
+      {error && (
+        <div className="rounded-xl border border-negative/40 bg-negative/10 px-4 py-3 text-sm text-negative font-medium">
+          {error}
+        </div>
+      )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" className="btn" disabled={!canSubmit}>
-          {busy ? 'Submitting…' : 'Submit Evaluation'}
-        </button>
-        <button
-          type="button"
-          className="btn-outline"
-          onClick={handleSaveDraft}
-          disabled={savingDraft}
-        >
-          <IconFloppyDisk className="h-4 w-4" />
-          {savingDraft ? 'Saving…' : 'Save Draft'}
-        </button>
-        {draftSaved && !allRated && (
-          <span className="text-xs text-gold-text">Draft restored — finish anytime</span>
-        )}
-        {!allRated && <span className="text-xs text-cream-faint">Rate all questions to submit</span>}
-        {!signed && <span className="text-xs text-cream-faint">Sign above to submit</span>}
+      {/* Floating Frosted Glass Action Dock */}
+      <div className="glass-panel sticky bottom-3 z-30 rounded-2xl p-3.5 sm:p-4 shadow-beautiful-lg backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 border border-glass-border">
+        <div className="text-xs text-cream-muted">
+          {!allRated ? (
+            <span className="text-gold-text font-medium">
+              Please rate all {questions.length} questions before final submission
+            </span>
+          ) : !signed ? (
+            <span className="text-gold-text font-medium">
+              Please provide your digital e-signature above
+            </span>
+          ) : (
+            <span className="text-positive font-semibold">
+              Ready to submit — all criteria and signature verified
+            </span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-2.5 shrink-0">
+          <button
+            type="button"
+            className="btn-outline"
+            onClick={handleSaveDraft}
+            disabled={savingDraft}
+          >
+            <IconFloppyDisk className="h-4 w-4" />
+            {savingDraft ? 'Saving…' : 'Save Draft'}
+          </button>
+          <button
+            type="submit"
+            className="btn"
+            disabled={!canSubmit}
+          >
+            {busy ? 'Submitting…' : 'Submit Evaluation'}
+          </button>
+        </div>
       </div>
     </form>
   );

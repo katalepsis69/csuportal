@@ -150,26 +150,29 @@ export function StaffStatCard({
 }) {
   const color = metric.color ?? '#D86A12';
   return (
-    <div className="rounded-xl border border-subtle bg-bg2/95 p-3 shadow-md hover:border-brand/40 transition-all duration-200">
-      <div className="flex items-center justify-between">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-panel border border-subtle text-cream-dim">
+    <div className="@container rounded-2xl border border-subtle bg-panel p-4 shadow-beautiful-sm hover:border-brand/40 transition-all duration-200 relative overflow-hidden group">
+      {/* Ambient background glow */}
+      <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-brand/5 blur-2xl pointer-events-none group-hover:bg-brand/10 transition-colors" />
+
+      <div className="flex items-center justify-between relative z-10">
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-panel2 border border-subtle text-cream-dim shadow-inner">
           {metric.icon ?? <IconUsersLine className="h-4 w-4" />}
         </div>
         <Sparkline color={color} points={metric.sparkline} />
       </div>
 
-      <div className="mt-2.5">
+      <div className="mt-3 relative z-10">
         <p className="text-xs font-semibold uppercase tracking-wider text-cream-muted">{metric.label}</p>
         <div className="mt-1 flex items-baseline gap-2">
-          <span className="text-xl sm:text-2xl font-bold tracking-tight text-cream font-mono tabular-nums">
+          <span className="text-2xl font-extrabold tracking-tight text-cream font-mono tabular-nums">
             {metric.value}
           </span>
           {metric.trend && (
             <span
-              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums ${
+              className={`rounded-full px-2 py-0.5 text-[11px] font-semibold tabular-nums border ${
                 metric.trendPositive !== false
-                  ? 'bg-positive/15 text-positive border border-positive/30'
-                  : 'bg-negative/15 text-negative border border-negative/30'
+                  ? 'bg-positive/15 text-positive border-positive/30'
+                  : 'bg-negative/15 text-negative border-negative/30'
               }`}
             >
               {metric.trend}
@@ -199,9 +202,9 @@ export function StaffScaffold({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-w-0 space-y-3">
-      {/* Top Utility Bar (Breadcrumb) */}
-      <div className="rounded-xl border border-subtle bg-bg2/90 px-3 py-2 shadow-md">
+    <div className="min-w-0 space-y-4">
+      {/* Top Utility Bar (Breadcrumb in frosted glass) */}
+      <div className="glass-panel rounded-2xl px-4 py-2.5 shadow-beautiful-sm border border-glass-border">
         <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-cream-muted">
           {breadcrumb.map((crumb, idx) => (
             <React.Fragment key={crumb}>
@@ -214,30 +217,30 @@ export function StaffScaffold({
         </nav>
       </div>
 
-        {/* Action Header Banner */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-cream" style={{ fontFamily: 'var(--font-display)' }}>
-              {title}
-            </h1>
-            <p className="text-xs sm:text-sm text-cream-muted mt-0.5">{subtitle}</p>
-          </div>
-          {actionButton && <div className="shrink-0">{actionButton}</div>}
+      {/* Action Header Banner */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-cream font-display">
+            {title}
+          </h1>
+          <p className="text-xs sm:text-sm text-cream-muted mt-0.5">{subtitle}</p>
         </div>
+        {actionButton && <div className="shrink-0">{actionButton}</div>}
+      </div>
 
-        {/* 4 Stat Metric Cards */}
-        {metrics && metrics.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {metrics.map((m, i) => (
-              <StaffStatCard key={i} metric={m} />
-            ))}
-          </div>
-        )}
-
-        {/* Main Content / Table Slot */}
-        <div className="rounded-2xl border border-subtle bg-bg2/95 shadow-xl overflow-hidden">
-          {children}
+      {/* Asymmetric 4-Up Bento KPI Grid */}
+      {metrics && metrics.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+          {metrics.map((m, i) => (
+            <StaffStatCard key={i} metric={m} />
+          ))}
         </div>
+      )}
+
+      {/* Main Content / Table Slot */}
+      <div className="rounded-2xl border border-subtle bg-panel shadow-beautiful-md overflow-hidden">
+        {children}
+      </div>
     </div>
   );
 }

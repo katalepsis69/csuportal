@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import {
   Bar,
   BarChart,
@@ -13,14 +14,12 @@ import {
   YAxis,
 } from 'recharts';
 
-/* CSU CETC chart tokens */
+/* CSU CETC verified chart tokens */
 const SENTIMENT_COLORS: Record<string, string> = {
   positive: '#6FA86F',
   neutral: '#B58A3C',
-  negative: '#B0453D',
+  negative: '#C9615A',
 };
-const GRID = 'rgba(245,240,232,0.08)';
-const TICK = { fontSize: 11, fill: '#A99D8D' };
 
 export function SentimentPie({
   counts,
@@ -34,23 +33,32 @@ export function SentimentPie({
   ].filter((d) => d.value > 0);
 
   if (data.length === 0)
-    return <p className="py-6 text-center text-sm text-cream-faint">No data yet</p>;
+    return <p className="py-6 text-center text-sm text-cream-faint">No evaluation sentiment recorded yet</p>;
 
   return (
     <ResponsiveContainer width="100%" height={180}>
       <PieChart>
-        <Pie data={data} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80}>
+        <Pie data={data} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={2}>
           {data.map((d) => (
-            <Cell key={d.name} fill={SENTIMENT_COLORS[d.name.toLowerCase()]} stroke="#171310" />
+            <Cell
+              key={d.name}
+              fill={SENTIMENT_COLORS[d.name.toLowerCase()]}
+              stroke="var(--canvas)"
+              strokeWidth={2}
+            />
           ))}
         </Pie>
         <Tooltip
           contentStyle={{
-            background: '#1F1A15',
-            border: '1px solid rgba(245,240,232,0.1)',
-            borderRadius: 8,
-            color: '#F5F0E8',
+            background: 'var(--panel)',
+            borderColor: 'var(--subtle)',
+            borderRadius: 12,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+            color: 'var(--cream)',
+            fontSize: '13px',
+            fontWeight: 600,
           }}
+          itemStyle={{ color: 'var(--cream)' }}
         />
       </PieChart>
     </ResponsiveContainer>
@@ -68,24 +76,35 @@ export function AvgBar({
 }) {
   const rows = data.map((d) => ({ name: d.name, value: d.value ?? 0 }));
   if (rows.length === 0)
-    return <p className="py-6 text-center text-sm text-cream-faint">No data yet</p>;
+    return <p className="py-6 text-center text-sm text-cream-faint">No criteria data yet</p>;
 
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={rows} margin={{ left: -20, right: 8, top: 8 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke={GRID} />
-        <XAxis dataKey="name" tick={TICK} interval={0} angle={-15} textAnchor="end" height={50} />
-        <YAxis domain={[0, domainMax]} tick={TICK} />
-        <Tooltip
-          cursor={{ fill: 'rgba(245,240,232,0.04)' }}
-          contentStyle={{
-            background: '#1F1A15',
-            border: '1px solid rgba(245,240,232,0.1)',
-            borderRadius: 8,
-            color: '#F5F0E8',
-          }}
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--subtle)" />
+        <XAxis
+          dataKey="name"
+          tick={{ fontSize: 11, fill: 'var(--cream-muted)' }}
+          interval={0}
+          angle={-15}
+          textAnchor="end"
+          height={50}
         />
-        <Bar dataKey="value" fill="#D86A12" radius={[4, 4, 0, 0]} />
+        <YAxis domain={[0, domainMax]} tick={{ fontSize: 11, fill: 'var(--cream-muted)' }} />
+        <Tooltip
+          cursor={{ fill: 'rgba(216,106,18,0.06)' }}
+          contentStyle={{
+            background: 'var(--panel)',
+            borderColor: 'var(--subtle)',
+            borderRadius: 12,
+            boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+            color: 'var(--cream)',
+            fontSize: '13px',
+            fontWeight: 600,
+          }}
+          itemStyle={{ color: 'var(--cream)' }}
+        />
+        <Bar dataKey="value" fill="var(--brand)" radius={[6, 6, 0, 0]} />
       </BarChart>
     </ResponsiveContainer>
   );
