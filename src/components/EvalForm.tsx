@@ -246,7 +246,7 @@ export default function EvalForm({
           {sentiment && (
             <p className="mt-1.5 text-xs text-cream-faint flex items-center gap-1.5">
               <span>Feedback tone:</span>
-              <span className="font-semibold text-gold-text capitalize">{sentiment.sentiment}</span>
+              <span className="font-semibold text-gold-text capitalize">{sentiment.label}</span>
             </p>
           )}
         </div>

@@ -6,7 +6,13 @@ import { requireRole } from '@/lib/auth';
 import { AvgBar, SentimentPie } from '@/components/Charts';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
 import type { DeanOverview, Semester } from '@/lib/types';
-import { StaffScaffold, IconChartLine, IconUsersLine, IconBookLine, IconGearLine } from '@/components/dashboard/StaffScaffold';
+import {
+  StaffScaffold,
+  IconChartLine,
+  IconUsersLine,
+  IconBookLine,
+  IconGearLine,
+} from '@/components/dashboard/StaffScaffold';
 import { DeanFacultyTable, type DeanFacultyRow } from '@/components/dashboard/DeanFacultyTable';
 
 export const dynamic = 'force-dynamic';
@@ -57,9 +63,10 @@ export default async function DeanPage({
 
   const activeEvaluatedFaculty = facultyRows.filter((f) => f.evaluationsReceived > 0).length;
   const ratedFaculty = facultyRows.filter((f) => f.overallRating != null);
-  const collegeMean = ratedFaculty.length > 0
-    ? (ratedFaculty.reduce((acc, f) => acc + (f.overallRating ?? 0), 0) / ratedFaculty.length).toFixed(2)
-    : '4.82';
+  const collegeMean =
+    ratedFaculty.length > 0
+      ? (ratedFaculty.reduce((acc, f) => acc + (f.overallRating ?? 0), 0) / ratedFaculty.length).toFixed(2)
+      : '4.82';
 
   const deanMetrics = [
     {
@@ -106,12 +113,16 @@ export default async function DeanPage({
     <StaffScaffold
       breadcrumb={['CSU CETC Portal', 'Academic Leadership', 'Faculty Appraisal & Rankings']}
       title="Dean's Executive Analytics"
-      subtitle={`Performance appraisal summary and faculty rankings for ${label}.`}
+      subtitle={`Performance appraisal summary and faculty rankings for ${label}. Click any faculty row to open the comprehensive dossier.`}
       metrics={deanMetrics}
       actionButton={
         <div className="flex flex-wrap items-center gap-2">
           <form method="get" className="flex items-center gap-1.5">
-            <select name="sem" defaultValue={semesterId ?? ''} className="rounded-lg border border-subtle bg-bg2 px-2.5 py-1.5 text-xs text-cream focus:border-brand focus:outline-none cursor-pointer">
+            <select
+              name="sem"
+              defaultValue={semesterId ?? ''}
+              className="rounded-lg border border-subtle bg-bg2 px-3 py-1.5 text-xs text-cream focus:border-brand focus:outline-none cursor-pointer min-h-[36px]"
+            >
               <option value="">Current semester</option>
               {(semesters as Semester[] | null)?.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -120,52 +131,102 @@ export default async function DeanPage({
                 </option>
               ))}
             </select>
-            <button type="submit" className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors">
+            <button
+              type="submit"
+              className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors min-h-[36px] active:scale-[0.98]"
+            >
               Filter
             </button>
           </form>
-          <Link href="/dean/history" className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors">
-            History
+          <Link
+            href="/dean/history"
+            className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors min-h-[36px] flex items-center justify-center active:scale-[0.98]"
+          >
+            Historical Trends
           </Link>
-          <Link href="/reports" className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors">
-            Reports
+          <Link
+            href="/reports"
+            className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors min-h-[36px] flex items-center justify-center active:scale-[0.98]"
+          >
+            Export Center
           </Link>
           <PdfDownloadButton
             type="department"
             filename={`department-overview-${label.replace(/\s+/g, '-')}.pdf`}
             data={{ overview, label }}
+            label="College PDF"
           />
         </div>
       }
     >
-      <div className="space-y-3">
+      <div className="space-y-4">
         {/* Faculty Ranking Roster Table */}
         <DeanFacultyTable faculty={facultyRows} semesterLabel={label} />
 
-        {/* Charts & Categorical Breakdown */}
-        <div className="grid gap-3 lg:grid-cols-2 p-3 sm:p-4 border-t border-subtle/80 bg-panel/20">
-          <div className="rounded-xl border border-subtle bg-bg2 p-3">
-            <h2 className="text-sm font-semibold text-cream mb-3">Faculty Overall Score Comparison</h2>
+        {/* Charts Bento Grid */}
+        <div className="grid gap-4 lg:grid-cols-2">
+          {/* Faculty Score Comparison */}
+          <div className="rounded-2xl border border-subtle/80 bg-panel/30 backdrop-blur-md p-5 shadow-beautiful-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-sm font-semibold text-cream font-mono">Faculty Overall Score Comparison</h2>
+                <p className="text-xs text-cream-muted mt-0.5">Mean rating per instructor across all evaluated classes</p>
+              </div>
+              <span className="rounded-md bg-bg2 px-2 py-0.5 text-[10px] font-mono text-cream-muted border border-subtle">
+                Scale 1-5
+              </span>
+            </div>
             <AvgBar
-              data={(overview.faculty ?? []).map((f) => ({ name: f.full_name.split(' ')[0], value: f.overall }))}
+              data={(overview.faculty ?? []).map((f) => ({
+                name: f.full_name.split(' ')[0],
+                value: f.overall,
+              }))}
             />
           </div>
 
-          <div className="rounded-xl border border-subtle bg-bg2 p-3">
-            <h2 className="text-sm font-semibold text-cream mb-3">Evaluation Criteria Averages</h2>
+          {/* Evaluation Criteria Averages */}
+          <div className="rounded-2xl border border-subtle/80 bg-panel/30 backdrop-blur-md p-5 shadow-beautiful-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-sm font-semibold text-cream font-mono">Evaluation Criteria Averages</h2>
+                <p className="text-xs text-cream-muted mt-0.5">Categorical mean scores across all evaluated criteria</p>
+              </div>
+              <span className="rounded-md bg-bg2 px-2 py-0.5 text-[10px] font-mono text-cream-muted border border-subtle">
+                Aggregated
+              </span>
+            </div>
             <AvgBar
-              data={(overview.per_criterion ?? []).map((c) => ({ name: c.category, value: c.avg_rating }))}
+              data={(overview.per_criterion ?? []).map((c) => ({
+                name: c.category,
+                value: c.avg_rating,
+              }))}
             />
           </div>
         </div>
 
-        {/* Sentiment Analysis Distribution */}
-        <div className="p-3 sm:p-4 border-t border-subtle/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div>
-            <h3 className="text-sm font-semibold text-cream">Student Comment Sentiment</h3>
-            <p className="text-xs text-cream-muted mt-0.5">Automated multilingual student feedback sentiment classification.</p>
+        {/* Sentiment Analysis Distribution Strip */}
+        <div className="rounded-2xl border border-subtle/80 bg-panel/30 backdrop-blur-md p-5 shadow-beautiful-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="max-w-md">
+            <div className="flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-positive" />
+              <h3 className="text-sm font-semibold text-cream font-mono">Student Feedback Sentiment Distribution</h3>
+            </div>
+            <p className="text-xs text-cream-muted mt-1.5 leading-relaxed">
+              Automated natural language sentiment classification of qualitative student commentary across English, Tagalog, and Maguindanaon.
+            </p>
+            <div className="mt-3 flex items-center gap-3 text-xs font-mono">
+              <span className="text-positive font-semibold">
+                {overview.sentiment?.positive ?? 0} Positive
+              </span>
+              <span className="text-cream-muted">
+                {overview.sentiment?.neutral ?? 0} Neutral
+              </span>
+              <span className="text-negative font-semibold">
+                {overview.sentiment?.negative ?? 0} Negative
+              </span>
+            </div>
           </div>
-          <div className="w-48">
+          <div className="w-52 shrink-0">
             <SentimentPie counts={overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 }} />
           </div>
         </div>
