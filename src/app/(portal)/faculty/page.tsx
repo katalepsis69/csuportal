@@ -3,7 +3,13 @@ import { requireRole } from '@/lib/auth';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
 import { AvgBar, SentimentPie } from '@/components/Charts';
 import type { FacultyOverview, Semester } from '@/lib/types';
-import { StaffScaffold, IconChartLine, IconBookLine, IconUsersLine, IconGearLine } from '@/components/dashboard/StaffScaffold';
+import {
+  StaffScaffold,
+  IconChartLine,
+  IconBookLine,
+  IconUsersLine,
+  IconGearLine,
+} from '@/components/dashboard/StaffScaffold';
 import { FacultyClassesTable, type FacultySubjectRow } from '@/components/dashboard/FacultyClassesTable';
 
 export const dynamic = 'force-dynamic';
@@ -32,9 +38,10 @@ export default async function FacultyPage({
 
   const sentimentTotal =
     (overview.sentiment?.positive ?? 0) + (overview.sentiment?.neutral ?? 0) + (overview.sentiment?.negative ?? 0);
-  const positivePct = sentimentTotal > 0
-    ? Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)
-    : 88;
+  const positivePct =
+    sentimentTotal > 0
+      ? Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)
+      : 88;
 
   const classes: FacultySubjectRow[] = (overview.per_subject ?? []).map((s) => ({
     subject_code: s.subject_code,
@@ -46,7 +53,7 @@ export default async function FacultyPage({
 
   const facultyMetrics = [
     {
-      label: 'Overall Rating',
+      label: 'Overall Appraisal Rating',
       value: `${overview.overall != null ? overview.overall.toFixed(2) : '4.85'} / 5.0`,
       trend: '+0.12',
       trendPositive: true,
@@ -95,7 +102,11 @@ export default async function FacultyPage({
       actionButton={
         <div className="flex flex-wrap items-center gap-2">
           <form method="get" className="flex items-center gap-1.5">
-            <select name="sem" defaultValue={semesterId ?? ''} className="rounded-lg border border-subtle bg-bg2 px-2.5 py-1.5 text-xs text-cream focus:border-brand focus:outline-none cursor-pointer">
+            <select
+              name="sem"
+              defaultValue={semesterId ?? ''}
+              className="rounded-lg border border-subtle bg-bg2 px-3 py-1.5 text-xs text-cream focus:border-brand focus:outline-none cursor-pointer min-h-[36px]"
+            >
               <option value="">All semesters</option>
               {(semesters as Semester[] | null)?.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -104,7 +115,10 @@ export default async function FacultyPage({
                 </option>
               ))}
             </select>
-            <button type="submit" className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors">
+            <button
+              type="submit"
+              className="rounded-lg border border-subtle bg-panel px-3 py-1.5 text-xs font-semibold text-cream hover:bg-panel2 transition-colors min-h-[36px] active:scale-[0.98]"
+            >
               Filter
             </button>
           </form>
@@ -112,18 +126,28 @@ export default async function FacultyPage({
             type="faculty"
             filename={`faculty-results-${semesterLabel.replace(/\s+/g, '-')}.pdf`}
             data={{ overview, facultyName: profile.full_name, semesterLabel }}
+            label="Download Appraisal PDF"
           />
         </div>
       }
     >
-      <div className="space-y-3">
+      <div className="space-y-4">
         {/* Classes Table */}
         <FacultyClassesTable classes={classes} />
 
-        {/* Question-level score bar chart */}
-        <div className="grid gap-3 lg:grid-cols-2 p-3 sm:p-4 border-t border-subtle/80 bg-panel/20">
-          <div className="rounded-xl border border-subtle bg-bg2 p-3">
-            <h2 className="text-sm font-semibold text-cream mb-3">Average Rating per Evaluation Question</h2>
+        {/* Question-level score bar chart & Sentiment Bento */}
+        <div className="grid gap-4 lg:grid-cols-2">
+          {/* Average Rating per Question */}
+          <div className="rounded-2xl border border-subtle/80 bg-panel/30 backdrop-blur-md p-5 shadow-beautiful-sm">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h2 className="text-sm font-semibold text-cream font-mono">Average Rating per Question</h2>
+                <p className="text-xs text-cream-muted mt-0.5">Performance index across each rubric question</p>
+              </div>
+              <span className="rounded-md bg-bg2 px-2 py-0.5 text-[10px] font-mono text-cream-muted border border-subtle">
+                Scale 1-5
+              </span>
+            </div>
             <AvgBar
               data={(overview.per_question ?? []).map((q) => ({
                 name: `Q${q.sort_order}`,
@@ -132,34 +156,56 @@ export default async function FacultyPage({
             />
           </div>
 
-          <div className="rounded-xl border border-subtle bg-bg2 p-3 flex flex-col justify-between">
+          {/* Student Feedback Sentiment */}
+          <div className="rounded-2xl border border-subtle/80 bg-panel/30 backdrop-blur-md p-5 shadow-beautiful-sm flex flex-col justify-between">
             <div>
-              <h2 className="text-sm font-semibold text-cream mb-1">Student Feedback Sentiment</h2>
+              <div className="flex items-center justify-between mb-1">
+                <h2 className="text-sm font-semibold text-cream font-mono">Student Feedback Sentiment</h2>
+                <span className="inline-flex items-center gap-1 rounded-full bg-positive/15 px-2 py-0.5 text-[10px] font-mono text-positive border border-positive/30">
+                  {positivePct}% Positive
+                </span>
+              </div>
               <p className="text-xs text-cream-muted mb-4">
                 {sentimentTotal === 0
                   ? 'No comments submitted yet for this semester.'
                   : `${Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)}% positive · ${Math.round(
                       ((overview.sentiment?.negative ?? 0) / sentimentTotal) * 100,
-                    )}% negative`}
+                    )}% negative ratio`}
               </p>
             </div>
-            <div className="w-full h-32 flex items-center justify-center">
+            <div className="w-full h-36 flex items-center justify-center">
               <SentimentPie counts={overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 }} />
             </div>
           </div>
         </div>
 
         {/* Anonymous Student Comments Roster */}
-        <div className="p-3 sm:p-4 border-t border-subtle/80 space-y-3">
-          <h3 className="text-sm font-semibold text-cream">Anonymous Student Comments ({overview.comments?.length ?? 0})</h3>
-          <div className="grid gap-2.5 sm:grid-cols-2">
+        <div className="rounded-2xl border border-subtle/80 bg-panel/30 backdrop-blur-md p-5 shadow-beautiful-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-cream font-mono">
+                Anonymous Student Commentary ({overview.comments?.length ?? 0})
+              </h3>
+              <p className="text-xs text-cream-muted mt-0.5">
+                Direct, unedited feedback from enrolled students across all class sections.
+              </p>
+            </div>
+            <span className="text-[11px] font-mono text-cream-faint">Encrypted & De-identified</span>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
             {(overview.comments ?? []).slice(0, 10).map((c, i) => (
-              <div key={i} className="rounded-xl border border-subtle bg-panel/50 p-3.5 text-xs text-cream-dim leading-relaxed">
-                “{c.comment}”
+              <div
+                key={i}
+                className="rounded-xl border border-subtle/80 bg-panel/40 p-4 text-xs text-cream-dim leading-relaxed hover:border-brand/30 transition-colors shadow-sm italic"
+              >
+                &ldquo;{c.comment}&rdquo;
               </div>
             ))}
             {(overview.comments ?? []).length === 0 && (
-              <p className="text-xs text-cream-muted col-span-2">No written comments recorded for this term.</p>
+              <p className="text-xs text-cream-muted col-span-2 py-4 text-center">
+                No written comments recorded for this term.
+              </p>
             )}
           </div>
         </div>
