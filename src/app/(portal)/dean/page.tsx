@@ -6,6 +6,7 @@ import { AvgBar, SentimentPie } from '@/components/Charts';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
 import type { DeanOverview, Semester } from '@/lib/types';
 import { DeanFacultyTable, type DeanFacultyRow } from '@/components/dashboard/DeanFacultyTable';
+import { SemesterSelect } from '@/components/dashboard/SemesterSelect';
 
 export const dynamic = 'force-dynamic';
 
@@ -116,10 +117,10 @@ export default async function DeanPage({
     ? overview.faculty
     : DEFAULT_DEAN_OVERVIEW.faculty
   ).map((f, idx) => {
-    const isTan = f.id === 'fc-tan' || f.full_name.includes('Tan');
-    const isSantos = f.id === 'fc-santos' || f.full_name.includes('Santos');
-    const isLim = f.id === 'fc-lim' || f.full_name.includes('Lim');
-    const isCruz = f.id === 'fc-cruz' || f.full_name.includes('Cruz');
+    const isTan = f.id === 'fc-tan' || (f.full_name ? f.full_name.includes('Tan') : false);
+    const isSantos = f.id === 'fc-santos' || (f.full_name ? f.full_name.includes('Santos') : false);
+    const isLim = f.id === 'fc-lim' || (f.full_name ? f.full_name.includes('Lim') : false);
+    const isCruz = f.id === 'fc-cruz' || (f.full_name ? f.full_name.includes('Cruz') : false);
 
     const department = isSantos
       ? 'Computer Science (CS/IT)'
@@ -156,7 +157,7 @@ export default async function DeanPage({
 
     return {
       id: f.id,
-      name: f.full_name,
+      name: f.full_name || 'Faculty Member',
       title,
       department,
       sectionsCount: f.loads || (idx === 0 ? 3 : idx === 1 ? 2 : idx === 2 ? 4 : 2),
@@ -273,41 +274,25 @@ export default async function DeanPage({
 
           {/* Controls & PDF Action */}
           <div className="flex flex-wrap items-center gap-2.5">
-            {/* Semester Dropdown Form */}
-            <form method="get" className="relative">
-              <select
-                name="sem"
-                defaultValue={semesterId ?? ''}
-                onChange={(e) => e.target.form?.submit()}
-                className="appearance-none bg-panel2/90 border border-subtle hover:border-brand/40 text-xs font-medium text-cream px-3.5 py-2.5 pr-8 rounded-xl focus:outline-none focus:border-brand transition-colors cursor-pointer shadow-sm"
-              >
-                <option value="">Current semester</option>
-                {(semesters as Semester[] | null)?.map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.academic_year} {s.term}
-                    {s.is_current ? ' (Final)' : ' (Archive)'}
-                  </option>
-                ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-cream-muted">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </form>
+            {/* Semester Dropdown Client Component (No RSC serialization violation) */}
+            <SemesterSelect
+              semesters={((semesters ?? []) as unknown) as Semester[]}
+              currentId={semesterId}
+            />
 
             {/* Department Filter */}
-            <div className="relative">
+            <div className="relative inline-block">
               <select
                 defaultValue="all"
-                className="appearance-none bg-panel2/90 border border-subtle hover:border-brand/40 text-xs font-medium text-cream px-3.5 py-2.5 pr-8 rounded-xl focus:outline-none focus:border-brand transition-colors cursor-pointer shadow-sm"
+                aria-label="Filter by department"
+                className="appearance-none rounded-xl border border-border bg-card px-3.5 py-2 pr-8 text-xs font-medium text-foreground hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-xs min-h-[38px] transition-colors"
               >
                 <option value="all">All Departments (4)</option>
                 <option value="cs">Computer Studies (CS/IT)</option>
                 <option value="ce">Civil Engineering (CE)</option>
                 <option value="ee">Electrical Engineering (EE)</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-cream-muted">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-muted-foreground">
                 <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
                 </svg>
@@ -566,7 +551,7 @@ export default async function DeanPage({
           </div>
           <AvgBar
             data={(overview.faculty ?? []).map((f) => ({
-              name: f.full_name.split(' ')[0],
+              name: (f.full_name || 'Faculty').split(' ')[0],
               value: f.overall,
             }))}
           />

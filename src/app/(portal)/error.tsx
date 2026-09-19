@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+
 export default function Error({
   error,
   reset,
@@ -7,17 +9,47 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    // Log unexpected client-side exceptions for telemetry
+    console.error('Portal error captured:', error);
+  }, [error]);
+
   return (
-    <div className="card max-w-md text-center">
-      <h1 className="text-lg font-semibold">Something went wrong</h1>
-      <p className="mt-2 text-sm text-cream-muted">
-        {error.digest
-          ? `Unexpected error (ref: ${error.digest}). Try again — if it keeps happening, contact the admin.`
-          : 'Unexpected error. Try again — if it keeps happening, contact the admin.'}
-      </p>
-      <button type="button" onClick={reset} className="btn mt-4">
-        Try again
-      </button>
+    <div className="flex items-center justify-center min-h-[60vh] p-4">
+      <div className="rounded-2xl border border-border bg-card p-8 shadow-xs max-w-md w-full text-center space-y-4">
+        <div className="w-12 h-12 rounded-full bg-destructive/10 text-destructive border border-destructive/20 mx-auto flex items-center justify-center">
+          <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+        </div>
+
+        <div>
+          <h1 className="text-lg font-bold text-foreground tracking-tight">Something went wrong</h1>
+          <p className="mt-2 text-xs sm:text-sm text-muted-foreground leading-relaxed">
+            {error.digest
+              ? `An unexpected system error occurred (Reference: ${error.digest}). Try refreshing the section or contact the portal administrator if the issue persists.`
+              : 'An unexpected system error occurred. Please try reloading the view.'}
+          </p>
+        </div>
+
+        <div className="pt-2 flex items-center justify-center gap-3">
+          <button
+            type="button"
+            onClick={reset}
+            className="btn py-2 px-5 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          >
+            Try Again
+          </button>
+          <a
+            href="/"
+            className="btn-outline py-2 px-4 text-xs font-medium focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          >
+            Back to Home
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
