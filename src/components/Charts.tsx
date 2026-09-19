@@ -69,16 +69,16 @@ export function SentimentPie({
                 const item = payload[0];
                 const pct = total > 0 ? Math.round(((Number(item.value) || 0) / total) * 100) : 0;
                 return (
-                  <div className="rounded-xl border border-subtle bg-panel/95 backdrop-blur-xl p-2.5 shadow-xl text-xs">
+                  <div className="rounded-xl border border-border bg-card/95 backdrop-blur-xl p-2.5 shadow-md text-xs">
                     <div className="flex items-center gap-2">
                       <span
                         className="h-2 w-2 rounded-full"
                         style={{ backgroundColor: SENTIMENT_COLORS[String(item.name).toLowerCase()] }}
                       />
-                      <span className="font-semibold text-cream">{item.name}</span>
+                      <span className="font-semibold text-foreground">{item.name}</span>
                     </div>
-                    <div className="mt-1 text-xs text-cream-muted">
-                      <span className="font-bold text-cream tabular-nums">{item.value}</span> responses ({pct}%)
+                    <div className="mt-1 text-xs text-muted-foreground">
+                      <span className="font-bold text-foreground tabular-nums">{item.value}</span> responses ({pct}%)
                     </div>
                   </div>
                 );
@@ -91,10 +91,10 @@ export function SentimentPie({
 
       {/* Donut Center Display */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="text-xl font-extrabold text-cream tabular-nums leading-none">
+        <span className="text-xl font-extrabold text-foreground tabular-nums leading-none">
           {posPct}%
         </span>
-        <span className="text-[10px] text-cream-muted uppercase tracking-wider mt-0.5">
+        <span className="text-[10px] text-muted-foreground uppercase tracking-wider mt-0.5">
           Positive
         </span>
       </div>
@@ -115,7 +115,7 @@ export function AvgBar({
 
   if (rows.length === 0)
     return (
-      <div className="py-8 text-center text-xs text-cream-faint">
+      <div className="py-8 text-center text-xs text-muted-foreground">
         No criteria metrics available
       </div>
     );
@@ -124,11 +124,11 @@ export function AvgBar({
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={rows} margin={{ left: -24, right: 12, top: 12, bottom: 8 }}>
         {/* Hairline horizontal gridlines only (no vertical clutter) */}
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--subtle)" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
 
         <XAxis
           dataKey="name"
-          tick={{ fontSize: 11, fill: 'var(--cream-muted)' }}
+          tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
           axisLine={false}
           tickLine={false}
           interval={0}
@@ -136,7 +136,7 @@ export function AvgBar({
         />
         <YAxis
           domain={[0, domainMax]}
-          tick={{ fontSize: 10, fill: 'var(--text-muted)' }}
+          tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }}
           axisLine={false}
           tickLine={false}
           ticks={[1, 2, 3, 4, 5]}

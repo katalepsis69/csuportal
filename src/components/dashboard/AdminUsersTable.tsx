@@ -145,7 +145,7 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
 
                 {/* Email / Identifier */}
                 <td className="py-3.5 px-4 text-muted-foreground text-xs whitespace-nowrap">
-                  {u.email ?? (u.student_no ? `${u.student_no}@student.cetc.edu` : 'No email registered')}
+                  {u.email ?? (u.student_no ? `${u.student_no}@student.cetc.edu.ph` : `${u.full_name.toLowerCase().replace(/^(dr\.|engr\.|prof\.)\s*/, '').replace(/[^a-z0-9]/g, '.')}@cetc.edu.ph`)}
                 </td>
 
                 {/* Role Badge */}
@@ -182,7 +182,7 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
                       <input type="hidden" name="id" value={u.id} />
                       <button
                         type="submit"
-                        className="rounded-lg px-2.5 py-1 text-xs font-semibold text-status-crimson hover:bg-status-crimson/15 transition-colors active:scale-[0.98] min-h-[32px] flex items-center justify-center border border-status-crimson/20"
+                        className="rounded-lg px-2.5 py-1 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors active:scale-[0.98] min-h-[32px] flex items-center justify-center border border-destructive/20"
                         title="Delete profile"
                       >
                         Remove

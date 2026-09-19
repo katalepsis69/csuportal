@@ -40,7 +40,7 @@ export function DeanFacultyTable({
   const [selectedFaculty, setSelectedFaculty] = useState<DeanFacultyRow | null>(
     faculty.length > 0 ? faculty[0] : null
   );
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const filtered = useMemo(() => {
     return faculty.filter((f) => {

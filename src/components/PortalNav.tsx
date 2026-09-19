@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { signOut } from '@/lib/actions/auth';
 import type { Role } from '@/lib/auth';
 import {
@@ -170,15 +170,18 @@ const NAV_CONFIG: Record<
 
 function useActiveCheck() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get('tab');
+
   return (href: string) => {
+    if (href.includes('?tab=')) {
+      const [base, query] = href.split('?tab=');
+      return pathname === base && currentTab === query;
+    }
     if (href.includes('#')) {
-      const [base] = href.split('#');
-      return pathname === base;
+      return false;
     }
-    if (href.includes('?')) {
-      return pathname.startsWith(href.split('?')[0]);
-    }
-    return pathname === href || (href !== '/' && pathname.startsWith(href + '/'));
+    return pathname === href && !currentTab;
   };
 }
 

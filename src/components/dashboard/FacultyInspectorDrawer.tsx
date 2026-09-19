@@ -119,7 +119,7 @@ export function FacultyInspectorDrawer({
       {/* Backdrop overlay for smaller viewports */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm 2xl:hidden pointer-events-auto animate-[fade-in_200ms_ease-out]"
+        className="fixed inset-0 bg-black/50 backdrop-blur-sm pointer-events-auto animate-[fade-in_200ms_ease-out]"
         aria-hidden="true"
       />
 

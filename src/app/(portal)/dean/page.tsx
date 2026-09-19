@@ -245,7 +245,7 @@ export default async function DeanPage({
   const negPct = Math.max(0, 100 - posPct - neuPct);
 
   return (
-    <div className="space-y-8 min-w-0 2xl:pr-[440px]">
+    <div className="space-y-8 min-w-0">
       {/* ========================================================================= */}
       {/* 1. TOP HEADER & SEMESTER CONTROLS                                         */}
       {/* ========================================================================= */}
@@ -315,7 +315,7 @@ export default async function DeanPage({
       {/* ========================================================================= */}
       <section className="grid grid-cols-12 gap-4 sm:gap-5">
         {/* Tile 1 (Wide): Overall College Faculty Score */}
-        <div className="col-span-12 xl:col-span-5 p-5 sm:p-6 rounded-xl bg-card border border-border shadow-xs relative flex flex-col justify-between">
+        <div className="col-span-12 xl:col-span-4 p-5 sm:p-6 rounded-xl bg-card border border-border shadow-xs relative flex flex-col justify-between">
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -422,14 +422,14 @@ export default async function DeanPage({
         </div>
 
         {/* Tile 3: Qualitative Sentiment Distribution Donut */}
-        <div className="col-span-12 sm:col-span-6 xl:col-span-2 p-5 rounded-xl bg-card border border-border shadow-xs flex flex-col justify-between">
+        <div className="col-span-12 sm:col-span-6 xl:col-span-3 p-5 rounded-xl bg-card border border-border shadow-xs flex flex-col justify-between">
           <div>
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground block mb-2">
               Sentiment Ratio
             </span>
             <div className="flex items-center gap-3">
               {/* Mini SVG Donut */}
-              <div className="relative w-14 h-14 shrink-0">
+              <div className="relative w-12 h-12 shrink-0">
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
                   <circle
                     cx="18"

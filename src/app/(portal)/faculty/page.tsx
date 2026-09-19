@@ -188,8 +188,8 @@ export default async function FacultyPage({
               </span>
             </div>
             <AvgBar
-              data={(overview.per_question ?? []).map((q) => ({
-                name: `Q${q.sort_order}`,
+              data={(overview.per_question ?? []).map((q, idx) => ({
+                name: `Q${idx + 1}`,
                 value: q.avg_rating,
               }))}
             />

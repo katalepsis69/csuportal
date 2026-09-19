@@ -188,7 +188,7 @@ export default async function AdminPage({
       value: studentCount || 5,
       trend: 'Enrolled',
       trendPositive: true,
-      color: '#6FA86F',
+      color: 'var(--positive)',
       sparkline: [5, 8, 9, 11, 14, 15, 18, 20],
       icon: <IconBookLine className="h-4 w-4" />,
     },
@@ -197,7 +197,7 @@ export default async function AdminPage({
       value: facultyCount || 4,
       trend: `${assigns.length || 6} Classes`,
       trendPositive: true,
-      color: '#B58A3C',
+      color: 'var(--gold)',
       sparkline: [2, 3, 3, 4, 4, 5, 5, 6],
       icon: <IconChartLine className="h-4 w-4" />,
     },
@@ -221,15 +221,15 @@ export default async function AdminPage({
     >
       <div className="space-y-4">
         {/* Navigation Tabs Bar */}
-        <div className="flex flex-wrap items-center gap-2 p-2.5 sm:p-3 border-b border-border bg-white/60 rounded-2xl overflow-x-auto">
+        <div className="flex flex-wrap items-center gap-1.5 p-1.5 border border-border bg-muted/60 rounded-xl overflow-x-auto">
           {TABS.map((t) => (
             <Link
               key={t.key}
               href={`/admin?tab=${t.key}`}
-              className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition-all whitespace-nowrap ${
+              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
                 t.key === tab
-                  ? 'bg-gradient-to-r from-primary to-[#c0590d] text-white font-bold shadow-lg shadow-primary/20 border border-primary/30'
-                  : 'text-muted-foreground hover:text-white hover:bg-muted'
+                  ? 'bg-card text-foreground font-bold shadow-xs border border-border'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
               }`}
             >
               {t.label}
