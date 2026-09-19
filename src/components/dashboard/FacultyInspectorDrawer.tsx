@@ -123,184 +123,184 @@ export function FacultyInspectorDrawer({
         aria-hidden="true"
       />
 
-      {/* Right pinned 440px drawer (CSS slide-in; reduced-motion killed globally) */}
+      {/* Right pinned 440px drawer */}
       <aside
-        className="w-full sm:w-[440px] fixed top-0 right-0 bottom-0 z-50 bg-card/95 backdrop-blur-2xl border-l border-border flex flex-col justify-between drawer-shadow overflow-y-auto pointer-events-auto animate-[slide-in-right_220ms_cubic-bezier(0.16,1,0.3,1)]"
+        className="w-full sm:w-[440px] fixed top-0 right-0 bottom-0 z-50 bg-card border-l border-border flex flex-col justify-between shadow-xl overflow-y-auto pointer-events-auto animate-[slide-in-right_220ms_cubic-bezier(0.16,1,0.3,1)]"
       >
-          {/* Drawer Header */}
-          <div className="p-6 border-b border-border bg-card/60 relative shrink-0">
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded text-[10px] uppercase font-semibold bg-primary/20 text-primary border border-primary/30">
-                  FACULTY DOSSIER
+        {/* Drawer Header */}
+        <div className="p-6 border-b border-border bg-card relative shrink-0">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded text-[10px] uppercase font-semibold bg-primary/10 text-primary border border-primary/25">
+                FACULTY DOSSIER
+              </span>
+              <span className="text-[11px] text-muted-foreground font-mono">ID: {dossierId}</span>
+            </div>
+
+            {/* Close / Export triggers */}
+            <div className="flex items-center gap-1 text-muted-foreground">
+              <button
+                type="button"
+                className="p-1.5 rounded-lg hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+                title="Export Record"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-1.5 rounded-lg hover:bg-muted hover:text-foreground transition-colors cursor-pointer"
+                title="Close Panel"
+                aria-label="Close dossier"
+              >
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <line x1="18" y1="6" x2="6" y2="18" />
+                  <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Instructor Identity Card */}
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-xl bg-primary text-primary-foreground border border-primary/30 flex items-center justify-center font-display font-bold text-lg shadow-xs shrink-0">
+              {getInitials(faculty.name)}
+            </div>
+            <div className="min-w-0 flex-1">
+              <h3 id="drawer-title" className="font-display font-bold text-lg text-foreground leading-snug">
+                {faculty.name}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {faculty.department || 'Department of Computer Science & Engineering'}
+              </p>
+
+              <div className="flex items-center gap-2 mt-2">
+                <span className="px-2 py-0.5 rounded text-[10px] bg-positive/10 text-positive border border-positive/25 font-semibold">
+                  ★ {ratingStr} {faculty.ratingLabel || 'OUTSTANDING'}
                 </span>
-                <span className="text-[11px] text-muted-foreground">ID: {dossierId}</span>
-              </div>
-
-              {/* Close / Export triggers */}
-              <div className="flex items-center gap-1 text-muted-foreground">
-                <button
-                  type="button"
-                  className="p-1 rounded hover:bg-muted hover:text-foreground transition-colors"
-                  title="Export Record"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                    <polyline points="7 10 12 15 17 10" />
-                    <line x1="12" y1="15" x2="12" y2="3" />
-                  </svg>
-                </button>
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="p-1 rounded hover:bg-muted hover:text-foreground transition-colors"
-                  title="Close Panel"
-                  aria-label="Close dossier"
-                >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </div>
-            </div>
-
-            {/* Instructor Identity Card */}
-            <div className="flex items-start gap-4">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-zinc-50 border-2 border-primary/40 flex items-center justify-center font-display font-extrabold text-lg text-white shadow-xl shrink-0">
-                {getInitials(faculty.name)}
-              </div>
-              <div className="min-w-0 flex-1">
-                <h3 id="drawer-title" className="font-display font-bold text-lg text-foreground leading-snug">
-                  {faculty.name}
-                </h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  {faculty.department || 'Department of Computer Science & Engineering'}
-                </p>
-
-                <div className="flex items-center gap-2 mt-2">
-                  <span className="px-2 py-0.5 rounded text-[10px] bg-status-sage/15 text-status-sage border border-status-sage/30 font-semibold">
-                    ★ {ratingStr} {faculty.ratingLabel || 'OUTSTANDING'}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground">{evals} Students Rated</span>
-                </div>
+                <span className="text-[11px] text-muted-foreground tabular-nums">{evals} Students Rated</span>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Drawer Body Content */}
-          <div className="p-6 space-y-6 flex-1 overflow-y-auto">
-            {/* Score Matrix Card */}
-            <div className="p-4 rounded-xl bg-white/80 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-                  Pedagogical Criteria Breakdown
-                </h4>
-                <span className="text-[10px] text-status-sage">Rank #2 in College</span>
-              </div>
+        {/* Drawer Body Content */}
+        <div className="p-6 space-y-6 flex-1 overflow-y-auto">
+          {/* Score Matrix Card */}
+          <div className="p-4 rounded-xl bg-muted/30 border border-border shadow-xs">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                Pedagogical Criteria Breakdown
+              </h4>
+              <span className="text-[10px] text-positive font-semibold">Rank #2 in College</span>
+            </div>
 
-              <div className="space-y-3">
-                {criteria.map((c) => (
-                  <div key={c.name}>
-                    <div className="flex justify-between text-xs mb-1">
-                      <span className="text-foreground/80">{c.name}</span>
-                      <span className="font-bold text-primary">
-                        {c.score.toFixed(2)} <span className="text-foreground/40 text-[10px]">/ 5.0</span>
-                      </span>
-                    </div>
-                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full ${c.color || 'bg-primary'}`} style={{ width: `${c.pct}%` }} />
-                    </div>
+            <div className="space-y-3">
+              {criteria.map((c) => (
+                <div key={c.name}>
+                  <div className="flex justify-between text-xs mb-1">
+                    <span className="text-foreground/90">{c.name}</span>
+                    <span className="font-bold text-primary tabular-nums">
+                      {c.score.toFixed(2)} <span className="text-muted-foreground/60 font-normal text-[10px]">/ 5.0</span>
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Sentiment Index & Distribution */}
-            <div className="p-4 rounded-xl bg-white/80 border border-border">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-                  Student Qualitative Sentiment
-                </h4>
-                <span className="text-[10px] text-status-sage font-semibold">+94 Net Index</span>
-              </div>
-
-              <div className="grid grid-cols-3 gap-2 text-center mb-1">
-                <div className="p-2 rounded-lg bg-status-sage/10 border border-status-sage/20">
-                  <span className="text-xs font-bold text-status-sage">{posPct}%</span>
-                  <p className="text-[10px] text-muted-foreground">Positive ({posCount})</p>
-                </div>
-                <div className="p-2 rounded-lg bg-status-gold/10 border border-status-gold/20">
-                  <span className="text-xs font-bold text-status-gold">{neuPct}%</span>
-                  <p className="text-[10px] text-muted-foreground">Neutral ({neuCount})</p>
-                </div>
-                <div className="p-2 rounded-lg bg-status-crimson/10 border border-status-crimson/20">
-                  <span className="text-xs font-bold text-status-crimson">{negPct}%</span>
-                  <p className="text-[10px] text-muted-foreground">Critical ({negCount})</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Real-Time Stream of Anonymous Student Remarks */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
-                  Verified Student Feedbacks
-                </h4>
-                <span className="text-[10px] text-muted-foreground">Cryptographically Blinded</span>
-              </div>
-
-              <div className="space-y-3">
-                {remarks.map((r, i) => (
-                  <div
-                    key={i}
-                    className="p-3.5 rounded-xl bg-white/60 border border-border hover:border-border transition-colors"
-                  >
-                    <div className="flex items-center justify-between text-[10px] mb-2">
-                      <span
-                        className={`px-1.5 py-0.5 rounded font-semibold border ${
-                          r.type === 'POSITIVE'
-                            ? 'bg-status-sage/15 text-status-sage border-status-sage/20'
-                            : 'bg-status-gold/15 text-status-gold border-status-gold/20'
-                        }`}
-                      >
-                        {r.type} • {r.course}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {r.section} • {r.timeAgo}
-                      </span>
-                    </div>
-                    <p className="text-xs text-foreground leading-relaxed italic">{r.text}</p>
-                    <div className="mt-2 text-[10px] text-muted-foreground/60">{r.hash}</div>
+                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full ${c.color || 'bg-primary'}`} style={{ width: `${c.pct}%` }} />
                   </div>
-                ))}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Sentiment Index & Distribution */}
+          <div className="p-4 rounded-xl bg-muted/30 border border-border shadow-xs">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                Student Qualitative Sentiment
+              </h4>
+              <span className="text-[10px] text-positive font-semibold">+94 Net Index</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 text-center mb-1">
+              <div className="p-2.5 rounded-lg bg-positive/10 border border-positive/25">
+                <span className="text-xs font-bold text-positive tabular-nums">{posPct}%</span>
+                <p className="text-[10px] text-muted-foreground tabular-nums">Positive ({posCount})</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/25">
+                <span className="text-xs font-bold text-amber-600 tabular-nums">{neuPct}%</span>
+                <p className="text-[10px] text-muted-foreground tabular-nums">Neutral ({neuCount})</p>
+              </div>
+              <div className="p-2.5 rounded-lg bg-destructive/10 border border-destructive/25">
+                <span className="text-xs font-bold text-destructive tabular-nums">{negPct}%</span>
+                <p className="text-[10px] text-muted-foreground tabular-nums">Critical ({negCount})</p>
               </div>
             </div>
           </div>
 
-          {/* Drawer Footer Actions */}
-          <div className="p-5 border-t border-border bg-card space-y-2.5 shrink-0">
-            <PdfDownloadButton
-              type="faculty"
-              filename={`faculty-appraisal-${faculty.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.pdf`}
-              data={pdfData}
-              label="Download Faculty Appraisal PDF"
-            />
+          {/* Real-Time Stream of Anonymous Student Remarks */}
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
+                Verified Student Feedbacks
+              </h4>
+              <span className="text-[10px] text-muted-foreground/70 font-mono">Cryptographically Blinded</span>
+            </div>
 
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-2 bg-muted hover:bg-muted active:scale-[0.98] text-foreground py-2.5 px-4 rounded-xl text-xs font-medium border border-border transition-colors"
-            >
-              <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-              <span>Schedule Peer Review / Consultation</span>
-            </button>
+            <div className="space-y-3">
+              {remarks.map((r, i) => (
+                <div
+                  key={i}
+                  className="p-3.5 rounded-xl bg-card border border-border hover:border-primary/30 transition-colors shadow-xs"
+                >
+                  <div className="flex items-center justify-between text-[10px] mb-2">
+                    <span
+                      className={`px-1.5 py-0.5 rounded font-semibold border ${
+                        r.type === 'POSITIVE'
+                          ? 'bg-positive/10 text-positive border-positive/25'
+                          : 'bg-amber-500/10 text-amber-600 border-amber-500/25'
+                      }`}
+                    >
+                      {r.type} • {r.course}
+                    </span>
+                    <span className="text-muted-foreground">
+                      {r.section} • {r.timeAgo}
+                    </span>
+                  </div>
+                  <p className="text-xs text-foreground leading-relaxed italic">{r.text}</p>
+                  <div className="mt-2 text-[10px] text-muted-foreground/60 font-mono">{r.hash}</div>
+                </div>
+              ))}
+            </div>
           </div>
-        </aside>
+        </div>
+
+        {/* Drawer Footer Actions */}
+        <div className="p-5 border-t border-border bg-card space-y-2.5 shrink-0">
+          <PdfDownloadButton
+            type="faculty"
+            filename={`faculty-appraisal-${faculty.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.pdf`}
+            data={pdfData}
+            label="Download Faculty Appraisal PDF"
+          />
+
+          <button
+            type="button"
+            className="w-full flex items-center justify-center gap-2 bg-muted hover:bg-muted/80 active:scale-[0.98] text-foreground py-2.5 px-4 rounded-xl text-xs font-semibold border border-border transition-colors cursor-pointer"
+          >
+            <svg className="w-4 h-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            <span>Schedule Peer Review / Consultation</span>
+          </button>
+        </div>
+      </aside>
     </div>
   );
 }

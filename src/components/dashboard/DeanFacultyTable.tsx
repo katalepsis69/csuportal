@@ -74,9 +74,9 @@ export function DeanFacultyTable({
 
   return (
     <>
-      <section className="rounded-2xl bg-white/80 backdrop-blur-md border border-border overflow-hidden ">
+      <section className="rounded-xl bg-card border border-border shadow-xs overflow-hidden">
         {/* Table Top Utility Bar */}
-        <div className="p-4 px-6 border-b border-border flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="p-4 px-6 border-b border-border bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <h2 className="font-display font-bold text-base text-foreground tracking-tight">
               College Faculty Performance Roster
@@ -94,7 +94,7 @@ export function DeanFacultyTable({
                 placeholder="Search faculty name or dept..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-white border border-border text-xs text-foreground pl-8 pr-3 py-1.5 rounded-lg w-56 focus:outline-none focus:border-primary placeholder-[#A1A1AA]/50 font-normal"
+                className="bg-card border border-border text-xs text-foreground pl-8 pr-3 py-1.5 rounded-lg w-56 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground/50 font-normal transition-colors"
               />
               <svg className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8" />
@@ -102,7 +102,9 @@ export function DeanFacultyTable({
               </svg>
             </div>
 
-            <span className="text-xs text-muted-foreground">42 Faculty Records</span>
+            <span className="rounded-full bg-card px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
+              {filtered.length} Faculty Records
+            </span>
           </div>
         </div>
 
@@ -110,7 +112,7 @@ export function DeanFacultyTable({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-border bg-muted0 text-[11px] uppercase text-muted-foreground tracking-wider">
+              <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
                 <th className="py-3 px-5 font-semibold">Faculty Instructor</th>
                 <th className="py-3 px-4 font-semibold">Department</th>
                 <th className="py-3 px-4 font-semibold text-center">Sections</th>
@@ -136,20 +138,20 @@ export function DeanFacultyTable({
                       isSelected
                         ? 'bg-primary/10 border-l-4 border-primary'
                         : f.isFlagged
-                        ? 'hover:bg-status-crimson/5'
-                        : 'hover:bg-muted'
+                        ? 'hover:bg-destructive/5'
+                        : 'hover:bg-muted/50'
                     }`}
                   >
                     {/* Faculty avatar + name */}
                     <td className="py-3.5 px-5">
                       <div className="flex items-center gap-3">
                         <div
-                          className={`w-8 h-8 rounded-lg text-foreground flex items-center justify-center font-bold text-xs shadow-md ${
+                          className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 transition-transform ${
                             f.isFlagged
-                              ? 'bg-status-crimson/20 text-status-crimson border border-status-crimson/30'
+                              ? 'bg-destructive/15 text-destructive border border-destructive/25'
                               : isSelected
-                              ? 'bg-gradient-to-br from-primary to-[#9e4606]'
-                              : 'bg-zinc-50 text-foreground border border-border'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-muted text-foreground border border-border'
                           }`}
                         >
                           {getInitials(f.name)}
@@ -160,7 +162,7 @@ export function DeanFacultyTable({
                               isSelected
                                 ? 'text-primary'
                                 : f.isFlagged
-                                ? 'text-foreground group-hover:text-status-crimson'
+                                ? 'text-foreground group-hover:text-destructive'
                                 : 'text-foreground group-hover:text-primary'
                             }`}
                           >
@@ -169,7 +171,7 @@ export function DeanFacultyTable({
                               <span className="w-1.5 h-1.5 rounded-full bg-primary" title="Currently Selected in Drawer" />
                             )}
                             {f.isFlagged && (
-                              <span className="px-1.5 py-0.2 rounded text-[9px] bg-status-crimson/20 text-status-crimson border border-status-crimson/30">
+                              <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-destructive/15 text-destructive border border-destructive/25">
                                 FLAGGED
                               </span>
                             )}
@@ -181,17 +183,17 @@ export function DeanFacultyTable({
 
                     {/* Department */}
                     <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground">
+                      <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground border border-border">
                         {f.department}
                       </span>
                     </td>
 
                     {/* Sections */}
-                    <td className="py-3.5 px-4 text-center">{f.sectionsCount}</td>
+                    <td className="py-3.5 px-4 text-center font-medium tabular-nums">{f.sectionsCount}</td>
 
                     {/* Responses */}
-                    <td className="py-3.5 px-4 text-center">
-                      {f.responsesReceived}{' '}
+                    <td className="py-3.5 px-4 text-center tabular-nums">
+                      <span className="font-medium text-foreground">{f.responsesReceived}</span>{' '}
                       <span className="text-muted-foreground text-[10px]">/ {f.totalStudents}</span>
                     </td>
 
@@ -199,9 +201,9 @@ export function DeanFacultyTable({
                     <td className="py-3.5 px-4">
                       <div className="flex items-center gap-2">
                         <span
-                          className={`font-bold text-sm ${
+                          className={`font-bold text-sm tabular-nums ${
                             f.isFlagged
-                              ? 'text-status-crimson'
+                              ? 'text-destructive'
                               : isSelected
                               ? 'text-primary'
                               : 'text-foreground'
@@ -210,11 +212,11 @@ export function DeanFacultyTable({
                           {score}
                         </span>
                         <span
-                          className={`px-1.5 py-0.5 rounded text-[9px] border ${
+                          className={`px-1.5 py-0.5 rounded text-[9px] font-semibold border ${
                             f.isFlagged
-                              ? 'bg-status-crimson/15 text-status-crimson border-status-crimson/30'
+                              ? 'bg-destructive/10 text-destructive border-destructive/25'
                               : Number(score) >= 4.8
-                              ? 'bg-status-sage/15 text-status-sage border-status-sage/20'
+                              ? 'bg-positive/10 text-positive border-positive/25'
                               : 'bg-muted text-foreground border-border'
                           }`}
                         >
@@ -226,16 +228,16 @@ export function DeanFacultyTable({
                     {/* Sentiment Ratio */}
                     <td className="py-3.5 px-4">
                       <div className="w-32">
-                        <div className="flex justify-between text-[10px] text-muted-foreground mb-1">
+                        <div className="flex justify-between text-[10px] text-muted-foreground mb-1 tabular-nums">
                           <span>{pos}% Pos</span>
-                          <span className={f.isFlagged ? 'text-status-crimson font-semibold' : ''}>
+                          <span className={f.isFlagged ? 'text-destructive font-semibold' : ''}>
                             {neg}% Neg
                           </span>
                         </div>
                         <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
-                          <div className="bg-status-sage h-full" style={{ width: `${pos}%` }} />
-                          <div className="bg-status-gold h-full" style={{ width: `${neu}%` }} />
-                          <div className="bg-status-crimson h-full" style={{ width: `${neg}%` }} />
+                          <div className="bg-positive h-full" style={{ width: `${pos}%` }} />
+                          <div className="bg-amber-500 h-full" style={{ width: `${neu}%` }} />
+                          <div className="bg-destructive h-full" style={{ width: `${neg}%` }} />
                         </div>
                       </div>
                     </td>
@@ -245,7 +247,7 @@ export function DeanFacultyTable({
                       {isSelected ? (
                         <button
                           type="button"
-                          className="px-2.5 py-1 rounded-lg bg-primary text-white font-medium text-[11px] shadow-sm hover:brightness-110 transition-all flex items-center gap-1 ml-auto"
+                          className="px-2.5 py-1 rounded-lg bg-primary text-primary-foreground font-semibold text-[11px] shadow-xs hover:brightness-105 transition-all flex items-center gap-1 ml-auto cursor-pointer"
                         >
                           <span>Inspecting</span>
                           <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
@@ -259,7 +261,7 @@ export function DeanFacultyTable({
                             e.stopPropagation();
                             handleSelect(f);
                           }}
-                          className="px-2.5 py-1 rounded-lg bg-status-crimson/20 hover:bg-status-crimson/30 text-status-crimson font-medium text-[11px] border border-status-crimson/30 transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-destructive/10 hover:bg-destructive/20 text-destructive font-semibold text-[11px] border border-destructive/25 transition-colors cursor-pointer"
                         >
                           Dean Audit
                         </button>
@@ -270,7 +272,7 @@ export function DeanFacultyTable({
                             e.stopPropagation();
                             handleSelect(f);
                           }}
-                          className="px-2.5 py-1 rounded-lg bg-muted hover:bg-muted text-foreground font-medium text-[11px] transition-colors"
+                          className="px-2.5 py-1 rounded-lg bg-muted hover:bg-muted/80 text-foreground font-medium text-[11px] border border-border transition-colors cursor-pointer"
                         >
                           View Dossier
                         </button>
@@ -292,18 +294,18 @@ export function DeanFacultyTable({
         </div>
 
         {/* Table Footer Pagination */}
-        <div className="p-4 px-6 border-t border-border bg-white/30 flex items-center justify-between text-xs text-muted-foreground">
-          <span>Showing 1 to {filtered.length} of 42 Faculty Members</span>
+        <div className="p-4 px-6 border-t border-border bg-muted/20 flex items-center justify-between text-xs text-muted-foreground">
+          <span className="tabular-nums">Showing 1 to {filtered.length} of 42 Faculty Members</span>
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="px-3 py-1 rounded-lg bg-white border border-border text-foreground/50 cursor-not-allowed text-xs"
+              className="px-3 py-1 rounded-lg bg-card border border-border text-muted-foreground/60 cursor-not-allowed text-xs"
             >
               Previous
             </button>
             <button
               type="button"
-              className="px-3 py-1 rounded-lg bg-white border border-border hover:border-border text-foreground text-xs transition-colors"
+              className="px-3 py-1 rounded-lg bg-card border border-border hover:bg-muted/50 text-foreground text-xs transition-colors cursor-pointer"
             >
               Next
             </button>
