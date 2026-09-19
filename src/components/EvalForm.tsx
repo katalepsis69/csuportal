@@ -29,7 +29,6 @@ export default function EvalForm({
   subjectCode,
   subjectName,
   facultyName,
-  closesAt,
   questions,
   draft = null,
 }: {
@@ -156,25 +155,25 @@ export default function EvalForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto pb-32">
       {/* 0. BREADCRUMBS & TOP UTILITY BAR (Matching download.htm) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.08] text-xs">
-        <nav className="flex items-center gap-2 font-mono text-[#A1A1AA]">
-          <Link href="/student" className="hover:text-amber-light transition-colors">CSU CETC Portal</Link>
-          <span className="text-white/20">/</span>
-          <Link href="/student" className="hover:text-amber-light transition-colors">Evaluate Faculty</Link>
-          <span className="text-white/20">/</span>
-          <span className="text-white font-medium">{subjectCode} Form</span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border text-xs">
+        <nav className="flex items-center gap-2 text-muted-foreground">
+          <Link href="/student" className="hover:text-primary transition-colors">CSU CETC Portal</Link>
+          <span className="text-foreground/20">/</span>
+          <Link href="/student" className="hover:text-primary transition-colors">Evaluate Faculty</Link>
+          <span className="text-foreground/20">/</span>
+          <span className="text-foreground font-medium">{subjectCode} Form</span>
         </nav>
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono bg-espresso-850 text-amber-light border border-white/10">
+          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] bg-white text-primary border border-border">
             Term 2025-2026
           </span>
           <button
             type="button"
             onClick={handleSaveDraft}
             disabled={savingDraft || busy}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 bg-espresso-850 hover:border-amber-glow/40 text-[#EDEDED] hover:text-amber-light text-xs font-mono transition-all active:scale-95 shadow-sm"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-white hover:border-primary/40 text-foreground hover:text-primary text-xs transition-all active:scale-95 shadow-sm"
           >
-            <svg className="w-3.5 h-3.5 text-amber-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg className="w-3.5 h-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
               <polyline points="17 21 17 13 7 13 7 21" />
               <polyline points="7 3 7 8 15 8" />
@@ -185,14 +184,14 @@ export default function EvalForm({
       </div>
 
       {/* 1. INSTRUCTOR & COURSE HERO CARD (Matching download.htm) */}
-      <section className="bg-espresso-850/80 backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 relative overflow-hidden shadow-xl amber-glow-box">
+      <section className="bg-white/80 backdrop-blur-xl border border-border rounded-2xl p-6 relative overflow-hidden shadow-xl ">
         {/* Subtle warm ambient top-right specular gradient */}
-        <div className="absolute -top-24 -right-24 w-80 h-80 bg-amber-glow/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -top-24 -right-24 w-80 h-80 bg-primary/10 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           {/* Left Faculty Details */}
           <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-espresso-900 border border-amber-glow/35 flex items-center justify-center shrink-0 shadow-md text-amber-light">
+            <div className="w-14 h-14 rounded-xl bg-white border border-primary/35 flex items-center justify-center shrink-0 shadow-md text-primary">
               <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
                 <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
                 <path d="M6 12v5c3 3 9 3 12 0v-5" />
@@ -200,34 +199,34 @@ export default function EvalForm({
             </div>
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2">
-                <span className="px-2 py-0.5 text-[10px] font-mono font-semibold bg-amber-glow/20 text-amber-light rounded border border-amber-glow/30">
+                <span className="px-2 py-0.5 text-[10px] font-semibold bg-primary/20 text-primary rounded border border-primary/30">
                   Faculty Member
                 </span>
-                <span className="text-xs font-mono text-[#A1A1AA]">Dept. of Computer Science</span>
+                <span className="text-xs text-muted-foreground">Dept. of Computer Science</span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold font-display text-white tracking-tight">
+              <h2 className="text-xl sm:text-2xl font-bold font-display text-foreground tracking-tight">
                 {facultyName}
               </h2>
-              <p className="text-sm font-medium text-[#EDEDED]">
+              <p className="text-sm font-medium text-foreground">
                 {subjectCode} — {subjectName}
               </p>
             </div>
           </div>
 
           {/* Right Class Meta Metrics */}
-          <div className="flex flex-wrap md:flex-col items-start md:items-end gap-2 border-t md:border-t-0 md:border-l border-white/[0.08] pt-4 md:pt-0 md:pl-6 text-xs font-mono">
-            <div className="flex items-center gap-2 text-white">
-              <span>Section: <strong className="font-semibold text-amber-light">BSCS 3-A</strong></span>
-              <span className="text-white/20">•</span>
+          <div className="flex flex-wrap md:flex-col items-start md:items-end gap-2 border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6 text-xs">
+            <div className="flex items-center gap-2 text-foreground">
+              <span>Section: <strong className="font-semibold text-primary">BSCS 3-A</strong></span>
+              <span className="text-foreground/20">•</span>
               <span>3.0 Units</span>
             </div>
-            <div className="flex items-center gap-2 text-[#A1A1AA]">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <span>Mon/Wed 10:00 AM–12:00 PM</span>
-              <span className="text-white/20">•</span>
+              <span className="text-foreground/20">•</span>
               <span>CETC Lab 2</span>
             </div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-espresso-900 border border-amber-glow/30 text-amber-light text-[11px] mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-glow animate-ping" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-primary/30 text-primary text-[11px] mt-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
               <span>Closes: Oct 15, 2026 (7 days remaining)</span>
             </div>
           </div>
@@ -260,20 +259,20 @@ export default function EvalForm({
           return (
             <div key={cat} id={`cat-${catIdx}`} className="space-y-4 pt-2">
               {/* Category Header */}
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div className="flex items-center justify-between border-b border-border pb-3">
                 <div>
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-amber-light font-semibold">
+                  <div className="text-[10px] uppercase tracking-wider text-primary font-semibold">
                     Criterion Set {String.fromCharCode(65 + catIdx)}
                   </div>
-                  <h3 className="text-base sm:text-lg font-bold font-display text-white">
+                  <h3 className="text-base sm:text-lg font-bold font-display text-foreground">
                     {cat}
                   </h3>
                 </div>
                 <span
-                  className={`px-2.5 py-1 rounded-full text-xs font-mono border tabular-nums ${
+                  className={`px-2.5 py-1 rounded-full text-xs border tabular-nums ${
                     catComplete
                       ? 'bg-status-sage/15 text-status-sage border-status-sage/30 font-semibold'
-                      : 'bg-espresso-850 text-[#A1A1AA] border-white/10'
+                      : 'bg-white text-muted-foreground border-border'
                   }`}
                 >
                   {catRated} of {catQuestions.length} Completed
@@ -288,30 +287,30 @@ export default function EvalForm({
                   return (
                     <article
                       key={q.id}
-                      className={`p-5 rounded-2xl bg-espresso-850/80 backdrop-blur-xl transition-all shadow-sm space-y-4 ${
+                      className={`p-5 rounded-2xl bg-white/80 backdrop-blur-xl transition-all shadow-sm space-y-4 ${
                         isUnanswered
-                          ? 'border-2 border-amber-glow/40 hover:border-amber-glow/60 shadow-amber-glow/10'
-                          : 'border border-white/[0.08] hover:border-white/20'
+                          ? 'border-2 border-primary/40 hover:border-primary/60 shadow-primary/10'
+                          : 'border border-border hover:border-border'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3.5">
                         <div className="flex items-start gap-3.5">
                           <span
-                            className={`w-6 h-6 rounded-full border text-xs font-mono font-bold flex items-center justify-center shrink-0 mt-0.5 tabular-nums ${
+                            className={`w-6 h-6 rounded-full border text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 tabular-nums ${
                               isUnanswered
-                                ? 'bg-amber-glow/20 text-amber-light border-amber-glow/40'
-                                : 'bg-espresso-800 text-white border-white/10'
+                                ? 'bg-primary/20 text-primary border-primary/40'
+                                : 'bg-white text-white border-border'
                             }`}
                           >
                             {qIdx + 1}
                           </span>
-                          <p className="text-sm font-medium text-white leading-relaxed">
+                          <p className="text-sm font-medium text-foreground leading-relaxed">
                             {q.text}
                           </p>
                         </div>
 
                         {isUnanswered && (
-                          <span className="px-2 py-0.5 text-[10px] font-mono font-bold bg-amber-glow/15 text-amber-light border border-amber-glow/30 rounded shrink-0">
+                          <span className="px-2 py-0.5 text-[10px] font-bold bg-primary/15 text-primary border border-primary/30 rounded shrink-0">
                             Action Required
                           </span>
                         )}
@@ -334,60 +333,60 @@ export default function EvalForm({
       </div>
 
       {/* 4. QUALITATIVE FEEDBACK CONTAINER */}
-      <section className="p-6 rounded-2xl bg-espresso-850/80 backdrop-blur-xl border border-white/[0.08] shadow-md space-y-4 amber-glow-box">
+      <section className="p-6 rounded-2xl bg-white/80 backdrop-blur-xl border border-border shadow-md space-y-4 ">
         <div className="space-y-1">
-          <h3 className="text-base sm:text-lg font-bold font-display text-white">
+          <h3 className="text-base sm:text-lg font-bold font-display text-foreground">
             Qualitative Remarks &amp; Constructive Feedback
           </h3>
-          <p className="text-xs text-[#A1A1AA]">
+          <p className="text-xs text-muted-foreground">
             Your observations directly inform faculty development and departmental curriculum evaluations.
           </p>
         </div>
         <div className="space-y-2">
           <textarea
-            className="w-full bg-espresso-950 border border-white/10 rounded-xl p-4 text-sm text-white placeholder:text-[#A1A1AA]/50 focus:border-amber-glow focus:ring-1 focus:ring-amber-glow outline-none transition-all shadow-inner leading-relaxed min-h-[110px]"
+            className="w-full bg-white border border-border rounded-xl p-4 text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-inner leading-relaxed min-h-[110px]"
             placeholder="Highlight instructional strengths or specific areas where teaching methodology could be enhanced…"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={4}
           />
-          <div className="flex items-center justify-between text-xs font-mono text-[#A1A1AA] pt-1">
+          <div className="flex items-center justify-between text-xs text-muted-foreground pt-1">
             <span className="flex items-center gap-1.5 text-status-gold">
               {sentiment ? (
                 <>
                   <span className="h-1.5 w-1.5 rounded-full bg-status-gold animate-pulse" />
-                  <span>Silent sentiment tone: <strong className="capitalize text-white">{sentiment.label}</strong></span>
+                  <span>Silent sentiment tone: <strong className="capitalize text-foreground">{sentiment.label}</strong></span>
                 </>
               ) : (
                 <span>Silent sentiment analysis: Positive / Constructive</span>
               )}
             </span>
-            <span className="tabular-nums text-[#A1A1AA]/70">{comment.length} / 2,000 characters</span>
+            <span className="tabular-nums text-muted-foreground/70">{comment.length} / 2,000 characters</span>
           </div>
         </div>
       </section>
 
       {/* 5. VECTOR E-SIGNATURE & ANONYMITY CONTROLS */}
-      <section className="p-6 rounded-2xl bg-espresso-850/80 backdrop-blur-xl border border-white/[0.08] shadow-md space-y-5 amber-glow-box">
+      <section className="p-6 rounded-2xl bg-white/80 backdrop-blur-xl border border-border shadow-md space-y-5 ">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h3 className="text-base sm:text-lg font-bold font-display text-white">
+            <h3 className="text-base sm:text-lg font-bold font-display text-foreground">
               Verification &amp; Attestation
             </h3>
-            <p className="text-xs text-[#A1A1AA]">
+            <p className="text-xs text-muted-foreground">
               Digital cryptographic signature compliant with CSU Academic Evaluation Policy.
             </p>
           </div>
 
           {/* Anonymity Control Toggle */}
-          <label className="inline-flex items-center gap-2 cursor-pointer bg-espresso-800 px-3.5 py-2 rounded-xl border border-amber-glow/30 select-none">
+          <label className="inline-flex items-center gap-2 cursor-pointer bg-white px-3.5 py-2 rounded-xl border border-primary/30 select-none">
             <input
               type="checkbox"
               checked={anonymous}
               onChange={(e) => setAnonymous(e.target.checked)}
-              className="w-4 h-4 rounded text-amber-glow bg-espresso-950 border-white/20 focus:ring-amber-glow"
+              className="w-4 h-4 rounded text-primary bg-white border-border focus:ring-primary"
             />
-            <span className="text-xs font-semibold text-white">Submit Anonymously</span>
+            <span className="text-xs font-semibold text-foreground">Submit Anonymously</span>
           </label>
         </div>
 
@@ -395,25 +394,25 @@ export default function EvalForm({
         <div className="space-y-2">
           <SignaturePad strokes={strokes} onChange={setStrokes} />
 
-          <p className="text-[11px] text-[#A1A1AA] flex items-center gap-1.5 px-1 font-mono">
+          <p className="text-[11px] text-muted-foreground flex items-center gap-1.5 px-1">
             <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
             <span>Anonymity enabled: Your name and student ID are decoupled and cryptographically blinded prior to faculty analytics publishing.</span>
           </p>
         </div>
       </section>
 
-      {/* 6. FLOATING GLASS ACTION DOCK (Bottom Pinned Bar) */}
-      <aside className="fixed bottom-0 right-0 left-0 md:left-64 z-40 bg-[#120e0b]/95 backdrop-blur-2xl border-t border-white/[0.08] py-3.5 px-6 sm:px-8 shadow-2xl flex items-center justify-between">
+      {/* 6. STICKY ACTION DOCK (Bottom Pinned Bar) */}
+      <aside className="fixed bottom-0 right-0 left-0 md:left-64 z-40 bg-card/95 backdrop-blur-2xl border-t border-border py-3.5 px-6 sm:px-8 shadow-2xl flex items-center justify-between">
         {/* Left Progress Recap */}
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-espresso-800 border border-amber-glow/30 flex items-center justify-center text-amber-light font-bold text-xs font-mono">
+          <div className="w-8 h-8 rounded-lg bg-white border border-primary/30 flex items-center justify-center text-primary font-bold text-xs">
             {ratedCount}
           </div>
           <div className="flex flex-col">
-            <span className="text-xs sm:text-sm font-semibold text-white">
+            <span className="text-xs sm:text-sm font-semibold text-foreground">
               {ratedCount} of {questions.length} Criteria Answered
             </span>
-            <span className="text-[11px] text-[#A1A1AA] font-mono hidden sm:inline">
+            <span className="text-[11px] text-muted-foreground hidden sm:inline">
               {allRated && signed ? 'Ready for final encrypted submission' : `Ready for final submission after remaining ${Math.max(0, questions.length - ratedCount)} questions`}
             </span>
           </div>
@@ -425,7 +424,7 @@ export default function EvalForm({
             type="button"
             onClick={handleSaveDraft}
             disabled={savingDraft || busy}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-white/10 bg-espresso-800 text-white text-xs font-semibold hover:bg-espresso-750 transition-all active:scale-[0.98] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-border bg-white text-foreground text-xs font-semibold hover:bg-zinc-50 transition-all active:scale-[0.98] disabled:opacity-50"
           >
             <span>{savingDraft ? 'Saving…' : 'Save Draft'}</span>
           </button>
@@ -433,7 +432,7 @@ export default function EvalForm({
           <button
             type="submit"
             disabled={!canSubmit}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-glow to-[#c0590d] text-white text-xs font-bold shadow-[0_4px_20px_rgba(216,106,18,0.35)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed border border-amber-light/30"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-[#c0590d] text-white text-xs font-bold shadow-[0_4px_20px_rgba(127,29,29,0.35)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed border border-primary/30"
           >
             <span>{busy ? 'Submitting…' : 'Submit Evaluation'}</span>
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

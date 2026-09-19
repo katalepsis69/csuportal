@@ -6,9 +6,19 @@ export type Semester = {
   term: Term;
   is_current: boolean;
   is_open: boolean;
+  manual_override: string | null;
   opens_at: string | null;
   closes_at: string | null;
 };
+
+/** Open state is derived: manual override trumps, then the time window. */
+export function semesterIsOpen(s: Pick<Semester, 'manual_override' | 'is_open' | 'opens_at' | 'closes_at'>): boolean {
+  if (s.manual_override === 'open') return true;
+  if (s.manual_override === 'closed') return false;
+  if (!s.opens_at || !s.closes_at) return s.is_open; // legacy rows without a window
+  const now = Date.now();
+  return now >= new Date(s.opens_at).getTime() && now <= new Date(s.closes_at).getTime();
+}
 
 export type StudentSubject = {
   section_subject_id: string;
@@ -80,8 +90,6 @@ export type SentimentComment = {
   comment: string;
   label: string;
   sentiment_score: number;
-  anonymous: boolean;
-  student_name: string | null;
   faculty_name: string;
   subject_code: string;
   submitted_at: string;

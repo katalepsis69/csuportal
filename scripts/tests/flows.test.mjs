@@ -113,12 +113,20 @@ test('full evaluation flow: draft, submit with hash, dedupe, persistence', async
     // ── 6. persistence: hash, answers, dashboard state ──
     const { data: evalRow } = await admin
       .from('evaluations')
-      .select('payload_hash, sentiment_label, comment')
+      .select('payload_hash')
       .eq('student_id', student.id)
       .eq('section_subject_id', classId)
       .single();
     assert.equal(evalRow?.payload_hash, payloadHash, 'hash must persist');
-    assert.equal(evalRow?.sentiment_label, 'positive');
+
+    // comment persistence: identity-free table (no student column at all)
+    const { data: commentRow } = await admin
+      .from('evaluation_comments')
+      .select('comment, sentiment_label')
+      .eq('evaluation_id', submit.body.evaluation_id)
+      .single();
+    assert.equal(commentRow?.comment, 'flow test final comment', 'comment must persist');
+    assert.equal(commentRow?.sentiment_label, 'positive');
 
     const { count } = await admin
       .from('evaluation_answers')

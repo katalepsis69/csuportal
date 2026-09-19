@@ -15,6 +15,7 @@ import {
   toggleQuestion,
 } from '@/lib/actions/admin';
 import type { Semester } from '@/lib/types';
+import { semesterIsOpen } from '@/lib/types';
 import { StaffScaffold, IconUsersLine, IconBookLine, IconGearLine, IconChartLine } from '@/components/dashboard/StaffScaffold';
 import { AdminUsersTable, type UserRow } from '@/components/dashboard/AdminUsersTable';
 
@@ -178,7 +179,7 @@ export default async function AdminPage({
       value: profilesList.length || 10,
       trend: '+12.4%',
       trendPositive: true,
-      color: '#D86A12',
+      color: 'var(--primary)',
       sparkline: [12, 14, 18, 16, 22, 25, 29, 34],
       icon: <IconUsersLine className="h-4 w-4" />,
     },
@@ -205,7 +206,7 @@ export default async function AdminPage({
       value: '94.2%',
       trend: 'Audited',
       trendPositive: true,
-      color: '#D86A12',
+      color: 'var(--primary)',
       sparkline: [88, 89, 91, 90, 93, 94, 94, 95],
       icon: <IconGearLine className="h-4 w-4" />,
     },
@@ -220,15 +221,15 @@ export default async function AdminPage({
     >
       <div className="space-y-4">
         {/* Navigation Tabs Bar */}
-        <div className="flex flex-wrap items-center gap-2 p-2.5 sm:p-3 border-b border-white/[0.08] bg-espresso-900/60 rounded-2xl overflow-x-auto">
+        <div className="flex flex-wrap items-center gap-2 p-2.5 sm:p-3 border-b border-border bg-white/60 rounded-2xl overflow-x-auto">
           {TABS.map((t) => (
             <Link
               key={t.key}
               href={`/admin?tab=${t.key}`}
               className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition-all whitespace-nowrap ${
                 t.key === tab
-                  ? 'bg-gradient-to-r from-amber-glow to-[#c0590d] text-white font-bold shadow-lg shadow-amber-glow/20 border border-amber-light/30'
-                  : 'text-[#A1A1AA] hover:text-white hover:bg-white/[0.05]'
+                  ? 'bg-gradient-to-r from-primary to-[#c0590d] text-white font-bold shadow-lg shadow-primary/20 border border-primary/30'
+                  : 'text-muted-foreground hover:text-white hover:bg-muted'
               }`}
             >
               {t.label}
@@ -261,7 +262,7 @@ export default async function AdminPage({
                       <td className="td">{s.term}</td>
                       <td className="td">
                         {s.is_current && <span className="badge-brand mr-2">Current</span>}
-                        {s.is_open ? <span className="badge-positive">Open</span> : <span className="badge-gold">Closed</span>}
+                        {semesterIsOpen(s) ? <span className="badge-positive">Open</span> : <span className="badge-gold">Closed</span>}
                       </td>
                       <td className="td text-xs text-cream-muted">
                         {s.opens_at ? new Date(s.opens_at).toLocaleDateString() : '—'} →{' '}
@@ -279,9 +280,9 @@ export default async function AdminPage({
                           )}
                           <form action={togglePeriod}>
                             <input type="hidden" name="id" value={s.id} />
-                            <input type="hidden" name="open" value={(!s.is_open).toString()} />
+                            <input type="hidden" name="open" value={(!semesterIsOpen(s)).toString()} />
                             <button type="submit" className="text-xs text-cream-muted hover:underline">
-                              {s.is_open ? 'Close' : 'Open'}
+                              {semesterIsOpen(s) ? 'Close' : 'Open'}
                             </button>
                           </form>
                           <Del table="semesters" id={s.id} />

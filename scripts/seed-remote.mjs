@@ -224,10 +224,12 @@ for (const c of classIds) {
     const [comment, label] = COMMENTS[i % COMMENTS.length];
     const score = label === 'positive' ? 0.91 : label === 'negative' ? 0.87 : 0.62;
     const evals = await query(`insert into evaluations
-      (enrollment_id, student_id, section_subject_id, semester_id, anonymous, comment, sentiment_label, sentiment_score, signature_points, submitted_at)
-      values ('${en.id}', '${en.student_id}', '${c.id}', '${past}', ${i % 3 !== 0}, '${esc(comment)}', '${label}', ${score}, '${esc(sig)}'::jsonb, now() - ${80 - i} * interval '1 day')
+      (enrollment_id, student_id, section_subject_id, semester_id, anonymous, signature_points, submitted_at)
+      values ('${en.id}', '${en.student_id}', '${c.id}', '${past}', ${i % 3 !== 0}, '${esc(sig)}'::jsonb, now() - ${80 - i} * interval '1 day')
       on conflict do nothing returning id`);
     if (evals[0]) {
+      await query(`insert into evaluation_comments (evaluation_id, section_subject_id, semester_id, comment, sentiment_label, sentiment_score, submitted_at)
+        values ('${evals[0].id}', '${c.id}', '${past}', '${esc(comment)}', '${label}', ${score}, now() - ${80 - i} * interval '1 day')`);
       for (const q of qids) {
         const rating = 3 + ((i + q.charCodeAt(0) - 97) % 3);
         await query(`insert into evaluation_answers (evaluation_id, question_id, rating) values ('${evals[0].id}', '${q}', ${rating}) on conflict do nothing`);

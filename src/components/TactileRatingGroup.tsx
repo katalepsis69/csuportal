@@ -39,7 +39,7 @@ export function TactileRatingGroup({
   return (
     <div className="bg-inset-well/90 shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] border border-subtle/40 rounded-xl p-2.5">
       {/* Top scale anchors */}
-      <div className="flex items-center justify-between text-[11px] font-mono text-cream-muted px-1 mb-2 select-none">
+      <div className="flex items-center justify-between text-[11px] text-cream-muted px-1 mb-2 select-none">
         <span>1: Poor / Strongly Disagree</span>
         {value ? (
           <span className="font-semibold text-brand transition-all">
@@ -69,9 +69,9 @@ export function TactileRatingGroup({
               tabIndex={value === n || (value == null && n === 1) ? 0 : -1}
               onClick={() => onChange(n)}
               onKeyDown={(e) => handleKeyDown(e, n)}
-              className={`py-2.5 sm:py-3 rounded-lg font-mono text-sm sm:text-base font-bold transition-all duration-150 cursor-pointer select-none active:scale-[0.98] ${
+              className={`py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-bold transition-all duration-150 cursor-pointer select-none active:scale-[0.98] ${
                 isSelected
-                  ? 'bg-brand text-white font-extrabold shadow-[inset_0_2px_6px_rgba(0,0,0,0.5),0_0_16px_rgba(216,106,18,0.4)] border border-brand-light ring-1 ring-brand/50'
+                  ? 'bg-brand text-foreground font-extrabold shadow-[inset_0_2px_6px_rgba(0,0,0,0.5),0_0_16px_rgba(127,29,29,0.4)] border border-brand-light ring-1 ring-brand/50'
                   : 'bg-panel border border-subtle/50 text-cream-dim hover:bg-panel2 hover:text-cream shadow-[0_2px_4px_rgba(0,0,0,0.3)] hover:border-brand/40'
               }`}
             >

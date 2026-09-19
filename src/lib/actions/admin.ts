@@ -48,13 +48,11 @@ export async function togglePeriod(fd: FormDataLike) {
   const supabase = await adminClient();
   const id = str(fd, 'id');
   const open = str(fd, 'open') === 'true';
-  const patch: Record<string, unknown> = { is_open: open };
-  if (open) {
-    const { data } = await supabase.from('semesters').select('opens_at, closes_at').eq('id', id).single();
-    if (!data?.opens_at) patch.opens_at = new Date().toISOString();
-    if (!data?.closes_at) patch.closes_at = new Date(Date.now() + 14 * 864e5).toISOString();
-  }
-  await supabase.from('semesters').update(patch).eq('id', id);
+  // manual override trumps the derived time window (see lib/types.ts)
+  await supabase
+    .from('semesters')
+    .update({ manual_override: open ? 'open' : 'closed' })
+    .eq('id', id);
   refresh();
 }
 

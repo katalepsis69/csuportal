@@ -1,18 +1,20 @@
 import type { Metadata } from 'next';
-import { Manrope, Plus_Jakarta_Sans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 
-const manrope = Manrope({
+// One type family (MASTER.md v2). Both CSS var names are kept so existing
+// `font-display` / `font-sans` classes keep working - same face, two weights.
+const interSans = Inter({
   subsets: ['latin'],
-  weight: ['600', '700', '800'],
-  variable: '--font-manrope',
+  weight: ['400', '500'],
+  variable: '--font-sans',
   display: 'swap',
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
+const interDisplay = Inter({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-sans',
+  weight: ['600', '700'],
+  variable: '--font-manrope',
   display: 'swap',
 });
 
@@ -23,35 +25,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: { children: React.ReactNode }) {
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={`${manrope.variable} ${plusJakartaSans.variable} dark h-full antialiased`}
+      className={`${interSans.variable} ${interDisplay.variable} h-full antialiased`}
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              try {
-                const t = localStorage.getItem('cetc-theme');
-                if (t === 'light') {
-                  document.documentElement.classList.remove('dark');
-                  document.documentElement.style.colorScheme = 'light';
-                } else if (t === 'dark') {
-                  document.documentElement.classList.add('dark');
-                  document.documentElement.style.colorScheme = 'dark';
-                } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
-                  document.documentElement.classList.remove('dark');
-                  document.documentElement.style.colorScheme = 'light';
-                }
-              } catch (e) {}
-            `,
-          }}
-        />
-      </head>
-      <body className="min-h-full flex flex-col font-sans bg-canvas text-cream">{children}</body>
+      <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+        {children}
+      </body>
     </html>
   );
 }

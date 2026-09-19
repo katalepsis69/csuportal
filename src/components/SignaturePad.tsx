@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 export type Point = { x: number; y: number };
 export type Strokes = Point[][];
 
 /**
- * Canvas signature pad with espresso dark theme and amber stroke rendering.
+ * Canvas signature pad. Stores normalized 0..1 stroke vectors (no image),
  * Stores strokes as normalized (0..1) coordinates — JSON payload, redrawable on PDF.
  */
 export default function SignaturePad({
@@ -18,35 +18,6 @@ export default function SignaturePad({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawingRef = useRef(false);
-  const [hasDrawn, setHasDrawn] = useState(strokes.length > 0);
-
-  // Initialize with simulated sample stroke if empty, so it displays like download.htm
-  useEffect(() => {
-    if (strokes.length === 0 && !hasDrawn) {
-      // Provide initial sample vector stroke
-      const sampleStroke: Strokes = [
-        [
-          { x: 0.05, y: 0.6 },
-          { x: 0.15, y: 0.15 },
-          { x: 0.22, y: 0.75 },
-          { x: 0.3, y: 0.45 },
-          { x: 0.38, y: 0.2 },
-          { x: 0.45, y: 0.8 },
-          { x: 0.55, y: 0.4 },
-          { x: 0.65, y: 0.1 },
-          { x: 0.72, y: 0.65 },
-          { x: 0.82, y: 0.3 },
-          { x: 0.92, y: 0.25 },
-        ],
-        [
-          { x: 0.1, y: 0.8 },
-          { x: 0.85, y: 0.75 },
-        ],
-      ];
-      onChange(sampleStroke);
-      setHasDrawn(true);
-    }
-  }, []); // Run once on mount
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -55,8 +26,10 @@ export default function SignaturePad({
     if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.strokeStyle = '#D86A12';
-    ctx.shadowColor = 'rgba(216, 106, 18, 0.4)';
+    ctx.strokeStyle = getComputedStyle(document.documentElement)
+      .getPropertyValue('--brand')
+      .trim() || 'var(--primary)';
+    ctx.shadowColor = 'rgba(127, 29, 29, 0.4)';
     ctx.shadowBlur = 8;
     ctx.lineWidth = 2.5;
     ctx.lineCap = 'round';
@@ -88,7 +61,6 @@ export default function SignaturePad({
     e.currentTarget.setPointerCapture(e.pointerId);
     drawingRef.current = true;
     onChange([...strokes, [pos(e)]]);
-    setHasDrawn(true);
   }
 
   function move(e: React.PointerEvent<HTMLCanvasElement>) {
@@ -104,29 +76,28 @@ export default function SignaturePad({
 
   return (
     <div className="space-y-2">
-      <div className="relative bg-espresso-950 border border-white/10 rounded-xl p-4 min-h-[180px] flex flex-col justify-between overflow-hidden shadow-inner">
+      <div className="relative bg-white border border-border rounded-xl p-4 min-h-[180px] flex flex-col justify-between overflow-hidden shadow-inner">
         {/* Grid hairline guidelines */}
         <div
           className="absolute inset-0 opacity-20 pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(#574237 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(#a1a1aa 1px, transparent 1px)',
             backgroundSize: '16px 16px',
           }}
         />
 
         {/* Top Canvas Header Badges */}
         <div className="relative z-10 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-[11px] font-mono text-[#A1A1AA]">
-            <span className="w-2 h-2 rounded-full bg-amber-glow animate-pulse" />
-            <span>Digitizer Active • Sensitivity: Pressure-Adaptive</span>
+          <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
+            <span className="w-2 h-2 rounded-full bg-primary" />
+            <span>Draw your signature below</span>
           </div>
           <button
             type="button"
             onClick={() => {
               onChange([]);
-              setHasDrawn(false);
             }}
-            className="flex items-center gap-1 text-[11px] font-mono text-[#A1A1AA] hover:text-amber-light transition-colors"
+            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-primary transition-colors"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
@@ -154,9 +125,9 @@ export default function SignaturePad({
         </div>
 
         {/* Baseline dotted signature guide rule with caption */}
-        <div className="relative z-10 border-t border-dashed border-white/20 pt-1.5 flex items-center justify-between text-[11px] font-mono text-[#A1A1AA]">
+        <div className="relative z-10 border-t border-dashed border-border pt-1.5 flex items-center justify-between text-[11px] text-muted-foreground">
           <span>Sign above using trackpad, mouse, or stylus</span>
-          <span className="text-amber-light">Vector Hash: 9f8a...32b1-csu</span>
+          <span>Stored as normalized vectors, never an image</span>
         </div>
       </div>
     </div>

@@ -1,3 +1,8 @@
+> **SUPERSEDED 2026-09-18.** The design direction in this file is replaced by
+> `design-system/cetc-lsc/MASTER.md` (v2, light/airy zinc). Do not implement from
+> this file. Kept only for history.
+
+
 # CETC Faculty Evaluation Portal — Design Specification
 **Date:** 2026-09-15  
 **Status:** Approved via Brainstorming & Grilling Interview  

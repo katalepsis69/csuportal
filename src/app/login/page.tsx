@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, Suspense } from 'react';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { resolveLoginEmail, registerStudent, requestPasswordReset } from '@/lib/actions/auth';
 
@@ -265,10 +266,13 @@ function LoginContent() {
       {/* Mobile Masthead (< 768px) */}
       <div className="md:hidden flex flex-col items-center pt-5 pb-3 px-4 text-center border-b border-subtle bg-panel/40">
         <div className="flex items-center gap-2.5">
-          <img
+          <Image
             src="/csu-cetc-logo.png"
             alt="Cotabato State University - CETC"
+            width={36}
+            height={36}
             className="h-9 w-9 object-contain shrink-0"
+            priority
           />
           <div className="text-left">
             <div
@@ -348,9 +352,11 @@ function LoginContent() {
             {/* Header Brand */}
             <div className="flex items-center justify-between pb-1 border-b border-subtle/60">
               <div className="flex items-center gap-3">
-                <img
+                <Image
                   src="/csu-cetc-logo.png"
                   alt="CSU CETC"
+                  width={40}
+                  height={40}
                   className="h-10 w-10 object-contain shrink-0 drop-shadow"
                 />
                 <div>
@@ -492,7 +498,7 @@ function LoginContent() {
                     <input
                       id="studentIdInput"
                       type="text"
-                      className={`input font-mono ${
+                      className={`input ${
                         touched.studentId && !isStudentIdValid
                           ? 'border-negative focus:border-negative ring-1 ring-negative/30'
                           : ''
@@ -768,7 +774,7 @@ function LoginContent() {
               <div className="pt-3 border-t border-subtle/70 space-y-2">
                 <div className="flex items-center justify-between text-[11px] text-cream-muted">
                   <span className="font-semibold uppercase tracking-wider text-[10px]">Demo Test Accounts:</span>
-                  <span className="text-[10px] text-brand-text font-mono">Password: eval1234</span>
+                  <span className="text-[10px] text-brand-text">Password: eval1234</span>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5">
                   {DEMO_STAFF_ACCOUNTS.map((acc) => (
@@ -784,7 +790,7 @@ function LoginContent() {
                       title={acc.desc}
                     >
                       <span className="text-xs font-bold text-cream">{acc.label}</span>
-                      <span className="text-[9px] text-cream-muted truncate max-w-full font-mono">{acc.email.split('@')[0]}</span>
+                      <span className="text-[9px] text-cream-muted truncate max-w-full">{acc.email.split('@')[0]}</span>
                     </button>
                   ))}
                 </div>
@@ -805,9 +811,11 @@ function LoginContent() {
         {/* Top Branding (Official Logo + CSU CETC) */}
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3.5">
-            <img
+            <Image
               src="/csu-cetc-logo.png"
               alt="Cotabato State University - CETC Logo"
+              width={56}
+              height={56}
               className="h-14 w-14 object-contain shrink-0 drop-shadow-md"
             />
             <div>
@@ -857,7 +865,7 @@ function LoginContent() {
                   <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
                   <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
                   <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
-                  <span className="ml-2 text-[11px] font-mono text-cream-muted">portal.csu.edu.ph/student</span>
+                  <span className="ml-2 text-[11px] text-cream-muted">portal.csu.edu.ph/student</span>
                 </div>
                 <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-brand-text border border-subtle">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
@@ -942,7 +950,7 @@ function LoginContent() {
                   <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
                   <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
                   <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
-                  <span className="ml-2 text-[11px] font-mono text-cream-muted">portal.csu.edu.ph/dean/analytics</span>
+                  <span className="ml-2 text-[11px] text-cream-muted">portal.csu.edu.ph/dean/analytics</span>
                 </div>
                 <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-positive border border-subtle">
                   <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />

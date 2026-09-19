@@ -1,9 +1,13 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/auth/callback'];
-
-export async function updateSession(request: NextRequest) {
+/**
+ * Session-refresh only (v2 revision): auth redirects and role guards live in
+ * route layouts (requireProfile / requireRole). This exists solely because
+ * Server Components cannot write cookies — without it, Supabase access
+ * tokens expire after 1h and students get logged out mid-form.
+ */
+export async function refreshSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -25,24 +29,7 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // IMPORTANT: do not run code between createServerClient and auth.getUser()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { pathname } = request.nextUrl;
-
-  if (!user && !PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-    return NextResponse.redirect(url);
-  }
-
-  if (user && pathname === '/login') {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
-  }
+  await supabase.auth.getUser();
 
   return response;
 }

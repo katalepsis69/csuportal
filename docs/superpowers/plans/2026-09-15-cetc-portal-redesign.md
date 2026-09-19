@@ -1,3 +1,7 @@
+> **SUPERSEDED 2026-09-18.** The design direction in this plan is superseded by
+> `design-system/cetc-lsc/MASTER.md` (v2, light/airy zinc). Do not execute this plan.
+
+
 # CETC Portal Redesign — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:subagent-driven-development` (recommended) or `superpowers:executing-plans` to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

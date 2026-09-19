@@ -95,7 +95,7 @@ export function IconSignOutLine({ className = 'h-5 w-5' }: { className?: string 
 
 // --- Dynamic SVG Sparkline Curve with Area Gradient ---
 export function Sparkline({
-  color = '#D86A12',
+  color = 'var(--primary)',
   points = [12, 18, 14, 22, 19, 28, 25, 30],
 }: {
   color?: string;
@@ -157,10 +157,10 @@ export function StaffStatCard({
 }: {
   metric: StatMetric;
 }) {
-  const color = metric.color ?? '#D86A12';
+  const color = metric.color ?? 'var(--primary)';
 
   return (
-    <div className="@container rounded-2xl border border-subtle/80 bg-panel/75 backdrop-blur-xl p-5 shadow-beautiful-sm hover:border-brand/40 transition-all duration-300 relative overflow-hidden group amber-glow-box">
+    <div className="@container rounded-2xl border border-subtle/80 bg-panel/75 backdrop-blur-xl p-5 shadow-beautiful-sm hover:border-brand/40 transition-all duration-300 relative overflow-hidden group ">
       {/* Specular 1px Top Rim Reflection */}
       <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
 
@@ -175,7 +175,7 @@ export function StaffStatCard({
       </div>
 
       <div className="mt-4 relative z-10">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-cream-muted font-mono">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-cream-muted">
           {metric.label}
         </p>
         <div className="mt-1 flex items-baseline gap-2.5">
@@ -184,7 +184,7 @@ export function StaffStatCard({
           </span>
           {metric.trend && (
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase font-mono border ${
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase border ${
                 metric.trendPositive !== false
                   ? 'bg-positive/15 text-positive border-positive/30'
                   : 'bg-negative/15 text-negative border-negative/30'
@@ -221,9 +221,9 @@ export function StaffScaffold({
 }) {
   return (
     <div className="min-w-0 space-y-6">
-      {/* Top Utility Bar (Breadcrumb in frosted glass) */}
-      <div className="glass-panel rounded-2xl px-4 py-2.5 shadow-beautiful-sm border border-subtle/80 flex items-center justify-between">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-cream-muted font-mono">
+      {/* Top Utility Bar (breadcrumb) */}
+      <div className="card rounded-2xl px-4 py-2.5 shadow-beautiful-sm border border-subtle/80 flex items-center justify-between">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-cream-muted">
           {breadcrumb.map((crumb, idx) => (
             <React.Fragment key={crumb}>
               {idx > 0 && <span className="text-cream-faint">/</span>}
@@ -234,7 +234,7 @@ export function StaffScaffold({
           ))}
         </nav>
 
-        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-mono font-semibold text-positive border border-positive/25">
+        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
           <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />
           Audited & Sealed
         </span>

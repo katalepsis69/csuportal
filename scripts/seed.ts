@@ -230,11 +230,13 @@ async function seedDemo() {
       const [comment, label] = COMMENTS[i % COMMENTS.length];
       const score = label === 'positive' ? 0.91 : label === 'negative' ? 0.87 : 0.62;
       const evals = await sql`insert into evaluations
-        (enrollment_id, student_id, section_subject_id, semester_id, anonymous, comment, sentiment_label, sentiment_score, signature_points, submitted_at)
-        select en.id, en.student_id, en.section_subject_id, ${past}, ${i % 3 !== 0}, ${comment}, ${label}, ${score}, ${sig}::jsonb, now() - ${80 - i} * interval '1 day'
+        (enrollment_id, student_id, section_subject_id, semester_id, anonymous, signature_points, submitted_at)
+        select en.id, en.student_id, en.section_subject_id, ${past}, ${i % 3 !== 0}, ${sig}::jsonb, now() - ${80 - i} * interval '1 day'
         from enrollments en where en.student_id = ${studentId} and en.section_subject_id = ${c.id}
         on conflict do nothing returning id`;
       if (evals[0]) {
+        await sql`insert into evaluation_comments (evaluation_id, section_subject_id, semester_id, comment, sentiment_label, sentiment_score, submitted_at)
+          values (${evals[0].id}, ${c.id}, ${past}, ${comment}, ${label}, ${score}, now() - ${80 - i} * interval '1 day')`;
         for (const q of qids) {
           const rating = 3 + ((i + q.id.charCodeAt(0)) % 3); // 3..5 deterministic-ish
           await sql`insert into evaluation_answers (evaluation_id, question_id, rating)

@@ -112,7 +112,7 @@ export default async function FacultyPage({
       value: `${overview.overall != null ? overview.overall.toFixed(2) : '4.82'} / 5.0`,
       trend: '+0.12',
       trendPositive: true,
-      color: '#D86A12',
+      color: 'var(--primary)',
       sparkline: [4.6, 4.65, 4.72, 4.75, 4.8, 4.82, 4.84, 4.85],
       icon: <IconChartLine className="h-4 w-4" />,
     },
@@ -142,7 +142,7 @@ export default async function FacultyPage({
       sublabel: 'Active teaching loads',
       trend: 'Active',
       trendPositive: true,
-      color: '#D86A12',
+      color: 'var(--primary)',
       sparkline: [1, 1, 2, 2, 2, 2, 2, 2],
       icon: <IconGearLine className="h-4 w-4" />,
     },
@@ -160,7 +160,7 @@ export default async function FacultyPage({
             <select
               name="sem"
               defaultValue={semesterId ?? ''}
-              className="rounded-xl border border-white/10 bg-espresso-850 px-3 py-1.5 text-xs text-white focus:border-amber-glow focus:outline-none cursor-pointer min-h-[36px]"
+              className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer min-h-[36px]"
             >
               <option value="">Current semester</option>
               {(semesters as Semester[] | null)?.map((s) => (
@@ -172,7 +172,7 @@ export default async function FacultyPage({
             </select>
             <button
               type="submit"
-              className="rounded-xl border border-white/10 bg-espresso-800 px-3 py-1.5 text-xs font-semibold text-white hover:bg-espresso-750 transition-colors min-h-[36px] active:scale-[0.98]"
+              className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-zinc-50 transition-colors min-h-[36px] active:scale-[0.98]"
             >
               Filter
             </button>
@@ -193,13 +193,13 @@ export default async function FacultyPage({
         {/* Question-level score bar chart & Sentiment Bento */}
         <div className="grid gap-5 lg:grid-cols-2">
           {/* Average Rating per Question */}
-          <div className="rounded-2xl border border-white/[0.08] bg-espresso-850/80 backdrop-blur-md p-5 shadow-beautiful-sm amber-glow-box">
+          <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm ">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-semibold text-white font-mono">Average Rating per Question</h2>
-                <p className="text-xs text-[#A1A1AA] mt-0.5">Performance index across each rubric question</p>
+                <h2 className="text-sm font-semibold text-foreground">Average Rating per Question</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Performance index across each rubric question</p>
               </div>
-              <span className="rounded-md bg-espresso-800 px-2.5 py-0.5 text-[10px] font-mono text-[#A1A1AA] border border-white/10">
+              <span className="rounded-md bg-white px-2.5 py-0.5 text-[10px] text-muted-foreground border border-border">
                 Scale 1-5
               </span>
             </div>
@@ -212,15 +212,15 @@ export default async function FacultyPage({
           </div>
 
           {/* Student Feedback Sentiment */}
-          <div className="rounded-2xl border border-white/[0.08] bg-espresso-850/80 backdrop-blur-md p-5 shadow-beautiful-sm flex flex-col justify-between amber-glow-box">
+          <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm flex flex-col justify-between ">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-sm font-semibold text-white font-mono">Student Feedback Sentiment</h2>
-                <span className="inline-flex items-center gap-1 rounded-full bg-status-sage/15 px-2 py-0.5 text-[10px] font-mono text-status-sage border border-status-sage/30">
+                <h2 className="text-sm font-semibold text-foreground">Student Feedback Sentiment</h2>
+                <span className="inline-flex items-center gap-1 rounded-full bg-status-sage/15 px-2 py-0.5 text-[10px] text-status-sage border border-status-sage/30">
                   {positivePct}% Positive
                 </span>
               </div>
-              <p className="text-xs text-[#A1A1AA] mb-4">
+              <p className="text-xs text-muted-foreground mb-4">
                 {sentimentTotal === 0
                   ? 'No comments submitted yet for this semester.'
                   : `${Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)}% positive · ${Math.round(
@@ -235,30 +235,30 @@ export default async function FacultyPage({
         </div>
 
         {/* Anonymous Student Comments Roster */}
-        <div className="rounded-2xl border border-white/[0.08] bg-espresso-850/80 backdrop-blur-md p-5 shadow-beautiful-sm space-y-4 amber-glow-box">
+        <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm space-y-4 ">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-white font-mono">
+              <h3 className="text-sm font-semibold text-foreground">
                 Anonymous Student Commentary ({overview.comments?.length ?? 0})
               </h3>
-              <p className="text-xs text-[#A1A1AA] mt-0.5">
+              <p className="text-xs text-muted-foreground mt-0.5">
                 Direct, unedited feedback from enrolled students across all class sections.
               </p>
             </div>
-            <span className="text-[11px] font-mono text-[#A1A1AA]/60">Encrypted &amp; De-identified</span>
+            <span className="text-[11px] text-muted-foreground/60">Encrypted &amp; De-identified</span>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             {(overview.comments ?? []).slice(0, 10).map((c, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-white/[0.06] bg-espresso-900/60 p-4 text-xs text-[#EDEDED] leading-relaxed hover:border-amber-glow/30 transition-colors shadow-sm italic"
+                className="rounded-xl border border-border bg-white/60 p-4 text-xs text-foreground leading-relaxed hover:border-primary/30 transition-colors shadow-sm italic"
               >
                 &ldquo;{c.comment}&rdquo;
               </div>
             ))}
             {(overview.comments ?? []).length === 0 && (
-              <p className="text-xs text-[#A1A1AA] col-span-2 py-4 text-center">
+              <p className="text-xs text-muted-foreground col-span-2 py-4 text-center">
                 No written comments recorded for this term.
               </p>
             )}

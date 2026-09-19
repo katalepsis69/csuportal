@@ -1,96 +1,83 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where(.dark, .dark *));
-
-/* CSU CETC design tokens — Cotabato State University */
+/* CSU CETC design tokens - v2 light/airy (source of truth: design-system/cetc-lsc/MASTER.md) */
 :root {
   color-scheme: light;
-  --canvas: #f8f6f1;
-  --canvas-subtle: #f0ece3;
-  --glass-surface: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(45, 31, 23, 0.08);
-  --panel: rgba(255, 255, 255, 0.82);
-  --panel2: #faf8f5;
-  --bg2: #f0ece3;
-  --text-primary: #251811;
-  --text-dim: #5c4a3e;
-  --text-muted: #827063;
-  --text-faint: #a69689;
-  --brand: #c25e0f;
-  --brand-text: #c25e0f;
-  --brand-light: #d86a12;
-  --brand-hover: #a34e0c;
-  --gold: #9e7528;
-  --gold-text: #9e7528;
-  --positive: #2e7d32;
-  --positive-fill: #2e7d32;
-  --negative: #c62828;
-  --negative-fill: #c62828;
-  --subtle: rgba(45, 31, 23, 0.09);
-  --inset-well: #efeae1;
-  --espresso-950: #0c0a08;
-  --espresso-900: #120e0b;
-  --espresso-850: #17130f;
-  --espresso-800: #1f1a15;
-  --espresso-750: #26201a;
-  --espresso-700: #2e2720;
-  --espresso-600: #3d342c;
-  --amber-glow: #d86a12;
-  --amber-light: #f48e36;
-  --status-sage: #6fa86f;
-  --status-gold: #b58a3c;
-  --status-crimson: #c9615a;
-}
+  /* NOTE: --brand / --primary are placeholder maroon (white text on it = 9.9:1 AA).
+     Swap for the official CSU hex when confirmed - two tokens, nothing else changes. */
 
-.dark {
-  color-scheme: dark;
-  --canvas: #120e0b;
-  --canvas-subtle: #17130f;
-  --glass-surface: rgba(28, 22, 18, 0.72);
-  --glass-border: rgba(245, 240, 232, 0.08);
-  --panel: rgba(28, 22, 18, 0.70);
-  --panel2: rgba(38, 28, 22, 0.85);
-  --bg2: #18130f;
-  --text-primary: #ededed;
-  --text-dim: #d1c7ba;
-  --text-muted: #a1a1aa;
-  --text-faint: #706456;
-  --brand: #d86a12;
-  --brand-text: #f48e36;
-  --brand-light: #f48e36;
-  --brand-hover: #c25e0f;
-  --gold: #b58a3c;
-  --gold-text: #cda45c;
-  --positive: #6fa86f;
-  --positive-fill: #6fa86f;
-  --negative: #c9615a;
-  --negative-fill: #b0453d;
-  --subtle: rgba(255, 255, 255, 0.08);
-  --inset-well: #110d0a;
-  --espresso-950: #0c0a08;
-  --espresso-900: #120e0b;
-  --espresso-850: #17130f;
-  --espresso-800: #1f1a15;
-  --espresso-750: #26201a;
-  --espresso-700: #2e2720;
-  --espresso-600: #3d342c;
-  --amber-glow: #d86a12;
-  --amber-light: #f48e36;
-  --status-sage: #6fa86f;
-  --status-gold: #b58a3c;
-  --status-crimson: #c9615a;
+  /* semantic tokens */
+  --background: #fafafa;          /* zinc-50 canvas */
+  --foreground: #18181b;          /* zinc-900 */
+  --card: #ffffff;
+  --card-foreground: #18181b;
+  --popover: #ffffff;
+  --popover-foreground: #18181b;
+  --primary: #7f1d1d;             /* PLACEHOLDER maroon */
+  --primary-foreground: #ffffff;
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+  --muted: #f4f4f5;
+  --muted-foreground: #71717a;    /* zinc-500, 4.8:1 */
+  --accent: #f4f4f5;
+  --accent-foreground: #18181b;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+  --border: #e4e4e7;              /* zinc-200 */
+  --input: #e4e4e7;
+  --ring: #7f1d1d;
+  --radius: 0.625rem;
+
+  /* chart palette: muted, no gradients */
+  --chart-positive: #15803d;
+  --chart-neutral: #a1a1aa;
+  --chart-negative: #dc2626;
+  --gold: #b58a3c;                /* chart fills / large elements ONLY - never small text */
+  --gold-text: #7d5a17;           /* bronze, 5:1 on white - the only gold allowed as text */
+  --positive: #15803d;
+  --negative: #dc2626;
+
+  /* legacy aliases still used by the class contract below (zinc-valued) */
+  --canvas: #fafafa;
+  --panel: #ffffff;
+  --bg2: #f4f4f5;
+  --text-primary: #18181b;
+  --text-dim: #52525b;
+  --text-muted: #71717a;
+  --text-faint: #a1a1aa;
+  --brand: #7f1d1d;
+  --brand-text: #7f1d1d;
+  --brand-hover: #671717;
+  --subtle: #e4e4e7;
 }
 
 @theme {
-  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-sans), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
 
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* legacy class-contract colors */
   --color-canvas: var(--canvas);
-  --color-canvas-subtle: var(--canvas-subtle);
-  --color-glass-surface: var(--glass-surface);
-  --color-glass-border: var(--glass-border);
   --color-panel: var(--panel);
-  --color-panel2: var(--panel2);
   --color-bg2: var(--bg2);
   --color-cream: var(--text-primary);
   --color-cream-dim: var(--text-dim);
@@ -98,45 +85,41 @@
   --color-cream-faint: var(--text-faint);
   --color-brand: var(--brand);
   --color-brand-text: var(--brand-text);
-  --color-brand-light: var(--brand-light);
   --color-brand-hover: var(--brand-hover);
   --color-gold: var(--gold);
   --color-gold-text: var(--gold-text);
   --color-positive: var(--positive);
-  --color-positive-fill: var(--positive-fill);
   --color-negative: var(--negative);
-  --color-negative-fill: var(--negative-fill);
   --color-subtle: var(--subtle);
-  --color-inset-well: var(--inset-well);
-  --color-espresso-950: var(--espresso-950);
-  --color-espresso-900: var(--espresso-900);
-  --color-espresso-850: var(--espresso-850);
-  --color-espresso-800: var(--espresso-800);
-  --color-espresso-750: var(--espresso-750);
-  --color-espresso-700: var(--espresso-700);
-  --color-espresso-600: var(--espresso-600);
-  --color-amber-glow: var(--amber-glow);
-  --color-amber-light: var(--amber-light);
-  --color-status-sage: var(--status-sage);
-  --color-status-gold: var(--status-gold);
-  --color-status-crimson: var(--status-crimson);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 body {
-  background: var(--canvas);
-  color: var(--text-primary);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  transition: background-color 200ms ease-out, color 200ms ease-out;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
 ::selection {
-  background: rgba(216, 106, 18, 0.35);
+  background: rgba(127, 29, 29, 0.15);
 }
 
-/* a11y: visible keyboard focus, brand molten amber ring */
+/* CSS entrance animations (no motion library) */
+@keyframes fade-in {
+  from { opacity: 0; }
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+}
+
+/* a11y: visible keyboard focus, accent ring */
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(216, 106, 18, 0.45);
+  box-shadow: 0 0 0 3px rgba(127, 29, 29, 0.4);
   border-radius: 6px;
 }
 
@@ -151,50 +134,25 @@ body {
   }
 }
 
-/* Stitch Frosted Glass & Specular Glow Utilities */
-@utility amber-glow-box {
-  box-shadow: 0 0 25px -5px rgba(216, 106, 18, 0.18), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-}
-@utility amber-pill-glow {
-  box-shadow: 0 0 16px rgba(216, 106, 18, 0.35);
-}
+/* barely-there elevation: hierarchy comes from spacing + type, not shadows */
 @utility drawer-shadow {
-  box-shadow: -15px 0 35px -5px rgba(0, 0, 0, 0.6), -1px 0 0 0 rgba(255, 255, 255, 0.08);
+  box-shadow: -8px 0 24px -12px rgba(0, 0, 0, 0.18);
 }
-@utility glass-rim {
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
-}
-
-/* Beautiful Shadows & Elevation */
-@utility shadow-beautiful-sm {
-  box-shadow: 0px 2px 3px -1px rgba(0, 0, 0, 0.1), 0px 1px 0px 0px rgba(25, 28, 33, 0.02), 0px 0px 0px 1px rgba(25, 28, 33, 0.08);
-}
-@utility shadow-beautiful-md {
-  box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 1px 1px -0.5px rgba(0, 0, 0, 0.06), 0px 3px 3px -1.5px rgba(0, 0, 0, 0.06), 0px 6px 6px -3px rgba(0, 0, 0, 0.06), 0px 12px 12px -6px rgba(0, 0, 0, 0.06), 0px 24px 24px -12px rgba(0, 0, 0, 0.06);
-}
-@utility shadow-beautiful-lg {
-  box-shadow: 0 2.8px 2.2px rgba(0, 0, 0, 0.034), 0 6.7px 5.3px rgba(0, 0, 0, 0.048), 0 12.5px 10px rgba(0, 0, 0, 0.06), 0 22.3px 17.9px rgba(0, 0, 0, 0.072), 0 41.8px 33.4px rgba(0, 0, 0, 0.086), 0 100px 80px rgba(0, 0, 0, 0.12);
+@utility shadow-xs {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-.glass-panel {
-  background: var(--glass-surface);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid var(--glass-border);
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
-}
-
+/* Class contract (kept while page markup migrates to shadcn primitives) */
 @layer components {
   .page-title {
-    @apply text-[26px] leading-tight font-bold tracking-tight;
+    @apply text-[24px] leading-tight font-semibold tracking-tight;
     font-family: var(--font-display);
   }
   .page-subtitle {
     @apply mb-3 text-sm text-cream-muted;
   }
   .panel-title {
-    @apply mb-1 text-base font-bold;
+    @apply mb-1 text-base font-semibold;
     font-family: var(--font-display);
   }
   .panel-subtitle {
@@ -204,18 +162,18 @@ body {
     @apply mb-1 text-xs font-semibold tracking-[0.06em] text-cream-muted uppercase;
   }
   .stat-value {
-    @apply text-2xl leading-none font-extrabold tabular-nums;
+    @apply text-2xl leading-none font-semibold tabular-nums;
     font-family: var(--font-display);
   }
 
   .btn {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-bold text-white transition-all duration-150 ease-out hover:bg-brand-hover active:scale-[0.98] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl bg-brand px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-150 ease-out hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-outline {
-    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-subtle bg-glass-surface px-4 py-2 text-sm font-semibold text-cream transition-all duration-150 ease-out hover:bg-black/5 dark:hover:bg-white/5 active:scale-[0.98] active:translate-y-[1px] disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-subtle bg-card px-4 py-2 text-sm font-medium text-cream transition-colors duration-150 ease-out hover:bg-muted disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-danger {
-    @apply inline-flex cursor-pointer items-center rounded-lg px-2.5 py-1 text-xs font-semibold text-negative transition-colors duration-150 hover:bg-negative/10;
+    @apply inline-flex cursor-pointer items-center rounded-lg px-2.5 py-1 text-xs font-medium text-negative transition-colors duration-150 hover:bg-negative/10;
   }
 
   .input {
@@ -226,22 +184,21 @@ body {
   }
 
   .card {
-    @apply rounded-2xl border border-subtle bg-panel p-4 transition-all duration-200 backdrop-blur-md;
-    box-shadow: 0px 2px 3px -1px rgba(0, 0, 0, 0.1), 0px 1px 0px 0px rgba(25, 28, 33, 0.02), 0px 0px 0px 1px rgba(25, 28, 33, 0.08);
+    @apply rounded-xl border border-subtle bg-card p-6 transition-colors duration-200;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   }
   .card-hover:hover {
-    @apply -translate-y-0.5 border-brand/40;
-    box-shadow: 0px 0px 0px 1px rgba(0, 0, 0, 0.06), 0px 1px 1px -0.5px rgba(0, 0, 0, 0.06), 0px 3px 3px -1.5px rgba(0, 0, 0, 0.06), 0px 6px 6px -3px rgba(0, 0, 0, 0.06), 0px 12px 12px -6px rgba(0, 0, 0, 0.06), 0px 24px 24px -12px rgba(0, 0, 0, 0.06);
+    @apply border-brand/30;
   }
 
   .table {
     @apply w-full border-collapse;
   }
   .th {
-    @apply px-4 py-2.5 text-left text-xs font-semibold tracking-wide text-cream-muted uppercase border-b border-subtle;
+    @apply border-b border-subtle px-4 py-2.5 text-left text-xs font-semibold tracking-wide text-cream-muted uppercase;
   }
   .td {
-    @apply px-4 py-3 text-sm whitespace-nowrap text-cream-dim border-b border-subtle/50;
+    @apply border-b border-subtle/60 px-4 py-3 text-sm whitespace-nowrap text-cream-dim tabular-nums;
   }
 
   .badge,
@@ -249,23 +206,23 @@ body {
   .badge-gold,
   .badge-positive,
   .badge-negative {
-    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold tracking-[0.03em] uppercase;
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-[0.03em] uppercase;
   }
   .badge-brand {
-    @apply bg-brand/15 text-brand-text ring-1 ring-brand/40;
+    @apply bg-brand/10 text-brand-text ring-1 ring-brand/30;
   }
   .badge-gold {
-    @apply bg-gold/15 text-gold-text ring-1 ring-gold/40;
+    @apply bg-gold/10 text-gold-text ring-1 ring-gold/30;
   }
   .badge-positive {
-    @apply bg-positive/15 text-positive ring-1 ring-positive/40;
+    @apply bg-positive/10 text-positive ring-1 ring-positive/30;
   }
   .badge-negative {
-    @apply bg-negative/15 text-negative ring-1 ring-negative/40;
+    @apply bg-negative/10 text-negative ring-1 ring-negative/30;
   }
 
   .chip {
-    @apply rounded-lg bg-bg2 px-2.5 py-1 text-xs font-semibold text-cream-muted border border-subtle;
+    @apply rounded-lg border border-subtle bg-bg2 px-2.5 py-1 text-xs font-medium text-cream-muted;
   }
 
   .success-banner {
@@ -276,3 +233,4 @@ body {
     @apply rounded-xl border border-subtle bg-bg2 px-4 py-3;
   }
 }
+

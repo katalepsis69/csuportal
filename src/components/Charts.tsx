@@ -14,11 +14,11 @@ import {
   YAxis,
 } from 'recharts';
 
-/* CSU CETC verified chart tokens */
+/* CSU CETC chart palette (MASTER.md v2): muted, no gradients */
 const SENTIMENT_COLORS: Record<string, string> = {
-  positive: '#6FA86F',
-  neutral: '#B58A3C',
-  negative: '#C9615A',
+  positive: '#15803D',
+  neutral: '#A1A1AA',
+  negative: '#DC2626',
 };
 
 export function SentimentPie({
@@ -37,7 +37,7 @@ export function SentimentPie({
 
   if (data.length === 0)
     return (
-      <div className="py-8 text-center text-xs text-cream-faint font-mono">
+      <div className="py-8 text-center text-xs text-zinc-400">
         No evaluation sentiment recorded yet
       </div>
     );
@@ -77,7 +77,7 @@ export function SentimentPie({
                       />
                       <span className="font-semibold text-cream">{item.name}</span>
                     </div>
-                    <div className="mt-1 font-mono text-xs text-cream-muted">
+                    <div className="mt-1 text-xs text-cream-muted">
                       <span className="font-bold text-cream tabular-nums">{item.value}</span> responses ({pct}%)
                     </div>
                   </div>
@@ -91,10 +91,10 @@ export function SentimentPie({
 
       {/* Donut Center Display */}
       <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-        <span className="text-xl font-extrabold text-cream font-mono tabular-nums leading-none">
+        <span className="text-xl font-extrabold text-cream tabular-nums leading-none">
           {posPct}%
         </span>
-        <span className="text-[10px] text-cream-muted uppercase font-mono tracking-wider mt-0.5">
+        <span className="text-[10px] text-cream-muted uppercase tracking-wider mt-0.5">
           Positive
         </span>
       </div>
@@ -115,7 +115,7 @@ export function AvgBar({
 
   if (rows.length === 0)
     return (
-      <div className="py-8 text-center text-xs text-cream-faint font-mono">
+      <div className="py-8 text-center text-xs text-cream-faint">
         No criteria metrics available
       </div>
     );
@@ -123,13 +123,6 @@ export function AvgBar({
   return (
     <ResponsiveContainer width="100%" height={height}>
       <BarChart data={rows} margin={{ left: -24, right: 12, top: 12, bottom: 8 }}>
-        <defs>
-          <linearGradient id="amberBarGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#F48E36" stopOpacity={1} />
-            <stop offset="100%" stopColor="#C25E0F" stopOpacity={0.65} />
-          </linearGradient>
-        </defs>
-
         {/* Hairline horizontal gridlines only (no vertical clutter) */}
         <CartesianGrid strokeDasharray="3 3" stroke="var(--subtle)" vertical={false} />
 
@@ -143,22 +136,22 @@ export function AvgBar({
         />
         <YAxis
           domain={[0, domainMax]}
-          tick={{ fontSize: 10, fill: 'var(--cream-muted)', fontFamily: 'monospace' }}
+          tick={{ fontSize: 10, fill: 'var(--text-muted)' }}
           axisLine={false}
           tickLine={false}
           ticks={[1, 2, 3, 4, 5]}
         />
         <Tooltip
-          cursor={{ fill: 'rgba(216, 106, 18, 0.06)', radius: 8 }}
+          cursor={{ fill: 'rgba(127, 29, 29, 0.06)' }}
           content={({ active, payload, label }) => {
             if (active && payload && payload.length) {
               const val = payload[0].value;
               return (
-                <div className="rounded-xl border border-brand/40 bg-panel/95 backdrop-blur-xl p-3 shadow-[0_0_20px_rgba(216,106,18,0.25)] text-xs">
-                  <div className="font-semibold text-cream">{label}</div>
-                  <div className="mt-1 flex items-center gap-1.5 font-mono text-brand font-bold text-sm">
+                <div className="rounded-xl border border-border bg-card p-3 shadow-xs text-xs">
+                  <div className="font-semibold text-foreground">{label}</div>
+                  <div className="mt-1 flex items-center gap-1.5 text-primary font-bold text-sm">
                     <span className="tabular-nums">{typeof val === 'number' ? val.toFixed(2) : val}</span>
-                    <span className="text-[10px] text-cream-faint font-normal">/ {domainMax}.00</span>
+                    <span className="text-[10px] text-zinc-400 font-normal">/ {domainMax}.00</span>
                   </div>
                 </div>
               );
@@ -166,12 +159,7 @@ export function AvgBar({
             return null;
           }}
         />
-        <Bar
-          dataKey="value"
-          fill="url(#amberBarGradient)"
-          radius={[8, 8, 2, 2]}
-          maxBarSize={48}
-        />
+        <Bar dataKey="value" fill="var(--primary)" radius={[8, 8, 2, 2]} maxBarSize={48} />
       </BarChart>
     </ResponsiveContainer>
   );

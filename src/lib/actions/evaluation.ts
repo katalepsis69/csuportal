@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidateTag } from 'next/cache';
+import { z } from 'zod';
 
 export type SubmitInput = {
   sectionSubjectId: string;
@@ -20,6 +21,41 @@ export type DraftInput = {
 };
 
 export type SubmitResult = { ok: boolean; error?: string };
+
+// trust boundary schemas (client payloads are untrusted by definition)
+const SubmitSchema = z.object({
+  sectionSubjectId: z.string().uuid(),
+  anonymous: z.boolean(),
+  comment: z.string().max(2000, 'Comment is too long (max 2,000 characters).'),
+  sentiment: z
+    .object({
+      label: z.enum(['positive', 'neutral', 'negative']),
+      score: z.number(),
+    })
+    .nullable()
+    .optional(),
+  signaturePoints: z
+    .array(z.array(z.object({ x: z.number(), y: z.number() })))
+    .max(200, 'Signature has too many strokes.'),
+  answers: z
+    .array(
+      z.object({
+        question_id: z.string().uuid(),
+        rating: z.number().int().min(1).max(5),
+      }),
+    )
+    .max(200),
+  payloadHash: z.string().max(128).optional(),
+});
+
+const DraftSchema = z.object({
+  sectionSubjectId: z.string().uuid(),
+  anonymous: z.boolean(),
+  comment: z.string().max(2000, 'Comment is too long (max 2,000 characters).'),
+  answers: z
+    .array(z.object({ question_id: z.string().uuid(), rating: z.number().int().min(1).max(5) }))
+    .max(200),
+});
 
 const FRIENDLY: Record<string, string> = {
   not_enrolled: 'You are not enrolled in this subject.',
@@ -45,22 +81,31 @@ export async function submitEvaluation(input: SubmitInput): Promise<SubmitResult
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return { ok: false, error: 'Please sign in again.' };
 
-  if (input.signaturePoints.length === 0) {
+  // trust boundary: validate shape before it reaches the RPC
+  const parsed = SubmitSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: 'Invalid submission payload.' };
+  const valid = parsed.data;
+
+  if (valid.signaturePoints.length === 0) {
     return { ok: false, error: 'Signature is required.' };
   }
-  if (input.answers.length === 0) {
+  if (valid.answers.length === 0) {
     return { ok: false, error: 'Please rate all questions.' };
   }
 
+  // server-side lexicon is authoritative; the client tag is display-only
+  const { classifyComment } = await import('@/lib/sentiment');
+  const sentiment = await classifyComment(valid.comment);
+
   const { data, error } = await supabase.rpc('rpc_submit_evaluation', {
-    p_section_subject_id: input.sectionSubjectId,
-    p_anonymous: input.anonymous,
-    p_comment: input.comment,
-    p_sentiment: input.sentiment?.label ?? 'neutral',
-    p_sentiment_score: input.sentiment?.score ?? 0,
-    p_signature: input.signaturePoints,
-    p_answers: input.answers,
-    p_payload_hash: input.payloadHash ?? null,
+    p_section_subject_id: valid.sectionSubjectId,
+    p_anonymous: valid.anonymous,
+    p_comment: valid.comment,
+    p_sentiment: sentiment?.label ?? 'neutral',
+    p_sentiment_score: sentiment?.score ?? 0,
+    p_signature: valid.signaturePoints,
+    p_answers: valid.answers,
+    p_payload_hash: valid.payloadHash ?? null,
   });
 
   if (error) return { ok: false, error: error.message };
@@ -80,11 +125,16 @@ export async function saveDraft(input: DraftInput): Promise<SubmitResult> {
   const { data: userData } = await supabase.auth.getUser();
   if (!userData.user) return { ok: false, error: 'Please sign in again.' };
 
+  // trust boundary: validate shape before it reaches the RPC
+  const parsed = DraftSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: 'Could not save draft.' };
+  const valid = parsed.data;
+
   const { data, error } = await supabase.rpc('rpc_save_draft', {
-    p_section_subject_id: input.sectionSubjectId,
-    p_answers: input.answers,
-    p_comment: input.comment,
-    p_anonymous: input.anonymous,
+    p_section_subject_id: valid.sectionSubjectId,
+    p_answers: valid.answers,
+    p_comment: valid.comment,
+    p_anonymous: valid.anonymous,
   });
 
   if (error) return { ok: false, error: error.message };

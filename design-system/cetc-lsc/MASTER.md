@@ -1,106 +1,100 @@
-# CETC-LSC Portal — Design System MASTER
+# CETC-LSC Portal - Design System MASTER
 
-> Source of truth for all visual decisions. Derived from the official CETC-LSC
-> mockup (dark warm institutional brand), WCAG-corrected. Every session builds
-> against this file; page-specific overrides live in `pages/`.
+> Source of truth for all visual decisions (v2, 2026-09-18). **Supersedes the
+> Luminous Espresso / Frosted Glassmorphism system** and all tokens in
+> `docs/superpowers/specs/2026-09-15-cetc-portal-redesign-design.md`.
+> Every session builds against this file.
 
 ## Brand essence
 
-CETC-LSC Faculty Evaluation Portal — warm, institutional, trustworthy.
-Dark espresso canvas, layered brown panels, orange action color, gold accents.
-The mood: a university at evening, not a tech dashboard.
+CETC-LSC Faculty Evaluation Portal - calm, institutional, trustworthy.
+White cards on a zinc-50 canvas, one university accent. The mood: a
+well-lit office in the morning, not a tech dashboard.
 
-## Color tokens (contrast-verified on their intended surfaces)
+**Air is a spacing decision, not a decoration decision.** Hierarchy comes
+from spacing and typography, never from elevation or color.
 
-| Token | Value | Use | Contrast |
-|---|---|---|---|
-| `--canvas` | `#171310` | page background | — |
-| `--panel` | `#3A271B` | cards, sidebar, table rows | — |
-| `--panel-2` | `#4A3427` | hover fills, nested panels | — |
-| `--bg-2` | `#1F1A15` | inputs, tracks, wells | — |
-| `--cream` | `#F5F0E8` | primary text on panel | 11:1 ✓ |
-| `--cream-dim` | `#C8BEB0` | body text on panel | 7:1 ✓ |
-| `--cream-muted` | `#A99D8D` | secondary text on panel | 5:1 ✓ |
-| `--cream-faint` | `#8A7F71` | non-essential hints only (≥14px bold) | 3.4:1 ⚠ large only |
-| `--brand` | `#D86A12` | fills, borders, large numerals on canvas | 4.9:1 on canvas ✓ |
-| `--brand-text` | `#F09A5A` | orange TEXT on panels | 4.8:1 on panel ✓ |
-| `--brand-light` | `#E8873F` | hover, large accents | — |
-| `--brand-hover` | `#C25E0F` | pressed states | — |
-| `--gold` | `#B58A3C` | chart fills, stars, large text | — |
-| `--gold-text` | `#CDA45C` | gold TEXT on panels | 5:1 ✓ |
-| `--positive` | `#82BB82` | positive text/badges on panel | 4.8:1 ✓ |
-| `--positive-fill` | `#6FA86F` | chart fills, donut segments | — |
-| `--negative` | `#C9615A` | negative text/badges on panel | 4.6:1 ✓ |
-| `--negative-fill` | `#B0453D` | chart fills | — |
-| `--subtle` | `rgba(245,240,232,0.10)` | borders | — |
+## Color tokens (shadcn v4 `globals.css` - edit values in place, OKLCH or hex as generated)
 
-Rule: never place `--brand`, `--gold`, or `--negative-fill` as small-text colors
-on panels — use the `-text` variants.
+| Token | Value | Use |
+|---|---|---|
+| `--background` | `#FAFAFA` (zinc-50) | page canvas |
+| `--card` | `#FFFFFF` | all cards, tables, dialogs |
+| `--border` | `#E4E4E7` (zinc-200) | 1px borders, dividers |
+| `--muted` | `#F4F4F5` (zinc-100) | wells, hover fills, table row hover |
+| `--foreground` | `#18181B` (zinc-900) | headings, primary text |
+| `--muted-foreground` | `#71717A` (zinc-500) | secondary text (4.8:1 ok) |
+| `--primary` | `<official CSU maroon hex>` | primary buttons, active states, chart highlights, focus rings |
+| `--primary-foreground` | `#FFFFFF` | text on primary (verify 4.5:1+) |
+| `--gold` | `#B58A3C` | **chart fills / large elements only - never small text** (2.8:1 on white, fails) |
+| `--radius` | `0.625rem` | all radii, concentric (outer = inner + padding) |
+
+Chart palette (muted, no gradients, thin axes, no legend clutter):
+positive `#15803D` / neutral `#A1A1AA` / negative `#DC2626`.
+
+Rule: one accent. Primary color appears only on primary buttons, active
+states, focus rings, and chart highlights - never as decoration.
 
 ## Typography
 
-- Body: system stack (`ui-sans-serif, system-ui, ...`) — zero font cost.
-- Display: **Manrope** (via `next/font`, variable `--font-display`) — page
-  titles, stat values, logo, numbers. Weights 700/800.
-- Scale: page title 26px/700 · panel title 16px/700 · body 14px · meta 12px ·
-  stat value 28px/800. Line-height 1.5 body.
+- One family: **Inter** (`next/font`, weights 400/600 only).
+- `tabular-nums` on every number in tables, KPI cards, and stat values.
+- Scale: page title 24px/600 / card title 16px/600 / body 14px/400 /
+  meta 12px / KPI value 28px/600. Line-height 1.5.
 
-## Layout
+## Layout & space
 
-- Navbar (sticky): logo `CETC-LSC` (orange accent), role links, profile pill
-  (initials avatar + name + role chip + sign out).
-- Sidebar 240px, desktop only (`md:`), role-specific sections — never show nav
-  a role can't access (RLS-aligned):
-  - **student**: Main (Dashboard, Evaluate Faculty, My Evaluations)
-  - **faculty**: Main (My Results)
-  - **dean**: Main (Dashboard), Analytics (History, Reports)
-  - **admin**: Main (Admin, Dashboard), Analytics (Reports)
-- Content: 32/40px padding, stat grid 4-up, content grid 1.3fr/1fr.
-- Density: dashboard-dense (8–24px component padding).
+- Content centered, `max-w-6xl`, never touching screen edges.
+- `p-6`+ inside cards, `gap-6` grids - gaps between containers exceed
+  inner padding (Gestalt: air lives between cards, not inside them).
+- Shadows barely exist: `shadow-xs` only. Hierarchy from spacing and type.
+- Sidebar 240px desktop only, role-specific sections (RLS-aligned) -
+  same nav contract as before.
+- Star-rating inputs: 44x44px minimum touch targets.
 
-## Icons
+## Tables
 
-Phosphor **duotone** weight, vendored as React components in
-`src/components/icons.tsx` (generated from the local pack — zero npm dep).
-`fill="currentColor"`, `aria-hidden`, sized via className. No emoji as icons.
+Subtle row dividers (`--border`), hover `zinc-50`, sticky header,
+no zebra stripes, `tabular-nums`, right-aligned numeric columns.
+
+## Empty states
+
+One icon, one line of text, generous padding. A zero-state list must
+look intentional.
 
 ## Motion
 
-- Baseline (everywhere, CSS only): 150–250ms hover/focus transitions,
-  card lift `translateY(-2px)` + border glow on hover, orange focus rings
-  (`:focus-visible`, 3px `rgba(216,106,18,0.35)`).
-- Choreographed (dean dashboard only, `motion` library): stat-card +
-  panel entrance stagger, 300–450ms, `ease-out`, y-offset 16px, 60ms each.
-- `prefers-reduced-motion: reduce` → all transitions/animations off, stagger
-  renders final state immediately.
+- CSS only: 150-200ms fade/slide on hover/focus/mount. Nothing else, rarely.
+- No animation library. `transform`/`opacity` only.
+- `prefers-reduced-motion: reduce` -> all transitions off, final states render immediately.
 
-## Components (class contract)
+## Accessibility (hard requirements)
 
-`.btn` (brand fill, dark text on orange), `.btn-outline` (ghost, subtle
-border), `.btn-danger`, `.input` (bg-2, brand focus ring), `.card` (panel,
-subtle border, 12px radius, hover lift), `.table/.th/.td`, `.badge`
-(+ `.badge-positive/.badge-gold/.badge-negative/.badge-brand`), `.chip`
-(role chip), `.panel-title`, `.stat-label/.stat-value`, `.side-link`
-(sidebar item), `.success-banner`, `.side-section-h`.
+- Focus: `focus-visible:ring-2 focus-visible:ring-offset-2` on every
+  interactive element (rings in `--primary`).
+- Contrast: 4.5:1 body text, 3:1 large headings. zinc-500 on white = 4.8:1 ok.
+- Icons decorative -> `aria-hidden`; star inputs get accessible labels.
 
-## Skill & process gates (gap analysis — 2026-09-13)
+## Icons
 
-Inventory is design-rich (ui-ux-pro-max, impeccable, design-taste-frontend,
-high-end-visual-design, web-design-guidelines, emilkowalski suite ×12,
-brandkit). **No new skills required.** The gaps are process gates:
+`lucide-react` (already installed). `aria-hidden`, sized via className.
+No emoji as icons.
 
-| Gate | Status | Owner skill/agent |
-|---|---|---|
-| Accessibility (contrast, focus, keyboard, reduced-motion) | ✅ applied in the rebrand | `ecc:accessibility`, ui-ux-pro-max checklist |
-| Security review of new write surfaces (drafts RPC) | ✅ self-reviewed with migration 0004 (enrollment check, size caps, student-only RLS); standard security headers deployed | `ecc:security-review` |
-| Test coverage (eval submit, draft, RLS smoke) | ✅ 10 API-level tests (`npm test`) — caught a real RPC-overload bug (fixed in migration 0005) | `ecc:react-testing`, `ecc:e2e-testing` |
-| Load test (500 concurrent, k6 — plan §7) | ✅ k6 harness in `k6/` + `scripts/loadtest-setup/teardown.mjs`; 20-VU smoke: 0% errors, p95 250ms; full 500-VU run documented | k6 OSS |
-| Dependency updates | ✅ automated | Dependabot (weekly) |
-| Design token persistence | ✅ this file | ui-ux-pro-max `--persist` pattern |
+## Components (shadcn/ui)
 
-Known operational facts: Supabase auth rate-limits ~60 logins/min per IP
-(measured) — irrelevant for real students on distinct IPs, relevant for
-computer-lab rollouts; RPC submit path sustained ~105 req/s from 20 VUs with
-p95 250ms.
+Use shadcn primitives as generated - Button, Card, Table, Tabs, Dialog,
+Command (cmdk palette), Badge, Form (RHF+zod). Token edits in this file are
+the only theme work.
+
+**Transitional note:** the legacy class contract in `globals.css`
+(`.btn/.card/.table/.badge/...`) is retained while page markup migrates to
+shadcn primitives page by page. It is re-skinned to these tokens - no new
+markup should be written against it.
+
+## What this file supersedes
+
+- Old espresso tokens in `design-system/cetc-lsc/` -> replaced by this file.
+- `docs/superpowers/specs/2026-09-15-cetc-portal-redesign-design.md` -> superseded.
+- `docs/superpowers/plans/2026-09-15-cetc-portal-redesign.md` -> superseded.
 
 Re-review gates after: new features, new pages, or each semester rollout.

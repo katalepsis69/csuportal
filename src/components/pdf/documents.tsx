@@ -179,8 +179,7 @@ export function buildDocument(type: string, data: any): any {
             <View key={i} style={styles.comment}>
               <T>{x.comment}</T>
               <Text style={styles.muted}>
-                {x.label ?? 'neutral'} · {x.faculty_name} · {x.subject_code} ·{' '}
-                {x.anonymous ? 'anonymous' : x.student_name}
+                {x.label ?? 'neutral'} · {x.faculty_name} · {x.subject_code}
               </Text>
             </View>
           ))}

@@ -1,9 +1,10 @@
 import { type NextRequest } from 'next/server';
-import { updateSession } from '@/lib/supabase/middleware';
+import { refreshSession } from '@/lib/supabase/middleware';
 
-// Next.js 16 "proxy" convention (formerly middleware)
+// Next.js 16 "proxy" convention (formerly middleware).
+// Session refresh only — auth + role guards live in route layouts.
 export async function proxy(request: NextRequest) {
-  return await updateSession(request);
+  return await refreshSession(request);
 }
 
 export const config = {
