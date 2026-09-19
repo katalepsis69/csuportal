@@ -11,6 +11,7 @@ import {
   IconGearLine,
 } from '@/components/dashboard/StaffScaffold';
 import { FacultyClassesTable, type FacultySubjectRow } from '@/components/dashboard/FacultyClassesTable';
+import { SemesterSelect } from '@/components/dashboard/SemesterSelect';
 
 export const dynamic = 'force-dynamic';
 
@@ -122,7 +123,7 @@ export default async function FacultyPage({
       sublabel: 'Total answers submitted',
       trend: '+15.2%',
       trendPositive: true,
-      color: '#6FA86F',
+      color: 'var(--positive)',
       sparkline: [12, 18, 22, 28, 35, 40, 44, 48],
       icon: <IconUsersLine className="h-4 w-4" />,
     },
@@ -132,7 +133,7 @@ export default async function FacultyPage({
       sublabel: `${overview.sentiment?.positive ?? 38} positive student remarks`,
       trend: 'High',
       trendPositive: true,
-      color: '#B58A3C',
+      color: 'var(--primary)',
       sparkline: [75, 78, 80, 82, 85, 86, 88, 90],
       icon: <IconBookLine className="h-4 w-4" />,
     },
@@ -156,27 +157,10 @@ export default async function FacultyPage({
       metrics={facultyMetrics}
       actionButton={
         <div className="flex flex-wrap items-center gap-2">
-          <form method="get" className="flex items-center gap-1.5">
-            <select
-              name="sem"
-              defaultValue={semesterId ?? ''}
-              className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer min-h-[36px]"
-            >
-              <option value="">Current semester</option>
-              {(semesters as Semester[] | null)?.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.academic_year} {s.term}
-                  {s.is_current ? ' (current)' : ''}
-                </option>
-              ))}
-            </select>
-            <button
-              type="submit"
-              className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-zinc-50 transition-colors min-h-[36px] active:scale-[0.98]"
-            >
-              Filter
-            </button>
-          </form>
+          <SemesterSelect
+            semesters={(semesters ?? []) as Semester[]}
+            currentId={semesterId}
+          />
           <PdfDownloadButton
             type="faculty"
             filename={`faculty-results-${semesterLabel.replace(/\s+/g, '-')}.pdf`}
@@ -193,13 +177,13 @@ export default async function FacultyPage({
         {/* Question-level score bar chart & Sentiment Bento */}
         <div className="grid gap-5 lg:grid-cols-2">
           {/* Average Rating per Question */}
-          <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm ">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-sm font-semibold text-foreground">Average Rating per Question</h2>
                 <p className="text-xs text-muted-foreground mt-0.5">Performance index across each rubric question</p>
               </div>
-              <span className="rounded-md bg-white px-2.5 py-0.5 text-[10px] text-muted-foreground border border-border">
+              <span className="rounded-md bg-muted px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border">
                 Scale 1-5
               </span>
             </div>
@@ -212,11 +196,11 @@ export default async function FacultyPage({
           </div>
 
           {/* Student Feedback Sentiment */}
-          <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm flex flex-col justify-between ">
+          <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-1">
                 <h2 className="text-sm font-semibold text-foreground">Student Feedback Sentiment</h2>
-                <span className="inline-flex items-center gap-1 rounded-full bg-status-sage/15 px-2 py-0.5 text-[10px] text-status-sage border border-status-sage/30">
+                <span className="inline-flex items-center gap-1 rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
                   {positivePct}% Positive
                 </span>
               </div>
@@ -235,7 +219,7 @@ export default async function FacultyPage({
         </div>
 
         {/* Anonymous Student Comments Roster */}
-        <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm space-y-4 ">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-xs space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-semibold text-foreground">
@@ -245,14 +229,14 @@ export default async function FacultyPage({
                 Direct, unedited feedback from enrolled students across all class sections.
               </p>
             </div>
-            <span className="text-[11px] text-muted-foreground/60">Encrypted &amp; De-identified</span>
+            <span className="text-[11px] text-muted-foreground/70 font-mono">Encrypted &amp; De-identified</span>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
             {(overview.comments ?? []).slice(0, 10).map((c, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-border bg-white/60 p-4 text-xs text-foreground leading-relaxed hover:border-primary/30 transition-colors shadow-sm italic"
+                className="rounded-lg border border-border bg-muted/30 p-4 text-xs text-foreground leading-relaxed hover:border-primary/30 transition-colors italic"
               >
                 &ldquo;{c.comment}&rdquo;
               </div>

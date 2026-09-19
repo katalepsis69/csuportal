@@ -160,43 +160,37 @@ export function StaffStatCard({
   const color = metric.color ?? 'var(--primary)';
 
   return (
-    <div className="@container rounded-2xl border border-subtle/80 bg-panel/75 backdrop-blur-xl p-5 shadow-beautiful-sm hover:border-brand/40 transition-all duration-300 relative overflow-hidden group ">
-      {/* Specular 1px Top Rim Reflection */}
-      <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
-
-      {/* Ambient background glow */}
-      <div className="absolute -right-8 -bottom-8 w-28 h-28 rounded-full bg-brand/8 blur-2xl pointer-events-none group-hover:bg-brand/15 transition-colors" />
-
-      <div className="flex items-center justify-between relative z-10">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-panel2/80 border border-brand/20 text-brand shadow-sm group-hover:scale-105 transition-transform">
+    <div className="rounded-xl border border-border bg-card p-5 shadow-xs transition-colors hover:border-primary/30 relative flex flex-col justify-between">
+      <div className="flex items-center justify-between">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-foreground/80">
           {metric.icon ?? <IconUsersLine className="h-4 w-4" />}
         </div>
         <Sparkline color={color} points={metric.sparkline} />
       </div>
 
-      <div className="mt-4 relative z-10">
-        <p className="text-[11px] font-semibold uppercase tracking-wider text-cream-muted">
+      <div className="mt-4">
+        <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           {metric.label}
         </p>
         <div className="mt-1 flex items-baseline gap-2.5">
-          <span className="text-2xl lg:text-3xl font-extrabold tracking-tight text-cream font-display tabular-nums">
+          <span className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground font-display tabular-nums">
             {metric.value}
           </span>
           {metric.trend && (
             <span
-              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase border ${
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase border ${
                 metric.trendPositive !== false
-                  ? 'bg-positive/15 text-positive border-positive/30'
-                  : 'bg-negative/15 text-negative border-negative/30'
+                  ? 'bg-positive/10 text-positive border-positive/25'
+                  : 'bg-destructive/10 text-destructive border-destructive/25'
               }`}
             >
-              <span className={`h-1.5 w-1.5 rounded-full ${metric.trendPositive !== false ? 'bg-positive' : 'bg-negative'}`} />
+              <span className={`h-1.5 w-1.5 rounded-full ${metric.trendPositive !== false ? 'bg-positive' : 'bg-destructive'}`} />
               {metric.trend}
             </span>
           )}
         </div>
         {metric.sublabel && (
-          <p className="mt-1 text-xs text-cream-faint font-medium">{metric.sublabel}</p>
+          <p className="mt-1 text-xs text-muted-foreground font-normal">{metric.sublabel}</p>
         )}
       </div>
     </div>
@@ -221,39 +215,39 @@ export function StaffScaffold({
 }) {
   return (
     <div className="min-w-0 space-y-6">
-      {/* Top Utility Bar (breadcrumb) */}
-      <div className="card rounded-2xl px-4 py-2.5 shadow-beautiful-sm border border-subtle/80 flex items-center justify-between">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-cream-muted">
+      {/* Top Utility Bar (Breadcrumb & Audited Badge) */}
+      <div className="flex items-center justify-between pb-1 text-xs">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground">
           {breadcrumb.map((crumb, idx) => (
             <React.Fragment key={crumb}>
-              {idx > 0 && <span className="text-cream-faint">/</span>}
-              <span className={idx === breadcrumb.length - 1 ? 'font-semibold text-cream' : 'text-cream-muted'}>
+              {idx > 0 && <span className="text-muted-foreground/40">/</span>}
+              <span className={idx === breadcrumb.length - 1 ? 'font-semibold text-foreground' : 'text-muted-foreground'}>
                 {crumb}
               </span>
             </React.Fragment>
           ))}
         </nav>
 
-        <span className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
           <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />
-          Audited & Sealed
+          Audited &amp; Sealed
         </span>
       </div>
 
       {/* Action Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-1 border-b border-subtle/60">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-cream font-display">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground font-display">
             {title}
           </h1>
-          <p className="text-xs sm:text-sm text-cream-muted mt-0.5">{subtitle}</p>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{subtitle}</p>
         </div>
         {actionButton && <div className="shrink-0">{actionButton}</div>}
       </div>
 
       {/* Metric Bento Summary Grid */}
       {metrics && metrics.length > 0 && (
-        <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {metrics.map((m, idx) => (
             <StaffStatCard key={idx} metric={m} />
           ))}
@@ -261,7 +255,7 @@ export function StaffScaffold({
       )}
 
       {/* Main Body Content */}
-      <div className="space-y-4">
+      <div className="space-y-6">
         {children}
       </div>
     </div>

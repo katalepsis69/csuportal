@@ -31,12 +31,12 @@ export function FacultyClassesTable({
   }, [classes, search]);
 
   return (
-    <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md overflow-hidden ">
+    <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
       {/* Table Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-6 border-b border-border bg-muted0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-6 border-b border-border bg-muted/30">
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-foreground">Assigned Teaching Loads</span>
-          <span className="rounded-full bg-white px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
+          <span className="rounded-full bg-card px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
             {filtered.length} of {classes.length} classes
           </span>
         </div>
@@ -49,7 +49,7 @@ export function FacultyClassesTable({
             placeholder="Search classes by code or title…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-border bg-white pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary min-h-[38px]"
+            className="w-full rounded-xl border border-border bg-card pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[38px] transition-colors"
           />
         </div>
       </div>
@@ -58,7 +58,7 @@ export function FacultyClassesTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-border bg-white/30 text-muted-foreground uppercase tracking-wider text-[10px]">
+            <tr className="border-b border-border bg-muted/40 text-muted-foreground uppercase tracking-wider text-[10px]">
               <th className="py-3 px-5 font-semibold">Subject Code &amp; Title</th>
               <th className="py-3 px-4 font-semibold">Section</th>
               <th className="py-3 px-4 font-semibold">Student Submissions</th>
@@ -68,7 +68,7 @@ export function FacultyClassesTable({
           </thead>
           <tbody className="divide-y divide-border">
             {filtered.map((c, i) => (
-              <tr key={i} className="hover:bg-muted transition-colors">
+              <tr key={i} className="hover:bg-muted/50 transition-colors">
                 {/* Subject Code & Name */}
                 <td className="py-3.5 px-5 whitespace-nowrap">
                   <div className="flex items-center gap-2.5">
@@ -101,8 +101,8 @@ export function FacultyClassesTable({
 
                 {/* Status */}
                 <td className="py-3.5 px-5 text-right whitespace-nowrap">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-status-sage/15 px-2.5 py-0.5 text-[10px] font-semibold text-status-sage border border-status-sage/30">
-                    <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
+                    <span className="h-1.5 w-1.5 rounded-full bg-positive" />
                     Active Term
                   </span>
                 </td>
