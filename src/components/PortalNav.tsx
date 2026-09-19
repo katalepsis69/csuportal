@@ -217,9 +217,9 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
       {/* ========================================================================= */}
       {/* 1. MOBILE TOP APP BAR (< md)                                               */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-card px-4 py-2.5 backdrop-blur-xl md:hidden">
+      <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-card px-4 py-2.5 md:hidden">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-white border border-primary/40 flex items-center justify-center p-1.5 shadow-md">
+          <div className="w-8 h-8 rounded-lg bg-card border border-primary/40 flex items-center justify-center p-1.5 shadow-xs">
             <svg viewBox="0 0 48 48" className="w-full h-full text-primary" fill="none" stroke="currentColor" strokeWidth="2.5">
               <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" className="stroke-primary fill-primary/10" />
               <circle cx="24" cy="24" r="4.5" className="fill-primary stroke-none" />
@@ -227,8 +227,8 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="font-display font-extrabold text-xs text-white">CSU CETC</span>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-primary/20 text-primary border border-primary/30">
+              <span className="font-display font-bold text-xs text-foreground">CSU CETC</span>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-primary/15 text-primary border border-primary/25">
                 {config.roleTag}
               </span>
             </div>
@@ -241,7 +241,7 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
             type="button"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
-            className="p-1.5 rounded-lg border border-border bg-card text-foreground hover:text-primary"
+            className="p-1.5 rounded-lg border border-border bg-card text-foreground hover:text-primary transition-colors"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -257,14 +257,14 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
         <div className="fixed inset-0 z-50 md:hidden" role="dialog" aria-modal="true">
           <div
             onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 bg-black/70 backdrop-blur-sm"
+            className="fixed inset-0 bg-black/50 backdrop-blur-xs"
             aria-hidden="true"
           />
-          <aside className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-white border-r border-border p-5 flex flex-col justify-between shadow-2xl overflow-y-auto">
+          <aside className="fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-card border-r border-border p-5 flex flex-col justify-between shadow-xl overflow-y-auto">
             <div>
               <div className="flex items-center justify-between pb-5 border-b border-border">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-white border border-primary/40 flex items-center justify-center p-1.5 shadow-md">
+                  <div className="w-9 h-9 rounded-xl bg-card border border-primary/40 flex items-center justify-center p-1.5 shadow-xs">
                     <svg viewBox="0 0 48 48" className="w-full h-full text-primary" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" className="stroke-primary fill-primary/10" />
                       <circle cx="24" cy="24" r="4.5" className="fill-primary stroke-none" />
@@ -272,8 +272,8 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
-                      <span className="font-display font-extrabold text-xs text-white">CSU CETC</span>
-                      <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-primary/20 text-primary border border-primary/30">
+                      <span className="font-display font-bold text-xs text-foreground">CSU CETC</span>
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-primary/15 text-primary border border-primary/25">
                         {config.roleTag}
                       </span>
                     </div>
@@ -290,7 +290,7 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
               </div>
 
               <div className="mt-6 space-y-1.5">
-                <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground/60 uppercase font-semibold">
+                <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground/80 uppercase font-semibold">
                   {config.sectionTitle}
                 </div>
                 {config.items.map((item) => {
@@ -299,19 +299,19 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                     <Link
                       key={item.href}
                       href={item.href}
+                      onClick={() => setMobileOpen(false)}
                       className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all ${
                         active
-                          ? 'bg-gradient-to-r from-primary/20 to-transparent border border-primary/40 text-white  font-semibold'
-                          : 'text-muted-foreground hover:text-white hover:bg-muted'
+                          ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                          : 'text-muted-foreground hover:text-foreground hover:bg-muted border-l-4 border-transparent'
                       }`}
                     >
                       <div className="flex items-center gap-3">
                         <span className={active ? 'text-primary' : 'text-muted-foreground'}>{item.icon}</span>
                         <span>{item.label}</span>
                       </div>
-                      {active && <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />}
-                      {item.badge && !active && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                      {item.badge && (
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${active ? 'bg-primary/20 text-primary font-bold' : 'bg-muted text-muted-foreground'}`}>
                           {item.badge}
                         </span>
                       )}
@@ -323,11 +323,11 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
 
             <div className="pt-4 border-t border-border space-y-3">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/40 to-white border border-primary/50 flex items-center justify-center font-display font-bold text-xs text-white">
+                <div className="w-9 h-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-display font-bold text-xs">
                   {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-semibold text-white truncate">{displayName}</h4>
+                  <h4 className="text-xs font-semibold text-foreground truncate">{displayName}</h4>
                   <span className="text-[9px] tracking-wider font-semibold text-primary bg-primary/15 px-1 py-0.5 rounded">
                     {roleSubtitle}
                   </span>
@@ -336,7 +336,7 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
               <form action={signOut} className="w-full">
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-muted hover:bg-muted text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-muted hover:bg-muted/80 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <IconSignOutLine className="w-4 h-4" />
                   <span>Exit Session</span>
@@ -348,27 +348,27 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
       )}
 
       {/* ========================================================================= */}
-      {/* 3. DESKTOP PERMANENT W-64 FROSTED SIDEBAR (Matching Reference HTML)         */}
+      {/* 3. DESKTOP PERMANENT W-64 SIDEBAR                                          */}
       {/* ========================================================================= */}
-      <aside className="hidden md:flex w-64 flex-shrink-0 bg-card backdrop-blur-xl border-r border-border flex-col justify-between fixed top-0 left-0 bottom-0 z-30 transition-all">
+      <aside className="hidden md:flex w-64 flex-shrink-0 bg-card border-r border-border flex-col justify-between fixed top-0 left-0 bottom-0 z-30 transition-all">
         {/* Top Brand Area */}
         <div className="p-5">
           {/* Logo & College Heading */}
           <Link href="/" className="flex items-center gap-3.5 pb-6 border-b border-border group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-zinc-50 to-white border border-border flex items-center justify-center p-2 relative shadow-lg group-hover:border-primary/40 transition-colors">
+            <div className="w-10 h-10 rounded-xl bg-card border border-border flex items-center justify-center p-2 relative shadow-xs group-hover:border-primary/40 transition-colors">
               <svg viewBox="0 0 48 48" className="w-full h-full text-primary" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polygon points="24,4 42,14 42,34 24,44 6,34 6,14" className="stroke-primary fill-primary/10" />
-                <line x1="24" y1="4" x2="24" y2="44" stroke="#EDEDED" strokeWidth="1.8" />
-                <line x1="6" y1="14" x2="42" y2="34" stroke="#EDEDED" strokeWidth="1.8" />
-                <line x1="6" y1="34" x2="42" y2="14" stroke="#EDEDED" strokeWidth="1.8" />
+                <line x1="24" y1="4" x2="24" y2="44" stroke="#D4D4D8" strokeWidth="1.8" />
+                <line x1="6" y1="14" x2="42" y2="34" stroke="#D4D4D8" strokeWidth="1.8" />
+                <line x1="6" y1="34" x2="42" y2="14" stroke="#D4D4D8" strokeWidth="1.8" />
                 <circle cx="24" cy="24" r="4.5" className="fill-primary stroke-none" />
               </svg>
-              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-white" />
+              <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-primary border-2 border-card" />
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <span className="font-display font-extrabold text-sm tracking-tight text-white">CSU CETC</span>
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-primary/20 text-primary border border-primary/30">
+                <span className="font-display font-extrabold text-sm tracking-tight text-foreground">CSU CETC</span>
+                <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-primary/15 text-primary border border-primary/25">
                   {config.roleTag}
                 </span>
               </div>
@@ -377,8 +377,8 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
           </Link>
 
           {/* Navigation Links Group */}
-          <div className="mt-6 space-y-1.5">
-            <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground/60 uppercase font-semibold">
+          <div className="mt-6 space-y-1">
+            <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground/80 uppercase font-semibold">
               {config.sectionTitle}
             </div>
 
@@ -388,69 +388,54 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`group flex items-center justify-between px-3.5 py-2.5 rounded-xl font-medium text-xs sm:text-[13px] transition-all duration-200 relative ${
+                  className={`group flex items-center justify-between px-3 py-2 rounded-xl font-medium text-xs sm:text-[13px] transition-all duration-150 ${
                     active
-                      ? 'bg-gradient-to-r from-primary/15 to-transparent border border-primary/30 text-white  font-semibold'
-                      : 'text-muted-foreground hover:text-white hover:bg-muted border border-transparent'
+                      ? 'bg-primary/10 text-primary font-semibold border-l-4 border-primary'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted border-l-4 border-transparent'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${active ? 'bg-primary shadow-[0_0_8px_var(--primary)]' : 'bg-transparent'}`} />
+                  <div className="flex items-center gap-2.5">
                     <span className={active ? 'text-primary' : 'text-muted-foreground group-hover:text-primary transition-colors'}>
                       {item.icon}
                     </span>
                     <span className="tracking-tight">{item.label}</span>
                   </div>
 
-                  {active && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
-                  {item.badge && !active && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                  {item.badge && (
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${active ? 'bg-primary/20 text-primary font-bold' : 'bg-muted text-muted-foreground'}`}>
                       {item.badge}
                     </span>
                   )}
                   {item.dotPulse && !active && (
-                    <span className="w-2 h-2 rounded-full bg-status-sage/80 animate-pulse" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-positive animate-pulse" />
                   )}
                 </Link>
               );
             })}
           </div>
 
-          {/* System Diagnostic Widget */}
-          <div className="mt-8 p-3 rounded-xl bg-white/60 border border-border">
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1.5">
-              <span>{role === 'student' ? 'Session Progress' : 'Ledger Integrity'}</span>
-              <span className={role === 'student' ? 'text-primary font-semibold' : 'text-status-sage font-semibold'}>
-                {role === 'student' ? '70%' : '100% Valid'}
-              </span>
+          {/* Academic Session & Security Status */}
+          <div className="mt-8 p-3 rounded-xl bg-muted/50 border border-border">
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
+              <span>Academic Period</span>
+              <span className="text-foreground font-semibold tabular-nums">AY 2026–2027</span>
             </div>
-            <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  role === 'student'
-                    ? 'bg-gradient-to-r from-primary to-primary w-[70%]'
-                    : 'bg-gradient-to-r from-primary to-status-sage w-full'
-                }`}
-              />
+            <div className="flex items-center gap-1.5 text-[10px] font-medium text-positive">
+              <span className="h-1.5 w-1.5 rounded-full bg-positive" />
+              <span>{role === 'student' ? 'Evaluation Window Active' : 'Quorum & RLS Active'}</span>
             </div>
-            <p className="text-[10px] text-muted-foreground/70 mt-1.5 flex items-center gap-1">
-              <svg className="w-3 h-3 text-status-sage" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              <span>{role === 'student' ? 'Encrypted Draft Active' : 'SHA-256 Ledger Synchronized'}</span>
-            </p>
           </div>
         </div>
 
-        {/* Bottom Profile Card & Theme Toggle */}
+        {/* Bottom Profile Card */}
         <div className="p-4 border-t border-border bg-card">
-          <div className="flex items-center justify-between mb-3.5">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary/40 to-white border border-primary/50 flex items-center justify-center font-display font-bold text-xs text-white shadow-md tracking-wider">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-display font-bold text-xs shadow-xs tracking-wider shrink-0">
                 {initials}
               </div>
-              <div className="min-w-0">
-                <h4 className="text-xs font-semibold text-white truncate">{displayName}</h4>
+              <div className="min-w-0 flex-1">
+                <h4 className="text-xs font-semibold text-foreground truncate">{displayName}</h4>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[9px] tracking-wider font-semibold text-primary bg-primary/15 px-1 py-0.2 rounded">
                     {roleSubtitle}
@@ -462,17 +447,17 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
 
           {/* Sign out */}
           <div className="flex items-center justify-end pt-2 border-t border-border">
-            <form action={signOut}>
+            <form action={signOut} className="w-full">
               <button
                 type="submit"
-                className="text-[11px] text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors font-medium px-2 py-1 rounded hover:bg-muted"
+                className="w-full text-[11px] text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 transition-colors font-medium py-1.5 rounded-lg hover:bg-muted"
               >
                 <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
                   <polyline points="16 17 21 12 16 7" />
                   <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
-                <span>Exit</span>
+                <span>Exit Session</span>
               </button>
             </form>
           </div>
