@@ -262,9 +262,9 @@ function LoginContent() {
   }
 
   return (
-    <main className="min-h-[100dvh] w-full flex flex-col md:grid md:grid-cols-12 bg-canvas text-cream selection:bg-brand/30">
+    <main className="min-h-[100dvh] w-full flex flex-col md:grid md:grid-cols-12 bg-background text-foreground">
       {/* Mobile Masthead (< 768px) */}
-      <div className="md:hidden flex flex-col items-center pt-5 pb-3 px-4 text-center border-b border-subtle bg-panel/40">
+      <div className="md:hidden flex flex-col items-center pt-5 pb-3 px-4 text-center border-b border-border bg-card">
         <div className="flex items-center gap-2.5">
           <Image
             src="/csu-cetc-logo.png"
@@ -276,24 +276,23 @@ function LoginContent() {
           />
           <div className="text-left">
             <div
-              className="text-lg font-extrabold tracking-wide leading-tight"
-              style={{ fontFamily: 'var(--font-display)' }}
+              className="text-lg font-bold tracking-wide leading-tight font-display"
             >
-              CSU <span className="text-brand">CETC</span>
+              CSU <span className="text-primary">CETC</span>
             </div>
-            <p className="text-[10px] text-cream-muted">Cotabato State University</p>
+            <p className="text-[10px] text-muted-foreground">Cotabato State University</p>
           </div>
         </div>
 
         {/* Mobile Portal Switcher */}
-        <div className="w-full max-w-[340px] mt-4 grid grid-cols-2 rounded-xl bg-bg2/90 p-1 border border-subtle shadow-inner">
+        <div className="w-full max-w-[340px] mt-4 grid grid-cols-2 rounded-xl bg-muted p-1 border border-border">
           <button
             type="button"
             onClick={() => handlePortalChange('student')}
-            className={`rounded-lg py-1.5 text-xs font-semibold transition-all ${
+            className={`rounded-lg py-1.5 text-xs font-semibold transition-all cursor-pointer ${
               portal === 'student'
-                ? 'bg-panel text-cream shadow-sm border border-subtle'
-                : 'text-cream-muted hover:text-cream'
+                ? 'bg-card text-foreground shadow-xs border border-border'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             Student Portal
@@ -301,46 +300,46 @@ function LoginContent() {
           <button
             type="button"
             onClick={() => handlePortalChange('staff')}
-            className={`rounded-lg py-1.5 text-xs font-semibold transition-all ${
+            className={`rounded-lg py-1.5 text-xs font-semibold transition-all cursor-pointer ${
               portal === 'staff'
-                ? 'bg-panel text-cream shadow-sm border border-subtle'
-                : 'text-cream-muted hover:text-cream'
+                ? 'bg-card text-foreground shadow-xs border border-border'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
-            Faculty & Staff
+            Faculty &amp; Staff
           </button>
         </div>
       </div>
 
       {/* Left Column: Authentication Form Panel (LEFT SIDE) */}
-      <section className="md:col-span-6 flex flex-col items-center justify-center p-4 sm:p-8 xl:p-12 border-b md:border-b-0 md:border-r border-subtle relative bg-canvas">
+      <section className="md:col-span-6 flex flex-col items-center justify-center p-4 sm:p-8 xl:p-12 border-b md:border-b-0 md:border-r border-border relative bg-background">
         {/* Desktop Portal Switcher Pill */}
         <div className="w-full max-w-[440px] mb-5 hidden md:block">
-          <div className="rounded-2xl bg-bg2/90 p-1.5 border border-subtle shadow-md">
+          <div className="rounded-xl bg-muted p-1 border border-border shadow-xs">
             <div className="grid grid-cols-2 gap-1">
               <button
                 type="button"
                 onClick={() => handlePortalChange('student')}
-                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs font-semibold transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   portal === 'student'
-                    ? 'bg-panel text-cream shadow-sm border border-subtle font-bold'
-                    : 'text-cream-muted hover:text-cream hover:bg-panel/40'
+                    ? 'bg-card text-foreground shadow-xs border border-border'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
                 }`}
               >
-                <span className={`h-2 w-2 rounded-full ${portal === 'student' ? 'bg-brand' : 'bg-cream-muted/40'}`} />
+                <span className={`h-2 w-2 rounded-full ${portal === 'student' ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
                 Student Portal
               </button>
               <button
                 type="button"
                 onClick={() => handlePortalChange('staff')}
-                className={`flex items-center justify-center gap-2 rounded-xl py-2.5 px-3 text-xs font-semibold transition-all duration-200 ${
+                className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-semibold transition-all duration-200 cursor-pointer ${
                   portal === 'staff'
-                    ? 'bg-panel text-cream shadow-sm border border-subtle font-bold'
-                    : 'text-cream-muted hover:text-cream hover:bg-panel/40'
+                    ? 'bg-card text-foreground shadow-xs border border-border'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
                 }`}
               >
-                <span className={`h-2 w-2 rounded-full ${portal === 'staff' ? 'bg-brand' : 'bg-cream-muted/40'}`} />
-                Faculty & Staff
+                <span className={`h-2 w-2 rounded-full ${portal === 'staff' ? 'bg-primary' : 'bg-muted-foreground/30'}`} />
+                Faculty &amp; Staff
               </button>
             </div>
           </div>
@@ -348,32 +347,31 @@ function LoginContent() {
 
         {/* Authentication Card */}
         <div className="w-full max-w-[440px]">
-          <div className="card space-y-5 transition-all duration-200 shadow-xl border border-subtle">
+          <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-xs space-y-5">
             {/* Header Brand */}
-            <div className="flex items-center justify-between pb-1 border-b border-subtle/60">
+            <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-3">
                 <Image
                   src="/csu-cetc-logo.png"
                   alt="CSU CETC"
                   width={40}
                   height={40}
-                  className="h-10 w-10 object-contain shrink-0 drop-shadow"
+                  className="h-10 w-10 object-contain shrink-0"
                 />
                 <div>
                   <div
-                    className="text-lg font-extrabold tracking-wide leading-tight"
-                    style={{ fontFamily: 'var(--font-display)' }}
+                    className="text-lg font-bold tracking-wide leading-tight font-display"
                   >
-                    CSU <span className="text-brand">CETC</span>
+                    CSU <span className="text-primary">CETC</span>
                   </div>
-                  <p className="text-[11px] text-cream-muted">
+                  <p className="text-[11px] text-muted-foreground">
                     {portal === 'student' ? 'Student Evaluation Portal' : 'Faculty, Dean & Admin Portal'}
                   </p>
                 </div>
               </div>
 
               {/* Portal Badge */}
-              <span className="badge badge-brand text-[10px] tracking-wider uppercase">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-primary/10 text-primary border border-primary/25">
                 {portal === 'student' ? 'Student' : 'Staff'}
               </span>
             </div>
@@ -381,8 +379,7 @@ function LoginContent() {
             {/* Title & Subtitle */}
             <div className="space-y-1">
               <h2
-                className="text-2xl font-bold tracking-tight text-cream"
-                style={{ fontFamily: 'var(--font-display)' }}
+                className="text-2xl font-bold tracking-tight text-foreground font-display"
               >
                 {portal === 'student'
                   ? mode === 'signup'
@@ -394,7 +391,7 @@ function LoginContent() {
                   ? 'Reset Staff Password'
                   : 'Staff Sign in'}
               </h2>
-              <p className="text-xs text-cream-muted">
+              <p className="text-xs text-muted-foreground">
                 {portal === 'student'
                   ? mode === 'signup'
                     ? 'Enter your undergraduate credentials to register.'
@@ -409,7 +406,7 @@ function LoginContent() {
 
             {/* Segmented Control for Student Portal (Login / Signup) */}
             {portal === 'student' && mode !== 'forgot' && (
-              <div className="grid grid-cols-2 rounded-lg bg-bg2 p-1 border border-subtle">
+              <div className="grid grid-cols-2 rounded-lg bg-muted p-1 border border-border">
                 <button
                   type="button"
                   onClick={() => {
@@ -417,10 +414,10 @@ function LoginContent() {
                     setError(null);
                     setSuccess(null);
                   }}
-                  className={`rounded-md py-2 text-xs font-semibold transition-all ${
+                  className={`rounded-md py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                     mode === 'login'
-                      ? 'bg-panel text-cream shadow-xs border border-subtle'
-                      : 'text-cream-muted hover:text-cream'
+                      ? 'bg-card text-foreground shadow-xs border border-border'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   Log in
@@ -432,10 +429,10 @@ function LoginContent() {
                     setError(null);
                     setSuccess(null);
                   }}
-                  className={`rounded-md py-2 text-xs font-semibold transition-all ${
+                  className={`rounded-md py-1.5 text-xs font-semibold transition-all cursor-pointer ${
                     mode === 'signup'
-                      ? 'bg-panel text-cream shadow-xs border border-subtle'
-                      : 'text-cream-muted hover:text-cream'
+                      ? 'bg-card text-foreground shadow-xs border border-border'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   Sign up
@@ -445,14 +442,14 @@ function LoginContent() {
 
             {/* Notifications */}
             {error && (
-              <div className="rounded-lg border border-negative/40 bg-negative-fill/20 px-3.5 py-2.5 text-xs text-negative flex items-center gap-2">
+              <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5 text-xs text-destructive flex items-center gap-2">
                 <span>⚠</span>
                 <span>{error}</span>
               </div>
             )}
 
             {success && (
-              <div className="rounded-lg border border-positive/40 bg-positive-fill/20 px-3.5 py-2.5 text-xs text-positive flex items-center gap-2">
+              <div className="rounded-lg border border-positive/25 bg-positive/10 px-3.5 py-2.5 text-xs text-positive flex items-center gap-2">
                 <span>✓</span>
                 <span>{success}</span>
               </div>
@@ -466,16 +463,16 @@ function LoginContent() {
                   {/* Full Name (Sign up only) */}
                   {mode === 'signup' && (
                     <div>
-                      <label className="label" htmlFor="studentName">
-                        Full Name <span className="text-negative">*</span>
+                      <label className="block text-xs font-semibold text-foreground mb-1.5" htmlFor="studentName">
+                        Full Name <span className="text-destructive">*</span>
                       </label>
                       <input
                         id="studentName"
                         type="text"
-                        className={`input ${
+                        className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                           touched.name && !isNameValid
-                            ? 'border-negative focus:border-negative ring-1 ring-negative/30'
-                            : ''
+                            ? 'border-destructive ring-1 ring-destructive/30'
+                            : 'border-border'
                         }`}
                         placeholder="e.g. Juan Dela Cruz"
                         value={name}
@@ -485,33 +482,33 @@ function LoginContent() {
                         autoComplete="name"
                       />
                       {touched.name && !isNameValid && (
-                        <p className="text-[11px] text-negative mt-1">Full name is required.</p>
+                        <p className="text-[11px] text-destructive mt-1">Full name is required.</p>
                       )}
                     </div>
                   )}
 
                   {/* Student ID (Auto-formatted YYYY-XXXX) */}
                   <div>
-                    <label className="label" htmlFor="studentIdInput">
-                      Student ID <span className="text-negative">*</span>
+                    <label className="block text-xs font-semibold text-foreground mb-1.5" htmlFor="studentIdInput">
+                      Student ID <span className="text-destructive">*</span>
                     </label>
                     <input
                       id="studentIdInput"
                       type="text"
-                      className={`input ${
+                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                         touched.studentId && !isStudentIdValid
-                          ? 'border-negative focus:border-negative ring-1 ring-negative/30'
-                          : ''
+                          ? 'border-destructive ring-1 ring-destructive/30'
+                          : 'border-border'
                       }`}
-                      placeholder={mode === 'signup' ? '2026-0001' : '2026-0001'}
+                      placeholder="2026-0001"
                       value={studentId}
                       onChange={handleStudentIdChange}
                       onBlur={() => markTouched('studentId')}
                       required
-                      autoComplete={mode === 'signup' ? 'username' : 'username'}
+                      autoComplete="username"
                     />
                     {touched.studentId && !isStudentIdValid && (
-                      <p className="text-[11px] text-negative mt-1">
+                      <p className="text-[11px] text-destructive mt-1">
                         Please enter a valid Student ID (e.g. 2026-0001).
                       </p>
                     )}
@@ -520,16 +517,16 @@ function LoginContent() {
                   {/* Email Address (Sign up only) */}
                   {mode === 'signup' && (
                     <div>
-                      <label className="label" htmlFor="studentEmailInput">
-                        Email Address <span className="text-negative">*</span>
+                      <label className="block text-xs font-semibold text-foreground mb-1.5" htmlFor="studentEmailInput">
+                        Email Address <span className="text-destructive">*</span>
                       </label>
                       <input
                         id="studentEmailInput"
                         type="email"
-                        className={`input ${
+                        className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                           touched.studentEmail && !isStudentEmailValid
-                            ? 'border-negative focus:border-negative ring-1 ring-negative/30'
-                            : ''
+                            ? 'border-destructive ring-1 ring-destructive/30'
+                            : 'border-border'
                         }`}
                         placeholder="student@cetc.edu or personal email"
                         value={studentEmail}
@@ -539,7 +536,7 @@ function LoginContent() {
                         autoComplete="email"
                       />
                       {touched.studentEmail && !isStudentEmailValid && (
-                        <p className="text-[11px] text-negative mt-1">Please enter a valid email address.</p>
+                        <p className="text-[11px] text-destructive mt-1">Please enter a valid email address.</p>
                       )}
                     </div>
                   )}
@@ -548,12 +545,12 @@ function LoginContent() {
                   {mode === 'signup' && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="label" htmlFor="programCode">
-                          Degree Program <span className="text-negative">*</span>
+                        <label className="block text-xs font-semibold text-foreground mb-1.5" htmlFor="programCode">
+                          Degree Program <span className="text-destructive">*</span>
                         </label>
                         <select
                           id="programCode"
-                          className="input py-2 cursor-pointer text-xs"
+                          className="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
                           value={programCode}
                           onChange={(e) => setProgramCode(e.target.value)}
                         >
@@ -563,12 +560,12 @@ function LoginContent() {
                       </div>
 
                       <div>
-                        <label className="label" htmlFor="yearLevel">
-                          Year Level <span className="text-negative">*</span>
+                        <label className="block text-xs font-semibold text-foreground mb-1.5" htmlFor="yearLevel">
+                          Year Level <span className="text-destructive">*</span>
                         </label>
                         <select
                           id="yearLevel"
-                          className="input py-2 cursor-pointer text-xs"
+                          className="w-full rounded-lg border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
                           value={yearLevel}
                           onChange={(e) => setYearLevel(e.target.value)}
                         >
@@ -588,16 +585,16 @@ function LoginContent() {
                 <>
                   {/* Institutional Email */}
                   <div>
-                    <label className="label" htmlFor="staffEmailInput">
-                      Institutional Email <span className="text-negative">*</span>
+                    <label className="block text-xs font-semibold text-foreground mb-1.5" htmlFor="staffEmailInput">
+                      Institutional Email <span className="text-destructive">*</span>
                     </label>
                     <input
                       id="staffEmailInput"
                       type="email"
-                      className={`input ${
+                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                         touched.staffEmail && !isStaffEmailValid
-                          ? 'border-negative focus:border-negative ring-1 ring-negative/30'
-                          : ''
+                          ? 'border-destructive ring-1 ring-destructive/30'
+                          : 'border-border'
                       }`}
                       placeholder="admin@cetc.test or name@csu.edu.ph"
                       value={staffEmail}
@@ -607,7 +604,7 @@ function LoginContent() {
                       autoComplete="username email"
                     />
                     {touched.staffEmail && !isStaffEmailValid && (
-                      <p className="text-[11px] text-negative mt-1">
+                      <p className="text-[11px] text-destructive mt-1">
                         Please enter a valid institutional email.
                       </p>
                     )}
@@ -618,9 +615,9 @@ function LoginContent() {
               {/* Password Field (Common to both portals when not in forgot password mode) */}
               {mode !== 'forgot' && (
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="label !mb-0" htmlFor="passwordInput">
-                      Password <span className="text-negative">*</span>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-foreground mb-0" htmlFor="passwordInput">
+                      Password <span className="text-destructive">*</span>
                     </label>
                     {mode === 'login' && (
                       <button
@@ -630,7 +627,7 @@ function LoginContent() {
                           setError(null);
                           setSuccess(null);
                         }}
-                        className="text-xs text-brand-text hover:underline focus:outline-none"
+                        className="text-xs text-primary font-medium hover:underline focus:outline-none cursor-pointer"
                       >
                         Forgot password?
                       </button>
@@ -640,10 +637,10 @@ function LoginContent() {
                     <input
                       id="passwordInput"
                       type={showPassword ? 'text' : 'password'}
-                      className={`input pr-10 ${
+                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] pr-10 transition-colors ${
                         touched.password && !isPasswordValid
-                          ? 'border-negative focus:border-negative ring-1 ring-negative/30'
-                          : ''
+                          ? 'border-destructive ring-1 ring-destructive/30'
+                          : 'border-border'
                       }`}
                       placeholder={
                         portal === 'student' && mode === 'signup'
@@ -659,7 +656,7 @@ function LoginContent() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-cream-muted hover:text-cream focus:outline-none"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none cursor-pointer"
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
                     >
                       {showPassword ? (
@@ -680,7 +677,7 @@ function LoginContent() {
                     <div className="mt-1.5 flex items-center gap-1.5 text-xs">
                       <svg
                         className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-                          password.length >= 8 ? 'text-positive' : 'text-cream-faint'
+                          password.length >= 8 ? 'text-positive' : 'text-muted-foreground/40'
                         }`}
                         viewBox="0 0 16 16"
                         fill="none"
@@ -692,20 +689,24 @@ function LoginContent() {
                         <circle cx="8" cy="8" r="7" />
                         <polyline points="5 8 7 10 11 6" />
                       </svg>
-                      <span className={password.length >= 8 ? 'text-cream-dim' : 'text-cream-faint'}>
+                      <span className={password.length >= 8 ? 'text-foreground' : 'text-muted-foreground'}>
                         Must be at least 8 characters.
                       </span>
                     </div>
                   )}
 
                   {touched.password && !isPasswordValid && mode !== 'signup' && (
-                    <p className="text-[11px] text-negative mt-1">Password is required.</p>
+                    <p className="text-[11px] text-destructive mt-1">Password is required.</p>
                   )}
                 </div>
               )}
 
               {/* Submit Button */}
-              <button type="submit" className="btn w-full mt-2" disabled={busy}>
+              <button
+                type="submit"
+                className="w-full rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 px-4 text-xs transition-colors shadow-xs active:scale-[0.98] disabled:opacity-50 min-h-[42px] mt-2 cursor-pointer"
+                disabled={busy}
+              >
                 {busy
                   ? mode === 'signup'
                     ? 'Creating account…'
@@ -723,7 +724,7 @@ function LoginContent() {
 
               {/* Footer Links & Switchers */}
               {portal === 'student' && mode === 'login' && (
-                <p className="text-center text-xs text-cream-muted pt-1">
+                <p className="text-center text-xs text-muted-foreground pt-1">
                   Don&apos;t have an account?{' '}
                   <button
                     type="button"
@@ -731,7 +732,7 @@ function LoginContent() {
                       setMode('signup');
                       setError(null);
                     }}
-                    className="text-brand-text font-semibold hover:underline"
+                    className="text-primary font-semibold hover:underline cursor-pointer"
                   >
                     Sign up
                   </button>
@@ -739,7 +740,7 @@ function LoginContent() {
               )}
 
               {portal === 'student' && mode === 'signup' && (
-                <p className="text-center text-xs text-cream-muted pt-1">
+                <p className="text-center text-xs text-muted-foreground pt-1">
                   Already have an account?{' '}
                   <button
                     type="button"
@@ -747,7 +748,7 @@ function LoginContent() {
                       setMode('login');
                       setError(null);
                     }}
-                    className="text-brand-text font-semibold hover:underline"
+                    className="text-primary font-semibold hover:underline cursor-pointer"
                   >
                     Log in
                   </button>
@@ -762,7 +763,7 @@ function LoginContent() {
                     setError(null);
                     setSuccess(null);
                   }}
-                  className="w-full text-center text-xs text-cream-muted hover:text-cream mt-2"
+                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-2 cursor-pointer"
                 >
                   ← Back to login
                 </button>
@@ -771,10 +772,10 @@ function LoginContent() {
 
             {/* ================= STAFF DEMO CREDENTIALS QUICK-FILL ================= */}
             {portal === 'staff' && mode === 'login' && (
-              <div className="pt-3 border-t border-subtle/70 space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-cream-muted">
+              <div className="pt-4 border-t border-border space-y-2.5">
+                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
                   <span className="font-semibold uppercase tracking-wider text-[10px]">Demo Test Accounts:</span>
-                  <span className="text-[10px] text-brand-text">Password: eval1234</span>
+                  <span className="text-[10px] text-primary font-mono">Password: eval1234</span>
                 </div>
                 <div className="grid grid-cols-3 gap-1.5">
                   {DEMO_STAFF_ACCOUNTS.map((acc) => (
@@ -782,20 +783,22 @@ function LoginContent() {
                       key={acc.role}
                       type="button"
                       onClick={() => fillStaffDemo(acc.email)}
-                      className={`flex flex-col items-center justify-center p-2 rounded-lg border text-left transition-all ${
+                      className={`flex flex-col items-center justify-center p-2 rounded-lg border text-left transition-all cursor-pointer ${
                         staffEmail === acc.email
-                          ? 'border-brand bg-brand/15 text-cream shadow-xs'
-                          : 'border-subtle bg-panel/50 text-cream-dim hover:text-cream hover:border-cream-muted/40 hover:bg-panel'
+                          ? 'border-primary bg-primary/10 text-primary shadow-xs'
+                          : 'border-border bg-muted/40 text-foreground hover:border-primary/40 hover:bg-muted/70'
                       }`}
                       title={acc.desc}
                     >
-                      <span className="text-xs font-bold text-cream">{acc.label}</span>
-                      <span className="text-[9px] text-cream-muted truncate max-w-full">{acc.email.split('@')[0]}</span>
+                      <span className={`text-xs font-bold ${staffEmail === acc.email ? 'text-primary' : 'text-foreground'}`}>
+                        {acc.label}
+                      </span>
+                      <span className="text-[9px] text-muted-foreground truncate max-w-full font-mono">{acc.email.split('@')[0]}</span>
                     </button>
                   ))}
                 </div>
-                <p className="text-[10px] text-cream-faint text-center pt-1">
-                  Accounts provisioned by Dean&apos;s Office & IT Services.
+                <p className="text-[10px] text-muted-foreground/70 text-center pt-1">
+                  Accounts provisioned by Dean&apos;s Office &amp; IT Services.
                 </p>
               </div>
             )}
@@ -803,11 +806,8 @@ function LoginContent() {
         </div>
       </section>
 
-      {/* Right Column: Refined Editorial Showcase (Quote + Live Preview) */}
-      <section className="md:col-span-6 hidden md:flex flex-col justify-between p-8 lg:p-12 xl:p-16 relative overflow-hidden bg-gradient-to-b from-panel/40 via-canvas to-canvas">
-        {/* Ambient warm glow */}
-        <div className="pointer-events-none absolute -top-32 -right-32 w-80 h-80 rounded-full bg-brand/10 blur-3xl" />
-
+      {/* Right Column: Refined Editorial Showcase (Institutional Notice + Live Preview) */}
+      <section className="md:col-span-6 hidden md:flex flex-col justify-between p-8 lg:p-12 xl:p-16 relative overflow-hidden bg-muted/20">
         {/* Top Branding (Official Logo + CSU CETC) */}
         <div className="relative z-10 flex items-center justify-between">
           <div className="flex items-center gap-3.5">
@@ -816,22 +816,21 @@ function LoginContent() {
               alt="Cotabato State University - CETC Logo"
               width={56}
               height={56}
-              className="h-14 w-14 object-contain shrink-0 drop-shadow-md"
+              className="h-14 w-14 object-contain shrink-0"
             />
             <div>
               <div
-                className="text-2xl font-extrabold tracking-[0.03em] leading-tight"
-                style={{ fontFamily: 'var(--font-display)' }}
+                className="text-2xl font-bold tracking-wide leading-tight font-display text-foreground"
               >
-                CSU <span className="text-brand">CETC</span>
+                CSU <span className="text-primary">CETC</span>
               </div>
-              <p className="text-xs text-cream-muted tracking-wide mt-0.5">
+              <p className="text-xs text-muted-foreground tracking-wide mt-0.5">
                 Cotabato State University · College of Engineering, Technology and Computing
               </p>
             </div>
           </div>
 
-          <span className="badge badge-subtle hidden lg:inline-flex text-[11px]">
+          <span className="px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-muted text-muted-foreground border border-border hidden lg:inline-flex">
             {portal === 'student' ? 'Student Portal' : 'Academic Leadership'}
           </span>
         </div>
@@ -839,36 +838,32 @@ function LoginContent() {
         {/* ================= STUDENT ACTIVE SHOWCASE ================= */}
         {portal === 'student' && (
           <div className="relative z-10 my-auto py-6 space-y-6 max-w-xl transition-all duration-300">
-            {/* Quote & Stars */}
-            <div className="space-y-2.5">
-              <div className="flex items-center gap-1 text-gold-text text-sm" aria-label="5 out of 5 stars">
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span className="text-xs text-cream-muted ml-2 font-medium">Student Verified</span>
+            {/* Institutional QA Notice (Replaces fake 5-star review) */}
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 rounded-full bg-positive/10 px-3 py-1 text-xs font-semibold text-positive border border-positive/25">
+                <span className="h-2 w-2 rounded-full bg-positive animate-pulse" />
+                CHED-Aligned &amp; Cryptographically Blinded
               </div>
-              <p className="text-lg xl:text-xl font-medium text-cream leading-snug">
-                “Objective student feedback is the cornerstone of academic excellence and continuous curriculum innovation at Cotabato State University.”
-              </p>
-              <p className="text-xs text-cream-muted">
-                — <span className="text-cream font-semibold">Faculty Evaluation Committee</span>, CSU CETC
+              <h2 className="text-xl xl:text-2xl font-bold text-foreground font-display leading-snug">
+                Confidential, tamper-evident student appraisal for academic quality assurance.
+              </h2>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Student identities are isolated via zero-knowledge hashing before evaluation scores reach faculty dossiers or dean analytics. Every submission generates an immutable verification receipt.
               </p>
             </div>
 
             {/* High-Fidelity Student Portal Dashboard Mockup */}
-            <div className="rounded-2xl border border-subtle bg-bg2/90 shadow-2xl overflow-hidden backdrop-blur-sm">
+            <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
               {/* Window bar */}
-              <div className="flex items-center justify-between border-b border-subtle bg-panel/70 px-4 py-2.5">
+              <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5">
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
-                  <span className="ml-2 text-[11px] text-cream-muted">portal.csu.edu.ph/student</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-destructive/70 inline-block" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70 inline-block" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-positive/70 inline-block" />
+                  <span className="ml-2 text-[11px] text-muted-foreground font-mono">portal.csu.edu.ph/student</span>
                 </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-brand-text border border-subtle">
-                  <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+                <span className="inline-flex items-center gap-1 rounded-full bg-card px-2 py-0.5 text-[10px] font-medium text-primary border border-border">
+                  <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                   AY 2026–2027 Active
                 </span>
               </div>
@@ -877,47 +872,51 @@ function LoginContent() {
               <div className="p-4 space-y-3.5">
                 {/* Stats Bar */}
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Enrolled</span>
-                    <div className="text-base font-bold text-cream">6 Subjects</div>
+                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Enrolled</span>
+                    <div className="text-base font-bold text-foreground tabular-nums">6 Subjects</div>
                   </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Completed</span>
-                    <div className="text-base font-bold text-positive">4 Evaluated</div>
+                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Completed</span>
+                    <div className="text-base font-bold text-positive tabular-nums">4 Evaluated</div>
                   </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Pending</span>
-                    <div className="text-base font-bold text-gold-text">2 Left</div>
+                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Pending</span>
+                    <div className="text-base font-bold text-amber-600 tabular-nums">2 Left</div>
                   </div>
                 </div>
 
                 {/* Progress bar */}
                 <div className="space-y-1">
                   <div className="flex justify-between text-[11px]">
-                    <span className="text-cream-dim">Semester Evaluation Progress</span>
-                    <span className="text-brand-text font-bold">66%</span>
+                    <span className="text-muted-foreground font-medium">Semester Evaluation Progress</span>
+                    <span className="text-primary font-bold tabular-nums">66%</span>
                   </div>
-                  <div className="h-2 w-full rounded-full bg-panel overflow-hidden">
-                    <div className="h-full rounded-full bg-brand transition-all" style={{ width: '66%' }} />
+                  <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+                    <div className="h-full rounded-full bg-primary transition-all" style={{ width: '66%' }} />
                   </div>
                 </div>
 
                 {/* Subject Rows Preview */}
                 <div className="space-y-1.5 pt-1">
-                  <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
+                  <div className="flex items-center justify-between rounded-lg bg-muted/20 px-3 py-2 text-xs border border-border">
                     <div className="truncate">
-                      <span className="font-bold text-cream">IT211</span>
-                      <span className="text-cream-muted ml-1.5">Web Systems & Tech · Engr. Jose Rizal Jr.</span>
+                      <span className="font-semibold text-foreground">IT211</span>
+                      <span className="text-muted-foreground ml-1.5">Web Systems &amp; Tech · Engr. Jose Rizal Jr.</span>
                     </div>
-                    <span className="badge badge-positive shrink-0 text-[10px]">Completed ✓</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-positive/10 text-positive border border-positive/25 shrink-0">
+                      Completed ✓
+                    </span>
                   </div>
 
-                  <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
+                  <div className="flex items-center justify-between rounded-lg bg-muted/20 px-3 py-2 text-xs border border-border">
                     <div className="truncate">
-                      <span className="font-bold text-cream">IT201</span>
-                      <span className="text-cream-muted ml-1.5">Data Structures · Prof. Maria Santos</span>
+                      <span className="font-semibold text-foreground">IT201</span>
+                      <span className="text-muted-foreground ml-1.5">Data Structures · Prof. Maria Santos</span>
                     </div>
-                    <span className="badge badge-gold shrink-0 text-[10px]">Pending ⏳</span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/25 shrink-0">
+                      Pending ⏳
+                    </span>
                   </div>
                 </div>
               </div>
@@ -928,31 +927,31 @@ function LoginContent() {
         {/* ================= STAFF ACTIVE SHOWCASE ================= */}
         {portal === 'staff' && (
           <div className="relative z-10 my-auto py-6 space-y-6 max-w-xl transition-all duration-300">
-            {/* Executive Quote */}
-            <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-brand/15 px-3 py-1 text-[11px] font-semibold text-brand-text border border-brand/30">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
+            {/* Executive Leadership Notice */}
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary border border-primary/25">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
                 Office of the Dean · Academic Governance
               </div>
-              <p className="text-lg xl:text-xl font-medium text-cream leading-snug">
+              <h2 className="text-xl xl:text-2xl font-bold text-foreground font-display leading-snug">
                 “Academic leadership and faculty excellence drive curriculum integrity and student success across every engineering and computing program.”
-              </p>
-              <p className="text-xs text-cream-muted">
-                — <span className="text-cream font-semibold">Dr. Elena Reyes</span>, Dean, College of Engineering, Technology & Computing
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                — <span className="text-foreground font-semibold">Dr. Elena Reyes</span>, Dean, College of Engineering, Technology &amp; Computing
               </p>
             </div>
 
             {/* High-Fidelity Executive Analytics Dashboard Mockup */}
-            <div className="rounded-2xl border border-subtle bg-bg2/90 shadow-2xl overflow-hidden backdrop-blur-sm">
+            <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
               {/* Window bar */}
-              <div className="flex items-center justify-between border-b border-subtle bg-panel/70 px-4 py-2.5">
+              <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5">
                 <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
-                  <span className="ml-2 text-[11px] text-cream-muted">portal.csu.edu.ph/dean/analytics</span>
+                  <span className="h-2.5 w-2.5 rounded-full bg-destructive/70 inline-block" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70 inline-block" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-positive/70 inline-block" />
+                  <span className="ml-2 text-[11px] text-muted-foreground font-mono">portal.csu.edu.ph/dean/analytics</span>
                 </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-positive border border-subtle">
+                <span className="inline-flex items-center gap-1 rounded-full bg-card px-2 py-0.5 text-[10px] font-medium text-positive border border-border">
                   <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />
                   1st Sem AY 2026–2027 Active
                 </span>
@@ -962,20 +961,20 @@ function LoginContent() {
               <div className="p-4 space-y-3.5">
                 {/* Executive Metric Cards */}
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Compliance</span>
-                    <div className="text-base font-bold text-positive">94.2%</div>
-                    <span className="text-[9px] text-cream-muted">1,240 Evaluated</span>
+                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Compliance</span>
+                    <div className="text-base font-bold text-positive tabular-nums">94.2%</div>
+                    <span className="text-[9px] text-muted-foreground tabular-nums">1,240 Evaluated</span>
                   </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Faculty</span>
-                    <div className="text-base font-bold text-cream">48 Active</div>
-                    <span className="text-[9px] text-cream-muted">100% Assigned</span>
+                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Faculty</span>
+                    <div className="text-base font-bold text-foreground tabular-nums">48 Active</div>
+                    <span className="text-[9px] text-muted-foreground">100% Assigned</span>
                   </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Quality Index</span>
-                    <div className="text-base font-bold text-gold-text">4.82 / 5.0</div>
-                    <span className="text-[9px] text-cream-muted">College Mean</span>
+                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Quality Index</span>
+                    <div className="text-base font-bold text-primary tabular-nums">4.82 / 5.0</div>
+                    <span className="text-[9px] text-muted-foreground">College Mean</span>
                   </div>
                 </div>
 
@@ -983,31 +982,31 @@ function LoginContent() {
                 <div className="space-y-2 pt-1">
                   <div className="space-y-1">
                     <div className="flex justify-between text-[11px]">
-                      <span className="text-cream-dim">BS Information Technology (BSIT)</span>
-                      <span className="text-brand-text font-bold">96.4%</span>
+                      <span className="text-muted-foreground font-medium">BS Information Technology (BSIT)</span>
+                      <span className="text-primary font-bold tabular-nums">96.4%</span>
                     </div>
-                    <div className="h-1.5 w-full rounded-full bg-panel overflow-hidden">
-                      <div className="h-full rounded-full bg-brand transition-all" style={{ width: '96.4%' }} />
+                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-primary transition-all" style={{ width: '96.4%' }} />
                     </div>
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex justify-between text-[11px]">
-                      <span className="text-cream-dim">BS Computer Science (BSCS)</span>
-                      <span className="text-brand-text font-bold">91.8%</span>
+                      <span className="text-muted-foreground font-medium">BS Computer Science (BSCS)</span>
+                      <span className="text-primary font-bold tabular-nums">91.8%</span>
                     </div>
-                    <div className="h-1.5 w-full rounded-full bg-panel overflow-hidden">
-                      <div className="h-full rounded-full bg-brand transition-all" style={{ width: '91.8%' }} />
+                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                      <div className="h-full rounded-full bg-primary transition-all" style={{ width: '91.8%' }} />
                     </div>
                   </div>
                 </div>
 
                 {/* Institutional Compliance Badges */}
-                <div className="flex items-center justify-between pt-2 border-t border-subtle/50 text-[10px]">
-                  <span className="inline-flex items-center gap-1 text-positive font-medium">
+                <div className="flex items-center justify-between pt-2 border-t border-border text-[10px]">
+                  <span className="inline-flex items-center gap-1 text-positive font-semibold">
                     <span>✓</span> CHED Memorandum Compliant
                   </span>
-                  <span className="text-cream-muted">
+                  <span className="text-muted-foreground">
                     AACCUP Level III Accredited
                   </span>
                 </div>
@@ -1017,7 +1016,7 @@ function LoginContent() {
         )}
 
         {/* Footer */}
-        <div className="relative z-10 text-xs text-cream-faint border-t border-subtle pt-4 flex items-center justify-between">
+        <div className="relative z-10 text-xs text-muted-foreground border-t border-border pt-4 flex items-center justify-between">
           <span>{portal === 'student' ? 'Faculty Evaluation System' : 'Academic Leadership & Quality Assurance'}</span>
           <span>© Cotabato State University</span>
         </div>
