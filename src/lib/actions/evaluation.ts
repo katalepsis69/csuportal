@@ -83,7 +83,11 @@ export async function submitEvaluation(input: SubmitInput): Promise<SubmitResult
 
   // trust boundary: validate shape before it reaches the RPC
   const parsed = SubmitSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: 'Invalid submission payload.' };
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const path = issue.path.join('.');
+    return { ok: false, error: `Invalid submission: ${path ? `${path} — ` : ''}${issue.message}` };
+  }
   const valid = parsed.data;
 
   if (valid.signaturePoints.length === 0) {
@@ -127,7 +131,11 @@ export async function saveDraft(input: DraftInput): Promise<SubmitResult> {
 
   // trust boundary: validate shape before it reaches the RPC
   const parsed = DraftSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: 'Could not save draft.' };
+  if (!parsed.success) {
+    const issue = parsed.error.issues[0];
+    const path = issue.path.join('.');
+    return { ok: false, error: `Could not save draft: ${path ? `${path} — ` : ''}${issue.message}` };
+  }
   const valid = parsed.data;
 
   const { data, error } = await supabase.rpc('rpc_save_draft', {

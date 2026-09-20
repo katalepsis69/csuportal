@@ -83,7 +83,7 @@ const NAV_CONFIG: Record<
         icon: <IconGaugeLine className="w-4 h-4" />,
       },
       {
-        href: '/student/eval/cs214',
+        href: '/student',
         label: 'Evaluate Faculty',
         badge: 'Active',
         icon: <IconClipboardLine className="w-4 h-4 text-primary" />,

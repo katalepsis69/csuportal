@@ -16,37 +16,37 @@ const DEFAULT_EVAL_ROW = {
 
 const DEFAULT_QUESTIONS = [
   {
-    id: 'q1',
+    id: '00000000-0000-0000-0000-000000000001',
     category: 'Category I: Commitment to Teaching',
     text: "Demonstrates sensitivity to students' ability to learn and accommodates individual pacing through differentiated academic support.",
     sort_order: 1,
   },
   {
-    id: 'q2',
+    id: '00000000-0000-0000-0000-000000000002',
     category: 'Category I: Commitment to Teaching',
     text: 'Comes to class prepared with organized syllabus materials, structured course modules, and transparent laboratory rubrics.',
     sort_order: 2,
   },
   {
-    id: 'q3',
+    id: '00000000-0000-0000-0000-000000000003',
     category: 'Category I: Commitment to Teaching',
     text: 'Regularly holds consultation hours, respects scheduled contact times, and responds promptly to academic clarifications.',
     sort_order: 3,
   },
   {
-    id: 'q4',
+    id: '00000000-0000-0000-0000-000000000004',
     category: 'Category II: Knowledge of Subject Matter & Instructional Clarity',
     text: 'Explains complex algorithmic concepts, recursive trees, and graph traversals with lucid real-world engineering analogies.',
     sort_order: 4,
   },
   {
-    id: 'q5',
+    id: '00000000-0000-0000-0000-000000000005',
     category: 'Category II: Knowledge of Subject Matter & Instructional Clarity',
     text: 'Integrates practical coding exercises and modern software development tools relevant to the current engineering industry.',
     sort_order: 5,
   },
   {
-    id: 'q6',
+    id: '00000000-0000-0000-0000-000000000006',
     category: 'Category II: Knowledge of Subject Matter & Instructional Clarity',
     text: 'Provides objective, transparent, and prompt feedback on laboratory submissions and algorithmic problem sets.',
     sort_order: 6,

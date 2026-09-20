@@ -26,7 +26,7 @@ export default async function StudentPage({
 
   const DEFAULT_SUBJECTS = [
     {
-      section_subject_id: 'cs214',
+      section_subject_id: '00000000-0000-0000-0000-000000000214',
       subject_code: 'CS 214',
       subject_name: 'Data Structures & Algorithms',
       section_name: 'BSCS 3-A',
@@ -36,7 +36,7 @@ export default async function StudentPage({
       completed: false,
     },
     {
-      section_subject_id: 'cpe312',
+      section_subject_id: '00000000-0000-0000-0000-000000000312',
       subject_code: 'CPE 312',
       subject_name: 'Digital Signal Processing',
       section_name: 'BSCPE 3-A',
