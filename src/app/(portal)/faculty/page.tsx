@@ -70,32 +70,60 @@ export default async function FacultyPage({
     {},
   );
 
+  const questionRatings = perQuestion.map((q) => q.avg_rating ?? 0).filter((r) => r > 0);
+  const ratingSparkline = questionRatings.length > 0 ? questionRatings : [0, 0];
+
+  const classEvals = (overview.per_subject ?? []).map((s) => s.evals);
+  const classSparkline = classEvals.length > 0 ? classEvals : [0, 0];
+
+  const sentimentSparkline = [
+    overview.sentiment?.negative ?? 0,
+    overview.sentiment?.neutral ?? 0,
+    overview.sentiment?.positive ?? 0,
+  ];
+
+  const loadsSparkline = classes.length > 0 ? classes.map((c, i) => c.evals || i + 1) : [0, 0];
+  const totalEvals = classes.reduce((sum, c) => sum + (c.evals ?? 0), 0);
+
   const facultyMetrics = [
     {
       label: 'Overall Appraisal Rating',
       value: overview.overall != null ? `${overview.overall.toFixed(2)} / 5.0` : '—',
-      trend: overview.overall != null ? 'Official' : 'Pending',
+      trend: overview.overall != null ? 'OFFICIAL' : 'PENDING',
       trendPositive: overview.overall != null,
+      sublabel: 'Based on institutional rubric',
+      color: '#881337',
+      sparkline: ratingSparkline,
       icon: <IconChartLine className="h-4 w-4" />,
     },
     {
       label: 'Student Responses',
-      value: overview.per_question?.[0]?.responses ?? 0,
+      value: overview.per_question?.[0]?.responses ?? totalEvals,
+      trend: totalEvals > 0 ? 'RECEIVED' : 'ENROLLED',
+      trendPositive: true,
       sublabel: 'Total answers submitted',
+      color: '#15803d',
+      sparkline: classSparkline,
       icon: <IconUsersLine className="h-4 w-4" />,
     },
     {
       label: 'Positive Sentiment',
       value: sentimentTotal > 0 ? `${positivePct}%` : '—',
       sublabel: `${overview.sentiment?.positive ?? 0} positive student remarks`,
-      trend: sentimentTotal > 0 ? 'Logged' : undefined,
-      trendPositive: true,
+      trend: sentimentTotal > 0 ? 'LOGGED' : 'PENDING',
+      trendPositive: sentimentTotal > 0,
+      color: '#b45309',
+      sparkline: sentimentSparkline,
       icon: <IconBookLine className="h-4 w-4" />,
     },
     {
       label: 'Assigned Classes',
       value: `${classes.length} Sections`,
+      trend: `${totalEvals} EVALS`,
+      trendPositive: true,
       sublabel: 'Active teaching loads',
+      color: '#881337',
+      sparkline: loadsSparkline,
       icon: <IconGearLine className="h-4 w-4" />,
     },
   ];

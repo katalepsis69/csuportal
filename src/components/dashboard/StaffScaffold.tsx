@@ -39,6 +39,58 @@ export function IconDotsLine({ className = 'h-5 w-5' }: { className?: string }) 
   );
 }
 
+// --- Dynamic SVG Sparkline with Resilient Math and Area Gradient ---
+export function Sparkline({
+  color = 'var(--primary)',
+  points = [],
+}: {
+  color?: string;
+  points?: number[];
+}) {
+  const rawId = React.useId();
+  const gradId = `spark-${rawId.replace(/:/g, '')}`;
+  const width = 96;
+  const height = 32;
+
+  // Ponytail: clean resilient math, handles 0, 1, or empty series without NaN
+  const data = points.length === 0 ? [0, 0] : points.length === 1 ? [points[0], points[0]] : points;
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+  const range = max - min || (max > 0 ? max : 1);
+
+  const coords = data.map((p, i) => {
+    const x = (i / (data.length - 1)) * width;
+    const y = min === max
+      ? height / 2
+      : height - ((p - min) / range) * (height - 12) - 6;
+    return { x, y };
+  });
+
+  const pathD = coords.reduce((acc, curr, idx, arr) => {
+    if (idx === 0) return `M ${curr.x} ${curr.y}`;
+    const prev = arr[idx - 1];
+    const cpx = (prev.x + curr.x) / 2;
+    return `${acc} C ${cpx} ${prev.y}, ${cpx} ${curr.y}, ${curr.x} ${curr.y}`;
+  }, '');
+
+  const areaD = `${pathD} L ${width} ${height} L 0 ${height} Z`;
+  const lastPoint = coords[coords.length - 1];
+
+  return (
+    <svg className="h-8 w-24 overflow-visible shrink-0" viewBox={`0 0 ${width} ${height}`} fill="none" aria-hidden="true">
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity={0.25} />
+          <stop offset="100%" stopColor={color} stopOpacity={0.0} />
+        </linearGradient>
+      </defs>
+      <path d={areaD} fill={`url(#${gradId})`} />
+      <path d={pathD} stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx={lastPoint.x} cy={lastPoint.y} r="2.5" fill={color} />
+    </svg>
+  );
+}
+
 // --- Stat Card Component for Production Dashboard KPIs ---
 export type StatMetric = {
   label: string;
@@ -56,22 +108,16 @@ export function StaffStatCard({
 }: {
   metric: StatMetric;
 }) {
+  const color = metric.color ?? 'var(--primary)';
+
   return (
     <div className="rounded-xl border border-border bg-card p-5 shadow-xs transition-colors hover:border-primary/30 relative flex flex-col justify-between">
       <div className="flex items-center justify-between">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-foreground/80">
           {metric.icon ?? <IconUsers className="h-4 w-4" />}
         </div>
-        {metric.trend && (
-          <span
-            className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
-              metric.trendPositive
-                ? 'bg-positive/10 text-positive border-positive/30'
-                : 'bg-muted text-muted-foreground border-border'
-            }`}
-          >
-            {metric.trend}
-          </span>
+        {metric.sparkline && (
+          <Sparkline color={color} points={metric.sparkline} />
         )}
       </div>
 
@@ -79,10 +125,26 @@ export function StaffStatCard({
         <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           {metric.label}
         </p>
-        <div className="mt-1 flex items-baseline gap-2.5">
+        <div className="mt-1 flex items-center gap-2">
           <span className="text-2xl lg:text-3xl font-bold tracking-tight text-foreground font-display tabular-nums">
             {metric.value}
           </span>
+          {metric.trend && (
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase border ${
+                metric.trendPositive !== false
+                  ? 'bg-positive/10 text-positive border-positive/25'
+                  : 'bg-muted text-muted-foreground border-border'
+              }`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  metric.trendPositive !== false ? 'bg-positive' : 'bg-muted-foreground'
+                }`}
+              />
+              {metric.trend}
+            </span>
+          )}
         </div>
         {metric.sublabel && (
           <p className="mt-1 text-xs text-muted-foreground font-normal">
