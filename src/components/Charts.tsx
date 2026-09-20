@@ -2,16 +2,11 @@
 
 import React from 'react';
 import {
-  Bar,
-  BarChart,
-  CartesianGrid,
   Cell,
   Pie,
   PieChart,
   ResponsiveContainer,
   Tooltip,
-  XAxis,
-  YAxis,
 } from 'recharts';
 
 /* CSU CETC chart palette (MASTER.md v2): muted, no gradients */
@@ -99,68 +94,5 @@ export function SentimentPie({
         </span>
       </div>
     </div>
-  );
-}
-
-export function AvgBar({
-  data,
-  domainMax = 5,
-  height = 220,
-}: {
-  data: { name: string; value: number | null }[];
-  domainMax?: number;
-  height?: number;
-}) {
-  const rows = data.map((d) => ({ name: d.name, value: d.value ?? 0 }));
-
-  if (rows.length === 0)
-    return (
-      <div className="py-8 text-center text-xs text-muted-foreground">
-        No criteria metrics available
-      </div>
-    );
-
-  return (
-    <ResponsiveContainer width="100%" height={height}>
-      <BarChart data={rows} margin={{ left: -24, right: 12, top: 12, bottom: 8 }}>
-        {/* Hairline horizontal gridlines only (no vertical clutter) */}
-        <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
-
-        <XAxis
-          dataKey="name"
-          tick={{ fontSize: 11, fill: 'var(--muted-foreground)' }}
-          axisLine={false}
-          tickLine={false}
-          interval={0}
-          height={32}
-        />
-        <YAxis
-          domain={[0, domainMax]}
-          tick={{ fontSize: 10, fill: 'var(--muted-foreground)' }}
-          axisLine={false}
-          tickLine={false}
-          ticks={[1, 2, 3, 4, 5]}
-        />
-        <Tooltip
-          cursor={{ fill: 'rgba(127, 29, 29, 0.06)' }}
-          content={({ active, payload, label }) => {
-            if (active && payload && payload.length) {
-              const val = payload[0].value;
-              return (
-                <div className="rounded-xl border border-border bg-card p-3 shadow-xs text-xs">
-                  <div className="font-semibold text-foreground">{label}</div>
-                  <div className="mt-1 flex items-center gap-1.5 text-primary font-bold text-sm">
-                    <span className="tabular-nums">{typeof val === 'number' ? val.toFixed(2) : val}</span>
-                    <span className="text-[10px] text-zinc-400 font-normal">/ {domainMax}.00</span>
-                  </div>
-                </div>
-              );
-            }
-            return null;
-          }}
-        />
-        <Bar dataKey="value" fill="var(--primary)" radius={[8, 8, 2, 2]} maxBarSize={48} />
-      </BarChart>
-    </ResponsiveContainer>
   );
 }

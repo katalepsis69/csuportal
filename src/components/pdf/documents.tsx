@@ -26,10 +26,6 @@ const styles = StyleSheet.create({
 
 const generated = () => new Date().toLocaleString();
 
-function T({ children }: { children: React.ReactNode }) {
-  return <Text>{children}</Text>;
-}
-
 function Table({ head, rows }: { head: [string, string]; rows: [string, string | number | null][] }) {
   return (
     <View>
@@ -99,7 +95,7 @@ export function buildDocument(type: string, data: any): any {
           </Text>
           {(overview.comments ?? []).slice(0, 40).map((c: any, i: number) => (
             <View key={i} style={styles.comment}>
-              <T>{c.comment}</T>
+              <Text>{c.comment}</Text>
               <Text style={styles.muted}>{c.label ?? 'neutral'}</Text>
             </View>
           ))}
@@ -149,7 +145,7 @@ export function buildDocument(type: string, data: any): any {
           <Text style={[styles.section, styles.bold]}>Comments</Text>
           {(detail.comments ?? []).slice(0, 60).map((c: any, i: number) => (
             <View key={i} style={styles.comment}>
-              <T>{c.comment}</T>
+              <Text>{c.comment}</Text>
               <Text style={styles.muted}>{c.label ?? 'neutral'}</Text>
             </View>
           ))}
@@ -177,7 +173,7 @@ export function buildDocument(type: string, data: any): any {
           </Text>
           {(report.comments ?? []).slice(0, 80).map((x: any, i: number) => (
             <View key={i} style={styles.comment}>
-              <T>{x.comment}</T>
+              <Text>{x.comment}</Text>
               <Text style={styles.muted}>
                 {x.label ?? 'neutral'} · {x.faculty_name} · {x.subject_code}
               </Text>

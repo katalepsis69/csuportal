@@ -79,12 +79,7 @@ const NAV_CONFIG: Record<
     items: [
       {
         href: '/student',
-        label: 'Dashboard',
-        icon: <IconGaugeLine className="w-4 h-4" />,
-      },
-      {
-        href: '/student',
-        label: 'Evaluate Faculty',
+        label: 'Evaluation Dashboard',
         badge: 'Active',
         icon: <IconClipboardLine className="w-4 h-4 text-primary" />,
       },
@@ -169,17 +164,21 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
     role === 'dean'
       ? 'DEAN / EXEC'
       : role === 'student'
-      ? 'BSCS-3A • CETC'
+      ? 'STUDENT • CETC'
       : role === 'faculty'
       ? 'FACULTY / DEPT'
       : 'SYSADMIN';
 
   const displayName =
-    role === 'dean' && (!fullName || fullName === 'User')
-      ? 'Dr. Roberto Al-Rashid'
-      : role === 'student' && (!fullName || fullName === 'User')
-      ? 'Juan Dela Cruz'
-      : fullName;
+    fullName && fullName !== 'User'
+      ? fullName
+      : role === 'dean'
+      ? "Dean's Office"
+      : role === 'faculty'
+      ? 'Faculty Member'
+      : role === 'student'
+      ? 'Student'
+      : 'Administrator';
 
   return (
     <>
