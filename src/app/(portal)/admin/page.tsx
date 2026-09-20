@@ -85,77 +85,7 @@ export default async function AdminPage({
     supabase.from('questions').select('*').order('sort_order'),
   ]);
 
-  const DEFAULT_PROFILES: UserRow[] = [
-    {
-      id: 'usr-1',
-      full_name: 'Engr. Maria Santos, M.Eng',
-      email: 'm.santos@cetc.edu.ph',
-      role: 'faculty',
-      program_code: 'BSCS',
-      created_at: '2025-08-15T00:00:00Z',
-    },
-    {
-      id: 'usr-2',
-      full_name: 'Dr. Fatima Lim, Ph.D.',
-      email: 'f.lim@cetc.edu.ph',
-      role: 'faculty',
-      program_code: 'BSCE',
-      created_at: '2025-08-15T00:00:00Z',
-    },
-    {
-      id: 'usr-3',
-      full_name: 'Prof. Danilo Cruz, M.Sc.',
-      email: 'd.cruz@cetc.edu.ph',
-      role: 'faculty',
-      program_code: 'BSEE',
-      created_at: '2025-08-15T00:00:00Z',
-    },
-    {
-      id: 'usr-4',
-      full_name: 'Engr. Ahmad Tan, PE',
-      email: 'a.tan@cetc.edu.ph',
-      role: 'faculty',
-      program_code: 'BSME',
-      created_at: '2025-08-15T00:00:00Z',
-    },
-    {
-      id: 'usr-5',
-      full_name: 'Engr. Haron Ali, Ph.D.',
-      email: 'dean.ali@cetc.edu.ph',
-      role: 'dean',
-      program_code: 'CETC Dean Office',
-      created_at: '2025-08-01T00:00:00Z',
-    },
-    {
-      id: 'usr-6',
-      full_name: 'Juan Dela Cruz',
-      email: 'j.delacruz@student.cetc.edu.ph',
-      student_no: '2023-CS-0042',
-      role: 'student',
-      program_code: 'BSCS',
-      created_at: '2025-08-20T00:00:00Z',
-    },
-    {
-      id: 'usr-7',
-      full_name: 'Amina Yusof',
-      email: 'a.yusof@student.cetc.edu.ph',
-      student_no: '2023-IT-0118',
-      role: 'student',
-      program_code: 'BSIT',
-      created_at: '2025-08-20T00:00:00Z',
-    },
-    {
-      id: 'usr-8',
-      full_name: 'System Administrator',
-      email: 'admin@cetc.edu.ph',
-      role: 'admin',
-      program_code: 'IT Services',
-      created_at: '2025-07-01T00:00:00Z',
-    },
-  ];
-
-  const dbProfiles = (allProfiles ?? []) as UserRow[];
-  const profilesList = dbProfiles.length > 0 ? dbProfiles : DEFAULT_PROFILES;
+  const profilesList = (allProfiles ?? []) as UserRow[];
   const studentCount = profilesList.filter((p) => p.role === 'student').length;
   const facultyCount = profilesList.filter((p) => p.role === 'faculty').length;
   const sems = (semesters ?? []) as unknown as Semester[];
@@ -176,38 +106,26 @@ export default async function AdminPage({
   const adminMetrics = [
     {
       label: 'Total Users',
-      value: profilesList.length || 10,
-      trend: '+12.4%',
-      trendPositive: true,
-      color: 'var(--primary)',
-      sparkline: [12, 14, 18, 16, 22, 25, 29, 34],
+      value: profilesList.length,
+      sublabel: `${studentCount} Students · ${facultyCount} Faculty`,
       icon: <IconUsersLine className="h-4 w-4" />,
     },
     {
       label: 'Active Students',
-      value: studentCount || 5,
-      trend: 'Enrolled',
-      trendPositive: true,
-      color: 'var(--positive)',
-      sparkline: [5, 8, 9, 11, 14, 15, 18, 20],
+      value: studentCount,
+      sublabel: 'Enrolled in portal',
       icon: <IconBookLine className="h-4 w-4" />,
     },
     {
       label: 'Faculty Assigned',
-      value: facultyCount || 4,
-      trend: `${assigns.length || 6} Classes`,
-      trendPositive: true,
-      color: 'var(--gold)',
-      sparkline: [2, 3, 3, 4, 4, 5, 5, 6],
+      value: facultyCount,
+      sublabel: `${assigns.length} Teaching assignments`,
       icon: <IconChartLine className="h-4 w-4" />,
     },
     {
-      label: 'System Compliance',
-      value: '94.2%',
-      trend: 'Audited',
-      trendPositive: true,
-      color: 'var(--primary)',
-      sparkline: [88, 89, 91, 90, 93, 94, 94, 95],
+      label: 'Academic Structure',
+      value: `${(programs ?? []).length} Programs`,
+      sublabel: `${secs.length} Sections · ${sems.length} Semesters`,
       icon: <IconGearLine className="h-4 w-4" />,
     },
   ];

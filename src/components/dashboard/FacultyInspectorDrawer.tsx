@@ -34,50 +34,18 @@ export function FacultyInspectorDrawer({
 
   if (!faculty || !isOpen) return null;
 
-  const rating = faculty.overallRating ?? 4.85;
-  const ratingStr = rating.toFixed(2);
-  const evals = faculty.responsesReceived ?? faculty.evaluationsReceived ?? 148;
-  const posPct = faculty.sentimentRatio?.positive ?? 94;
-  const neuPct = faculty.sentimentRatio?.neutral ?? 4;
-  const negPct = faculty.sentimentRatio?.negative ?? 2;
+  const rating = faculty.overallRating;
+  const ratingStr = rating != null ? rating.toFixed(2) : '—';
+  const evals = faculty.responsesReceived ?? faculty.evaluationsReceived ?? 0;
+  const posPct = faculty.sentimentRatio?.positive ?? 0;
+  const neuPct = faculty.sentimentRatio?.neutral ?? 0;
+  const negPct = faculty.sentimentRatio?.negative ?? 0;
   const posCount = Math.round((evals * posPct) / 100);
   const neuCount = Math.round((evals * neuPct) / 100);
   const negCount = Math.max(0, evals - posCount - neuCount);
 
-  // Criteria ratings
-  const criteria = faculty.pedagogicalBreakdown || [
-    { name: 'Commitment to Teaching', score: 4.9, pct: 98, color: 'bg-primary' },
-    { name: 'Instructional Clarity & Algorithms', score: 4.8, pct: 96, color: 'bg-primary' },
-    { name: 'Laboratory Pacing & Code Exercises', score: 4.7, pct: 94, color: 'bg-gold' },
-    { name: 'Fairness in Rubrics & Grading', score: 4.9, pct: 98, color: 'bg-positive' },
-  ];
-
-  const remarks = faculty.comments || [
-    {
-      type: 'POSITIVE',
-      course: 'CS 214',
-      section: 'BSCS 3-A',
-      timeAgo: '2w ago',
-      text: '“Engr. Santos explains recursion, binary trees, and graph traversals better than anyone. Very approachable and supportive during lab debugging sessions.”',
-      hash: 'Receipt 7c4e...d81a',
-    },
-    {
-      type: 'CONSTRUCTIVE',
-      course: 'CS 314',
-      section: 'BSIT 3-B',
-      timeAgo: '3w ago',
-      text: '“Problem sets were challenging and required deep thought, but the grading rubric was transparent and feedback returned quickly.”',
-      hash: 'Receipt 9f8a...32b1',
-    },
-    {
-      type: 'POSITIVE',
-      course: 'CS 214',
-      section: 'BSCS 2-A',
-      timeAgo: '1mo ago',
-      text: '“Always on time for consultation hours and provides clear real-world industry examples of algorithms.”',
-      hash: 'Receipt 3b12...a55e',
-    },
-  ];
+  const criteria = faculty.pedagogicalBreakdown || [];
+  const remarks = faculty.comments || [];
 
   function getInitials(name: string) {
     return (
@@ -191,12 +159,12 @@ export function FacultyInspectorDrawer({
         {/* Drawer Body Content */}
         <div className="p-6 space-y-6 flex-1 overflow-y-auto">
           {/* Score Matrix Card */}
+          {/* Score Matrix Card */}
           <div className="p-4 rounded-xl bg-muted/30 border border-border shadow-xs">
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Pedagogical Criteria Breakdown
               </h4>
-              <span className="text-[10px] text-positive font-semibold">Rank #2 in College</span>
             </div>
 
             <div className="space-y-3">
@@ -213,6 +181,11 @@ export function FacultyInspectorDrawer({
                   </div>
                 </div>
               ))}
+              {criteria.length === 0 && (
+                <p className="text-xs text-muted-foreground py-3 text-center">
+                  Pedagogical criteria breakdown pending evaluation responses.
+                </p>
+              )}
             </div>
           </div>
 
@@ -222,7 +195,9 @@ export function FacultyInspectorDrawer({
               <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
                 Student Qualitative Sentiment
               </h4>
-              <span className="text-[10px] text-positive font-semibold">+94 Net Index</span>
+              <span className="text-[10px] text-muted-foreground font-medium tabular-nums">
+                {evals} Total Remarks
+              </span>
             </div>
 
             <div className="grid grid-cols-3 gap-2 text-center mb-1">
@@ -241,7 +216,7 @@ export function FacultyInspectorDrawer({
             </div>
           </div>
 
-          {/* Real-Time Stream of Anonymous Student Remarks */}
+          {/* Stream of Anonymous Student Remarks */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h4 className="text-xs uppercase tracking-wider text-muted-foreground font-semibold">
@@ -274,6 +249,11 @@ export function FacultyInspectorDrawer({
                   <div className="mt-2 text-[10px] text-muted-foreground/60 font-mono">{r.hash}</div>
                 </div>
               ))}
+              {remarks.length === 0 && (
+                <p className="text-xs text-muted-foreground py-4 text-center">
+                  No student feedback comments submitted for this faculty member yet.
+                </p>
+              )}
             </div>
           </div>
         </div>

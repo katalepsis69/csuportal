@@ -125,10 +125,10 @@ export function DeanFacultyTable({
             <tbody className="divide-y divide-border text-xs">
               {filtered.map((f) => {
                 const isSelected = selectedFaculty?.id === f.id && isDrawerOpen;
-                const pos = f.sentimentRatio?.positive ?? 85;
-                const neu = f.sentimentRatio?.neutral ?? 10;
-                const neg = f.sentimentRatio?.negative ?? 5;
-                const score = f.overallRating != null ? f.overallRating.toFixed(2) : '4.85';
+                const pos = f.sentimentRatio?.positive ?? 0;
+                const neu = f.sentimentRatio?.neutral ?? 0;
+                const neg = f.sentimentRatio?.negative ?? 0;
+                const score = f.overallRating != null ? f.overallRating.toFixed(2) : '—';
 
                 return (
                   <tr
@@ -215,12 +215,14 @@ export function DeanFacultyTable({
                           className={`px-1.5 py-0.5 rounded text-[9px] font-semibold border ${
                             f.isFlagged
                               ? 'bg-destructive/10 text-destructive border-destructive/25'
-                              : Number(score) >= 4.8
+                              : f.overallRating == null
+                              ? 'bg-muted text-muted-foreground border-border'
+                              : f.overallRating >= 4.8
                               ? 'bg-positive/10 text-positive border-positive/25'
                               : 'bg-muted text-foreground border-border'
                           }`}
                         >
-                          {f.ratingLabel || (Number(score) >= 4.8 ? 'Outstanding' : 'Very Satisfactory')}
+                          {f.ratingLabel || (f.overallRating == null ? 'No Evaluations' : f.overallRating >= 4.8 ? 'Outstanding' : 'Very Satisfactory')}
                         </span>
                       </div>
                     </td>
@@ -228,17 +230,23 @@ export function DeanFacultyTable({
                     {/* Sentiment Ratio */}
                     <td className="py-3.5 px-4">
                       <div className="w-32">
-                        <div className="flex justify-between text-[10px] text-muted-foreground mb-1 tabular-nums">
-                          <span>{pos}% Pos</span>
-                          <span className={f.isFlagged ? 'text-destructive font-semibold' : ''}>
-                            {neg}% Neg
-                          </span>
-                        </div>
-                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
-                          <div className="bg-positive h-full" style={{ width: `${pos}%` }} />
-                          <div className="bg-amber-500 h-full" style={{ width: `${neu}%` }} />
-                          <div className="bg-destructive h-full" style={{ width: `${neg}%` }} />
-                        </div>
+                        {pos + neu + neg > 0 ? (
+                          <>
+                            <div className="flex justify-between text-[10px] text-muted-foreground mb-1 tabular-nums">
+                              <span>{pos}% Pos</span>
+                              <span className={f.isFlagged ? 'text-destructive font-semibold' : ''}>
+                                {neg}% Neg
+                              </span>
+                            </div>
+                            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
+                              <div className="bg-positive h-full" style={{ width: `${pos}%` }} />
+                              <div className="bg-amber-500 h-full" style={{ width: `${neu}%` }} />
+                              <div className="bg-destructive h-full" style={{ width: `${neg}%` }} />
+                            </div>
+                          </>
+                        ) : (
+                          <span className="text-[11px] text-muted-foreground/60">—</span>
+                        )}
                       </div>
                     </td>
 

@@ -9,62 +9,20 @@ import { SemesterSelect } from '@/components/dashboard/SemesterSelect';
 
 export const dynamic = 'force-dynamic';
 
-const DEFAULT_DEAN_OVERVIEW: DeanOverview = {
-  semester: {
-    id: 'ay2526-sem1',
-    academic_year: 'AY 2025–2026',
-    term: '1st',
-    is_current: true,
-    is_open: false,
-    manual_override: null,
-    opens_at: '2026-08-01T00:00:00Z',
-    closes_at: '2026-10-15T23:59:59Z',
-  },
+const EMPTY_DEAN_OVERVIEW: DeanOverview = {
+  semester: null,
   participation: {
-    enrolled: 2485,
-    submitted: 2148,
-    total_evals: 2148,
+    enrolled: 0,
+    submitted: 0,
+    total_evals: 0,
   },
-  faculty: [
-    {
-      id: 'fc-santos',
-      full_name: 'Engr. Maria Santos, M.Eng',
-      loads: 3,
-      evals: 42,
-      overall: 4.82,
-    },
-    {
-      id: 'fc-lim',
-      full_name: 'Dr. Fatima Lim, Ph.D.',
-      loads: 2,
-      evals: 35,
-      overall: 4.65,
-    },
-    {
-      id: 'fc-cruz',
-      full_name: 'Prof. Danilo Cruz, M.Sc.',
-      loads: 4,
-      evals: 48,
-      overall: 4.41,
-    },
-    {
-      id: 'fc-tan',
-      full_name: 'Engr. Ahmad Tan, PE',
-      loads: 2,
-      evals: 28,
-      overall: 4.15,
-    },
-  ],
+  faculty: [],
   sentiment: {
-    positive: 78,
-    neutral: 15,
-    negative: 7,
+    positive: 0,
+    neutral: 0,
+    negative: 0,
   },
-  per_criterion: [
-    { category: 'Instruction & Teaching Competence', avg_rating: 4.81 },
-    { category: 'Subject Mastery & Lab Pedagogy', avg_rating: 4.76 },
-    { category: 'Classroom Management & Consultation', avg_rating: 4.60 },
-  ],
+  per_criterion: [],
 };
 
 const getDeanOverview = unstable_cache(
@@ -73,20 +31,20 @@ const getDeanOverview = unstable_cache(
       const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
       if (!url || !key) {
-        return DEFAULT_DEAN_OVERVIEW;
+        return EMPTY_DEAN_OVERVIEW;
       }
       const supabase = createServiceClient(url, key);
       const { data, error } = await supabase.rpc('rpc_dean_overview', { p_semester_id: semesterId });
-      if (error || !data || !data.faculty || data.faculty.length === 0) {
-        return DEFAULT_DEAN_OVERVIEW;
+      if (error || !data) {
+        return EMPTY_DEAN_OVERVIEW;
       }
       return data as DeanOverview;
     } catch {
-      return DEFAULT_DEAN_OVERVIEW;
+      return EMPTY_DEAN_OVERVIEW;
     }
   },
   ['dean-overview'],
-  { revalidate: 60, tags: ['evals'] },
+  { revalidate: 60, tags: ['evaluations'] },
 );
 
 export default async function DeanPage({
@@ -104,112 +62,52 @@ export default async function DeanPage({
     getDeanOverview(semesterId),
   ]);
   const semester = overview.semester as Semester | null;
-  const label = semester ? `${semester.academic_year} ${semester.term}` : 'AY 2025–2026 • 1st Sem';
+  const currentSem =
+    ((semesters ?? []) as unknown as Semester[]).find((s) => s.is_current) ??
+    ((semesters ?? []) as unknown as Semester[])[0];
+  const label = semester
+    ? `${semester.academic_year} ${semester.term}`
+    : currentSem
+    ? `${currentSem.academic_year} ${currentSem.term}`
+    : 'Active Term';
 
-  const enrolledCount = overview.participation?.enrolled ?? 2485;
-  const submittedCount = overview.participation?.submitted ?? 2148;
+  const enrolledCount = overview.participation?.enrolled ?? 0;
+  const submittedCount = overview.participation?.submitted ?? 0;
   const participationPct =
-    enrolledCount > 0 ? Math.round((submittedCount / enrolledCount) * 100) : 86;
+    enrolledCount > 0 ? Math.round((submittedCount / enrolledCount) * 100) : 0;
 
-  // Rich mapping matching download (1).htm reference
-  const facultyRows: DeanFacultyRow[] = (overview.faculty && overview.faculty.length > 0
-    ? overview.faculty
-    : DEFAULT_DEAN_OVERVIEW.faculty
-  ).map((f, idx) => {
-    const isTan = f.id === 'fc-tan' || (f.full_name ? f.full_name.includes('Tan') : false);
-    const isSantos = f.id === 'fc-santos' || (f.full_name ? f.full_name.includes('Santos') : false);
-    const isLim = f.id === 'fc-lim' || (f.full_name ? f.full_name.includes('Lim') : false);
-    const isCruz = f.id === 'fc-cruz' || (f.full_name ? f.full_name.includes('Cruz') : false);
-
-    const department = isSantos
-      ? 'Computer Science (CS/IT)'
-      : isLim
-      ? 'Civil Engineering (CE)'
-      : isCruz
-      ? 'Electrical Engineering (EE)'
-      : isTan
-      ? 'Mechanical Engineering (ME)'
-      : 'Engineering & Technology';
-
-    const title = isSantos
-      ? 'Assistant Professor • Algorithms Chair'
-      : isLim
-      ? 'Associate Professor • Structural Eng'
-      : isCruz
-      ? 'Senior Lecturer • Power Systems'
-      : isTan
-      ? 'Instructor II • Thermal Fluids'
-      : 'Faculty Member';
-
-    const sentiment = isSantos
-      ? { positive: 95, neutral: 3, negative: 2 }
-      : isLim
-      ? { positive: 88, neutral: 8, negative: 4 }
-      : isCruz
-      ? { positive: 82, neutral: 12, negative: 6 }
-      : isTan
-      ? { positive: 74, neutral: 10, negative: 16 }
-      : { positive: 85, neutral: 10, negative: 5 };
-
-    const score = f.overall ?? (isSantos ? 4.82 : isLim ? 4.65 : isCruz ? 4.41 : 4.15);
-    const isFlagged = score < 4.25 || isTan;
+  const facultyRows: DeanFacultyRow[] = (overview.faculty ?? []).map((f) => {
+    const score = f.overall ?? null;
+    const isFlagged = score != null && score < 4.25;
 
     return {
       id: f.id,
       name: f.full_name || 'Faculty Member',
-      title,
-      department,
-      sectionsCount: f.loads || (idx === 0 ? 3 : idx === 1 ? 2 : idx === 2 ? 4 : 2),
-      responsesReceived: f.evals || (idx === 0 ? 42 : idx === 1 ? 35 : idx === 2 ? 48 : 28),
-      totalStudents: (f.evals ? Math.round(f.evals * 1.1) : idx === 0 ? 45 : idx === 1 ? 38 : idx === 2 ? 55 : 35),
+      title: 'Faculty Member',
+      department: 'College of Engineering & Technology',
+      sectionsCount: f.loads ?? 0,
+      responsesReceived: f.evals ?? 0,
+      totalStudents: f.evals ?? 0,
       overallRating: score,
-      ratingLabel: score >= 4.8 ? 'Outstanding' : score >= 4.5 ? 'Very Satisfactory' : score >= 4.25 ? 'Satisfactory' : 'Action Required',
-      sentimentRatio: sentiment,
+      ratingLabel:
+        score == null
+          ? 'No Evaluations'
+          : score >= 4.8
+          ? 'Outstanding'
+          : score >= 4.5
+          ? 'Very Satisfactory'
+          : score >= 4.25
+          ? 'Satisfactory'
+          : 'Action Required',
+      sentimentRatio: {
+        positive: 0,
+        neutral: 0,
+        negative: 0,
+      },
       isFlagged,
-      dossierId: `FC-2018-0${idx + 1}`,
-      pedagogicalBreakdown: [
-        { name: 'Commitment to Teaching', score: isSantos ? 4.90 : 4.70, pct: isSantos ? 98 : 94, color: 'bg-primary' },
-        { name: 'Instructional Clarity & Algorithms', score: isSantos ? 4.85 : 4.60, pct: isSantos ? 97 : 92, color: 'bg-primary' },
-        { name: 'Laboratory Pacing & Code Exercises', score: isSantos ? 4.75 : 4.45, pct: isSantos ? 95 : 89, color: 'bg-accent' },
-        { name: 'Fairness in Rubrics & Grading', score: isSantos ? 4.88 : 4.65, pct: isSantos ? 98 : 93, color: 'bg-positive' },
-      ],
-      comments: isSantos
-        ? [
-            {
-              type: 'POSITIVE',
-              course: 'CS 214',
-              section: 'BSCS 3-A',
-              timeAgo: '2w ago',
-              text: '“Engr. Santos explains recursion, binary trees, and graph traversals better than anyone. Very approachable and supportive during lab debugging sessions.”',
-              hash: 'Receipt 7c4e...d81a',
-            },
-            {
-              type: 'CONSTRUCTIVE',
-              course: 'CS 314',
-              section: 'BSIT 3-B',
-              timeAgo: '3w ago',
-              text: '“Problem sets were challenging and required deep thought, but the grading rubric was transparent and feedback returned quickly.”',
-              hash: 'Receipt 9f8a...32b1',
-            },
-            {
-              type: 'POSITIVE',
-              course: 'CS 214',
-              section: 'BSCS 2-A',
-              timeAgo: '1mo ago',
-              text: '“Always on time for consultation hours and provides clear real-world industry examples of algorithms.”',
-              hash: 'Receipt 3b12...a55e',
-            },
-          ]
-        : [
-            {
-              type: 'CONSTRUCTIVE',
-              course: 'ME 201',
-              section: 'BSME 2-A',
-              timeAgo: '1w ago',
-              text: '“Lecture pace was quite rapid during thermodynamics chapter. Would appreciate more sample problem walkthroughs before exams.”',
-              hash: 'Receipt 1a8f...90c4',
-            },
-          ],
+      dossierId: `FC-${f.id.slice(0, 8)}`,
+      pedagogicalBreakdown: [],
+      comments: [],
     };
   });
 
@@ -217,48 +115,28 @@ export default async function DeanPage({
   const collegeMeanNum =
     ratedFaculty.length > 0
       ? ratedFaculty.reduce((acc, f) => acc + (f.overallRating ?? 0), 0) / ratedFaculty.length
-      : 4.72;
-  const collegeMean = collegeMeanNum.toFixed(2);
+      : null;
+  const collegeMean = collegeMeanNum != null ? collegeMeanNum.toFixed(2) : '—';
   const flaggedCount = facultyRows.filter((f) => f.isFlagged).length;
 
-  // ponytail: seed RPC returns a single criteria category, which renders as
-  // one row in a void. Average the per-faculty breakdown instead when thin.
-  const breakdownAcc: Record<string, { total: number; n: number }> = {};
-  for (const f of facultyRows)
-    for (const b of f.pedagogicalBreakdown ?? []) {
-      breakdownAcc[b.name] ??= { total: 0, n: 0 };
-      breakdownAcc[b.name].total += b.score;
-      breakdownAcc[b.name].n += 1;
-    }
-  const breakdownAvg = Object.entries(breakdownAcc).map(([name, { total, n }]) => {
-    const score = total / n;
-    return { name, score: score.toFixed(2), pct: Math.min(100, Math.round((score / 5) * 100)) };
+  // Criteria averages from real database aggregations
+  const criteriaData = (overview.per_criterion ?? []).map((c) => {
+    const score = c.avg_rating ?? 0;
+    return {
+      name: c.category,
+      score: c.avg_rating != null ? c.avg_rating.toFixed(2) : '—',
+      pct: Math.min(100, Math.round((score / 5) * 100)),
+    };
   });
 
-  // Criteria averages or fallback realistic benchmarks
-  const criteriaData =
-    (overview.per_criterion?.length ?? 0) > 1
-      ? (overview.per_criterion ?? []).map((c) => ({
-          name: c.category,
-          score: (c.avg_rating ?? 4.8).toFixed(2),
-          pct: Math.min(100, Math.round(((c.avg_rating ?? 4.8) / 5) * 100)),
-        }))
-      : breakdownAvg.length > 0
-        ? breakdownAvg
-        : [
-            { name: 'Instruction & Teaching Competence', score: '4.81', pct: 96 },
-            { name: 'Subject Mastery & Lab Pedagogy', score: '4.76', pct: 95 },
-            { name: 'Classroom Management & Consultation', score: '4.60', pct: 92 },
-          ];
-
   // Sentiment counts
-  const posCount = overview.sentiment?.positive ?? 78;
-  const neuCount = overview.sentiment?.neutral ?? 15;
-  const negCount = overview.sentiment?.negative ?? 7;
+  const posCount = overview.sentiment?.positive ?? 0;
+  const neuCount = overview.sentiment?.neutral ?? 0;
+  const negCount = overview.sentiment?.negative ?? 0;
   const totalSent = posCount + neuCount + negCount;
-  const posPct = totalSent > 0 ? Math.round((posCount / totalSent) * 100) : 78;
-  const neuPct = totalSent > 0 ? Math.round((neuCount / totalSent) * 100) : 15;
-  const negPct = Math.max(0, 100 - posPct - neuPct);
+  const posPct = totalSent > 0 ? Math.round((posCount / totalSent) * 100) : 0;
+  const neuPct = totalSent > 0 ? Math.round((neuCount / totalSent) * 100) : 0;
+  const negPct = totalSent > 0 ? Math.max(0, 100 - posPct - neuPct) : 0;
 
   return (
     <div className="space-y-8 min-w-0">
@@ -296,25 +174,6 @@ export default async function DeanPage({
               currentId={semesterId}
             />
 
-            {/* Department Filter */}
-            <div className="relative inline-block">
-              <select
-                defaultValue="all"
-                aria-label="Filter by department"
-                className="appearance-none rounded-xl border border-border bg-card px-3.5 py-2 pr-8 text-xs font-medium text-foreground hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-xs min-h-[38px] transition-colors"
-              >
-                <option value="all">All Departments (4)</option>
-                <option value="cs">Computer Studies (CS/IT)</option>
-                <option value="ce">Civil Engineering (CE)</option>
-                <option value="ee">Electrical Engineering (EE)</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2.5 text-muted-foreground">
-                <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </div>
-            </div>
-
             {/* Download PDF Button */}
             <PdfDownloadButton
               type="department"
@@ -337,46 +196,62 @@ export default async function DeanPage({
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                 College Mean Faculty Appraisal
               </span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-primary/10 text-primary border border-primary/25 flex items-center gap-1">
-                <svg className="w-2.5 h-2.5 text-primary" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
-                +0.14 vs last term
+              <span className="text-[10px] text-muted-foreground bg-muted px-2 py-0.5 rounded border border-border">
+                Aggregated Average
               </span>
             </div>
 
-            <div className="flex items-baseline gap-2.5 mt-1">
-              <span className="font-display font-bold text-4xl text-foreground tracking-tight tabular-nums">
-                {collegeMean}
-              </span>
-              <span className="text-sm text-muted-foreground">/ 5.00</span>
-              <span className="ml-2 text-xs font-semibold text-positive bg-positive/10 px-2 py-0.5 rounded border border-positive/25">
-                Very Satisfactory
-              </span>
-            </div>
+            {collegeMeanNum != null ? (
+              <div className="flex items-baseline gap-2.5 mt-1">
+                <span className="font-display font-bold text-4xl text-foreground tracking-tight tabular-nums">
+                  {collegeMean}
+                </span>
+                <span className="text-sm text-muted-foreground">/ 5.00</span>
+                <span className="ml-2 text-xs font-semibold text-positive bg-positive/10 px-2 py-0.5 rounded border border-positive/25">
+                  {collegeMeanNum >= 4.8
+                    ? 'Outstanding'
+                    : collegeMeanNum >= 4.5
+                    ? 'Very Satisfactory'
+                    : collegeMeanNum >= 4.25
+                    ? 'Satisfactory'
+                    : 'Action Required'}
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-baseline gap-2 mt-1">
+                <span className="font-display font-bold text-4xl text-muted-foreground tracking-tight">
+                  —
+                </span>
+                <span className="text-xs text-muted-foreground">No evaluations completed yet</span>
+              </div>
+            )}
           </div>
 
           {/* Horizontal Criteria Breakdown Bars */}
           <div className="mt-4 pt-3.5 border-t border-border space-y-2.5">
-            {criteriaData.slice(0, 3).map((crit, idx) => {
-              const barColors = ['bg-primary', 'bg-primary/80', 'bg-accent'];
-              return (
-                <div key={crit.name}>
-                  <div className="flex justify-between text-[11px] mb-1">
-                    <span className="text-muted-foreground">{crit.name}</span>
-                    <span className="font-semibold text-foreground tabular-nums">
-                      {crit.score} <span className="text-muted-foreground/60 font-normal">/ 5.0</span>
-                    </span>
+            {criteriaData.length > 0 ? (
+              criteriaData.slice(0, 3).map((crit, idx) => {
+                const barColors = ['bg-primary', 'bg-primary/80', 'bg-accent'];
+                return (
+                  <div key={crit.name}>
+                    <div className="flex justify-between text-[11px] mb-1">
+                      <span className="text-muted-foreground">{crit.name}</span>
+                      <span className="font-semibold text-foreground tabular-nums">
+                        {crit.score} <span className="text-muted-foreground/60 font-normal">/ 5.0</span>
+                      </span>
+                    </div>
+                    <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
+                      <div
+                        className={`h-full ${barColors[idx % barColors.length]} rounded-full transition-all duration-300`}
+                        style={{ width: `${crit.pct}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
-                    <div
-                      className={`h-full ${barColors[idx % barColors.length]} rounded-full transition-all duration-300`}
-                      style={{ width: `${crit.pct}%` }}
-                    />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            ) : (
+              <p className="text-[11px] text-muted-foreground py-2">No categorical criteria recorded yet.</p>
+            )}
           </div>
         </div>
 
@@ -449,49 +324,58 @@ export default async function DeanPage({
             <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground block mb-2">
               Sentiment Ratio
             </span>
-            <div className="flex items-center gap-3">
-              {/* Mini SVG Donut */}
-              <div className="relative w-12 h-12 shrink-0">
-                <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="14"
-                    fill="none"
-                    stroke="#16a34a"
-                    strokeWidth="4.5"
-                    strokeDasharray={`${posPct} 100`}
-                    strokeDashoffset="0"
-                  />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="14"
-                    fill="none"
-                    stroke="#f59e0b"
-                    strokeWidth="4.5"
-                    strokeDasharray={`${neuPct} 100`}
-                    strokeDashoffset={`-${posPct}`}
-                  />
-                  <circle
-                    cx="18"
-                    cy="18"
-                    r="14"
-                    fill="none"
-                    stroke="#dc2626"
-                    strokeWidth="4.5"
-                    strokeDasharray={`${negPct} 100`}
-                    strokeDashoffset={`-${posPct + neuPct}`}
-                  />
-                </svg>
+            {totalSent > 0 ? (
+              <div className="flex items-center gap-3">
+                {/* Mini SVG Donut */}
+                <div className="relative w-12 h-12 shrink-0">
+                  <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="14"
+                      fill="none"
+                      stroke="#16a34a"
+                      strokeWidth="4.5"
+                      strokeDasharray={`${posPct} 100`}
+                      strokeDashoffset="0"
+                    />
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="14"
+                      fill="none"
+                      stroke="#f59e0b"
+                      strokeWidth="4.5"
+                      strokeDasharray={`${neuPct} 100`}
+                      strokeDashoffset={`-${posPct}`}
+                    />
+                    <circle
+                      cx="18"
+                      cy="18"
+                      r="14"
+                      fill="none"
+                      stroke="#dc2626"
+                      strokeWidth="4.5"
+                      strokeDasharray={`${negPct} 100`}
+                      strokeDashoffset={`-${posPct + neuPct}`}
+                    />
+                  </svg>
+                </div>
+                <div>
+                  <span className="font-display font-bold text-2xl text-foreground tracking-tight tabular-nums">
+                    {posPct}%
+                  </span>
+                  <p className="text-[10px] text-muted-foreground uppercase font-semibold">Positive</p>
+                </div>
               </div>
-              <div>
-                <span className="font-display font-bold text-2xl text-foreground tracking-tight tabular-nums">
-                  {posPct}%
+            ) : (
+              <div className="py-2">
+                <span className="font-display font-bold text-2xl text-muted-foreground tracking-tight">
+                  —
                 </span>
-                <p className="text-[10px] text-muted-foreground uppercase font-semibold">Positive</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5">No student remarks recorded yet</p>
               </div>
-            </div>
+            )}
           </div>
 
           <div className="space-y-1.5 mt-3 pt-2.5 border-t border-border text-[10px]">
@@ -572,22 +456,26 @@ export default async function DeanPage({
             </span>
           </div>
           <div className="space-y-2.5">
-            {facultyRows.map((f) => (
-              <div key={f.id} className="flex items-center gap-3">
-                <span className="w-20 shrink-0 truncate text-[11px] text-muted-foreground" title={f.name}>
-                  {f.name.replace(/^(Engr\.|Dr\.|Prof\.)\s+/, '').split(' ')[0]}
-                </span>
-                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
-                  <div
-                    className="h-full rounded-full bg-primary"
-                    style={{ width: `${((f.overallRating ?? 0) / 5) * 100}%` }}
-                  />
+            {facultyRows.length > 0 ? (
+              facultyRows.map((f) => (
+                <div key={f.id} className="flex items-center gap-3">
+                  <span className="w-24 shrink-0 truncate text-[11px] text-muted-foreground" title={f.name}>
+                    {f.name}
+                  </span>
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-primary"
+                      style={{ width: `${f.overallRating != null ? ((f.overallRating / 5) * 100) : 0}%` }}
+                    />
+                  </div>
+                  <span className="w-8 shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                    {f.overallRating != null ? f.overallRating.toFixed(2) : '—'}
+                  </span>
                 </div>
-                <span className="w-8 shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
-                  {(f.overallRating ?? 0).toFixed(2)}
-                </span>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-xs text-muted-foreground py-4 text-center">No faculty records found.</p>
+            )}
           </div>
         </div>
 
@@ -603,19 +491,23 @@ export default async function DeanPage({
             </span>
           </div>
           <div className="space-y-2.5">
-            {criteriaData.map((c) => (
-              <div key={c.name} className="flex items-center gap-3">
-                <span className="flex-1 truncate text-[11px] text-muted-foreground" title={c.name}>
-                  {c.name}
-                </span>
-                <div className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-muted">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${c.pct}%` }} />
+            {criteriaData.length > 0 ? (
+              criteriaData.map((c) => (
+                <div key={c.name} className="flex items-center gap-3">
+                  <span className="flex-1 truncate text-[11px] text-muted-foreground" title={c.name}>
+                    {c.name}
+                  </span>
+                  <div className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-muted">
+                    <div className="h-full rounded-full bg-primary" style={{ width: `${c.pct}%` }} />
+                  </div>
+                  <span className="w-8 shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                    {c.score}
+                  </span>
                 </div>
-                <span className="w-8 shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
-                  {c.score}
-                </span>
-              </div>
-            ))}
+              ))
+            ) : (
+              <p className="text-xs text-muted-foreground py-4 text-center">No categorical evaluations recorded yet.</p>
+            )}
           </div>
         </div>
       </section>

@@ -15,54 +15,12 @@ import { SemesterSelect } from '@/components/dashboard/SemesterSelect';
 
 export const dynamic = 'force-dynamic';
 
-const DEFAULT_FACULTY_OVERVIEW: FacultyOverview = {
-  overall: 4.82,
-  per_question: [
-    { id: 'q1', text: 'Demonstrates learning sensitivity', category: 'Teaching', sort_order: 1, avg_rating: 4.90, responses: 48 },
-    { id: 'q2', text: 'Comes to class prepared', category: 'Teaching', sort_order: 2, avg_rating: 4.85, responses: 48 },
-    { id: 'q3', text: 'Holds consultation hours', category: 'Teaching', sort_order: 3, avg_rating: 4.80, responses: 48 },
-    { id: 'q4', text: 'Explains complex algorithms', category: 'Mastery', sort_order: 4, avg_rating: 4.88, responses: 48 },
-    { id: 'q5', text: 'Integrates practical coding', category: 'Mastery', sort_order: 5, avg_rating: 4.75, responses: 48 },
-    { id: 'q6', text: 'Provides transparent feedback', category: 'Mastery', sort_order: 6, avg_rating: 4.70, responses: 48 },
-  ],
-  per_subject: [
-    {
-      subject_code: 'CS 214',
-      subject_name: 'Data Structures & Algorithms',
-      section_name: 'BSCS 3-A',
-      evals: 42,
-      avg_rating: 4.85,
-    },
-    {
-      subject_code: 'CS 314',
-      subject_name: 'Advanced Database Systems',
-      section_name: 'BSIT 3-B',
-      evals: 38,
-      avg_rating: 4.78,
-    },
-  ],
-  sentiment: {
-    positive: 38,
-    neutral: 4,
-    negative: 2,
-  },
-  comments: [
-    {
-      comment: 'Engr. Santos explains recursion, binary trees, and graph traversals better than anyone. Very approachable and supportive during lab debugging sessions.',
-      label: 'positive',
-      at: new Date().toISOString(),
-    },
-    {
-      comment: 'Problem sets were challenging and required deep thought, but the grading rubric was transparent and feedback returned quickly.',
-      label: 'positive',
-      at: new Date().toISOString(),
-    },
-    {
-      comment: 'Always on time for consultation hours and provides clear real-world industry examples of algorithms.',
-      label: 'positive',
-      at: new Date().toISOString(),
-    },
-  ],
+const EMPTY_FACULTY_OVERVIEW: FacultyOverview = {
+  overall: null,
+  per_question: [],
+  per_subject: [],
+  sentiment: { positive: 0, neutral: 0, negative: 0 },
+  comments: [],
 };
 
 export default async function FacultyPage({
@@ -79,25 +37,21 @@ export default async function FacultyPage({
     supabase.from('semesters').select('*').order('academic_year', { ascending: false }),
     supabase.rpc('rpc_faculty_overview', { p_semester_id: semesterId }),
   ]);
-  const overviewData = (data ?? {}) as FacultyOverview;
-  const overview =
-    overviewData.per_subject && overviewData.per_subject.length > 0
-      ? overviewData
-      : DEFAULT_FACULTY_OVERVIEW;
+  const overview = (data ?? EMPTY_FACULTY_OVERVIEW) as FacultyOverview;
 
   const semesterLabel =
     (semesters as Semester[] | null)?.find((s) => s.id === semesterId)
       ? `${(semesters as Semester[]).find((s) => s.id === semesterId)!.academic_year} ${(
           semesters as Semester[]
         ).find((s) => s.id === semesterId)!.term}`
-      : 'AY 2025–2026 1st Sem';
+      : 'Current Semester';
 
   const sentimentTotal =
     (overview.sentiment?.positive ?? 0) + (overview.sentiment?.neutral ?? 0) + (overview.sentiment?.negative ?? 0);
   const positivePct =
     sentimentTotal > 0
       ? Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)
-      : 90;
+      : 0;
 
   const classes: FacultySubjectRow[] = (overview.per_subject ?? []).map((s) => ({
     subject_code: s.subject_code,
@@ -119,41 +73,29 @@ export default async function FacultyPage({
   const facultyMetrics = [
     {
       label: 'Overall Appraisal Rating',
-      value: `${overview.overall != null ? overview.overall.toFixed(2) : '4.82'} / 5.0`,
-      trend: '+0.12',
-      trendPositive: true,
-      color: 'var(--primary)',
-      sparkline: [4.6, 4.65, 4.72, 4.75, 4.8, 4.82, 4.84, 4.85],
+      value: overview.overall != null ? `${overview.overall.toFixed(2)} / 5.0` : '—',
+      trend: overview.overall != null ? 'Official' : 'Pending',
+      trendPositive: overview.overall != null,
       icon: <IconChartLine className="h-4 w-4" />,
     },
     {
       label: 'Student Responses',
-      value: overview.per_question?.[0]?.responses ?? 80,
+      value: overview.per_question?.[0]?.responses ?? 0,
       sublabel: 'Total answers submitted',
-      trend: '+15.2%',
-      trendPositive: true,
-      color: 'var(--positive)',
-      sparkline: [12, 18, 22, 28, 35, 40, 44, 48],
       icon: <IconUsersLine className="h-4 w-4" />,
     },
     {
       label: 'Positive Sentiment',
-      value: `${positivePct}%`,
-      sublabel: `${overview.sentiment?.positive ?? 38} positive student remarks`,
-      trend: 'High',
+      value: sentimentTotal > 0 ? `${positivePct}%` : '—',
+      sublabel: `${overview.sentiment?.positive ?? 0} positive student remarks`,
+      trend: sentimentTotal > 0 ? 'Logged' : undefined,
       trendPositive: true,
-      color: 'var(--primary)',
-      sparkline: [75, 78, 80, 82, 85, 86, 88, 90],
       icon: <IconBookLine className="h-4 w-4" />,
     },
     {
       label: 'Assigned Classes',
-      value: `${classes.length || 2} Sections`,
+      value: `${classes.length} Sections`,
       sublabel: 'Active teaching loads',
-      trend: 'Active',
-      trendPositive: true,
-      color: 'var(--primary)',
-      sparkline: [1, 1, 2, 2, 2, 2, 2, 2],
       icon: <IconGearLine className="h-4 w-4" />,
     },
   ];

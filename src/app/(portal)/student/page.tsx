@@ -24,44 +24,11 @@ export default async function StudentPage({
   const { data } = await supabase.rpc('rpc_student_dashboard');
   const dash = (data ?? { current_semester: null, subjects: [], past: [] }) as StudentDashboard;
 
-  const DEFAULT_SUBJECTS = [
-    {
-      section_subject_id: '00000000-0000-0000-0000-000000000214',
-      subject_code: 'CS 214',
-      subject_name: 'Data Structures & Algorithms',
-      section_name: 'BSCS 3-A',
-      faculty_name: 'Engr. Maria Santos, M.Eng',
-      is_open: true,
-      closes_at: '2026-10-15T12:00:00Z',
-      completed: false,
-    },
-    {
-      section_subject_id: '00000000-0000-0000-0000-000000000312',
-      subject_code: 'CPE 312',
-      subject_name: 'Digital Signal Processing',
-      section_name: 'BSCPE 3-A',
-      faculty_name: 'Dr. Fatima Lim, Ph.D.',
-      is_open: true,
-      closes_at: '2026-10-15T12:00:00Z',
-      completed: true,
-    },
-  ];
-
-  const subjects = dash.subjects.length > 0 ? dash.subjects : DEFAULT_SUBJECTS;
-  const currentSemester = dash.current_semester ?? {
-    id: 'ay2526-sem1',
-    academic_year: 'Academic Year 2025–2026',
-    term: '1st',
-    is_current: true,
-    is_open: true,
-    manual_override: null,
-    opens_at: '2026-08-01T00:00:00Z',
-    closes_at: '2026-10-15T12:00:00Z',
-  };
-
+  const subjects = dash.subjects ?? [];
+  const currentSemester = dash.current_semester;
   const pending = subjects.filter((s) => !s.completed);
   const done = subjects.filter((s) => s.completed);
-  const daysLeft = computeDaysLeft(currentSemester.closes_at);
+  const daysLeft = currentSemester?.closes_at ? computeDaysLeft(currentSemester.closes_at) : null;
 
   return (
     <div className="space-y-6">
@@ -97,22 +64,43 @@ export default async function StudentPage({
             Faculty Appraisals
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-            {currentSemester.academic_year} · {currentSemester.term} Semester
-            {semesterIsOpen(currentSemester)
-              ? currentSemester.closes_at
-                ? ` · Open until ${new Date(currentSemester.closes_at).toLocaleDateString()}${daysLeft != null ? ` (${daysLeft} day${daysLeft === 1 ? '' : 's'} left)` : ''}`
-                : ' · Open for Submissions'
-              : ' · Evaluation Period Closed'}
+            {currentSemester ? (
+              <>
+                {currentSemester.academic_year} · {currentSemester.term} Semester
+                {semesterIsOpen(currentSemester)
+                  ? currentSemester.closes_at
+                    ? ` · Open until ${new Date(currentSemester.closes_at).toLocaleDateString()}${daysLeft != null ? ` (${daysLeft} day${daysLeft === 1 ? '' : 's'} left)` : ''}`
+                    : ' · Open for Submissions'
+                  : ' · Evaluation Period Closed'}
+              </>
+            ) : (
+              'No active academic term configured'
+            )}
           </p>
         </div>
 
-        {semesterIsOpen(currentSemester) && pending.length > 0 && (
+        {currentSemester && semesterIsOpen(currentSemester) && pending.length > 0 && (
           <div className="inline-flex items-center gap-2 rounded-xl bg-primary/15 border border-primary/30 px-3.5 py-1.5 text-xs text-primary font-semibold">
             <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
             {pending.length} Action{pending.length > 1 ? 's' : ''} Required
           </div>
         )}
       </div>
+
+      {subjects.length === 0 && (
+        <div className="rounded-xl border border-border bg-card p-8 text-center space-y-3 shadow-xs">
+          <div className="w-12 h-12 rounded-full bg-muted border border-border mx-auto flex items-center justify-center text-muted-foreground">
+            <IconClipboardText className="h-6 w-6" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-sm text-foreground">No Evaluation Schedule Active</h3>
+            <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+              There are no faculty evaluations currently scheduled for your enrolled classes this term.
+              When the CETC evaluation period opens, your enrolled subjects will automatically appear here.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* 3-Col Metric Bento Grid */}
       <div className="grid gap-4 sm:grid-cols-3">
