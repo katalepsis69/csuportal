@@ -6,6 +6,12 @@ import { IconClipboardText, IconHourglass, IconSealCheck } from '@/components/ic
 
 export const dynamic = 'force-dynamic';
 
+function computeDaysLeft(closesAt?: string | null): number | null {
+  if (!closesAt) return null;
+  const diff = new Date(closesAt).getTime() - Date.now();
+  return Math.max(0, Math.ceil(diff / 86400000));
+}
+
 export default async function StudentPage({
   searchParams,
 }: {
@@ -55,20 +61,21 @@ export default async function StudentPage({
 
   const pending = subjects.filter((s) => !s.completed);
   const done = subjects.filter((s) => s.completed);
+  const daysLeft = computeDaysLeft(currentSemester.closes_at);
 
   return (
     <div className="space-y-6">
       {/* Submission Confirmation Banner */}
       {submitted === '1' && (
-        <div className="rounded-2xl border border-status-sage/30 bg-status-sage/10 backdrop-blur-md p-4 text-sm text-status-sage flex items-start gap-3 shadow-beautiful-sm ">
-          <IconSealCheck className="h-5 w-5 shrink-0 text-status-sage mt-0.5" />
+        <div className="rounded-2xl border border-positive/30 bg-positive/10 p-4 text-sm text-positive flex items-start gap-3 shadow-xs ">
+          <IconSealCheck className="h-5 w-5 shrink-0 text-positive mt-0.5" />
           <div className="flex-1 min-w-0">
             <div className="font-bold text-foreground">Evaluation Submitted Successfully</div>
             <p className="text-xs text-muted-foreground mt-0.5">
               Your feedback has been recorded anonymously and encrypted with a digital tamper seal.
             </p>
             {hash && (
-              <div className="mt-2 rounded-lg bg-white/80 border border-status-sage/20 px-3 py-1.5 text-[11px] text-foreground break-all">
+              <div className="mt-2 rounded-lg bg-white/80 border border-positive/20 px-3 py-1.5 text-[11px] text-foreground break-all">
                 <span className="text-muted-foreground select-none mr-1.5">Verification Hash:</span>
                 {hash}
               </div>
@@ -93,7 +100,7 @@ export default async function StudentPage({
             {currentSemester.academic_year} · {currentSemester.term} Semester
             {semesterIsOpen(currentSemester)
               ? currentSemester.closes_at
-                ? ` · Open until ${new Date(currentSemester.closes_at).toLocaleDateString()} (7 days remaining)`
+                ? ` · Open until ${new Date(currentSemester.closes_at).toLocaleDateString()}${daysLeft != null ? ` (${daysLeft} day${daysLeft === 1 ? '' : 's'} left)` : ''}`
                 : ' · Open for Submissions'
               : ' · Evaluation Period Closed'}
           </p>
@@ -110,15 +117,15 @@ export default async function StudentPage({
       {/* 3-Col Metric Bento Grid */}
       <div className="grid gap-4 sm:grid-cols-3">
         {/* Pending Card */}
-        <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm flex items-center gap-4 hover:border-primary/40 transition-colors ">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-status-gold/10 border border-status-gold/20 text-status-gold">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex items-center gap-4 hover:border-primary/40 transition-colors ">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/10 border border-gold/20 text-gold-text">
             <IconHourglass className="h-6 w-6" />
           </div>
           <div>
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Pending Appraisals
             </div>
-            <div className="text-2xl font-bold text-status-gold font-display tabular-nums mt-0.5">
+            <div className="text-2xl font-bold text-gold-text font-display tabular-nums mt-0.5">
               {pending.length}
             </div>
             <div className="text-[11px] text-muted-foreground mt-0.5">
@@ -128,15 +135,15 @@ export default async function StudentPage({
         </div>
 
         {/* Completed Card */}
-        <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm flex items-center gap-4 hover:border-status-sage/40 transition-colors ">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-status-sage/10 border border-status-sage/20 text-status-sage">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex items-center gap-4 hover:border-positive/40 transition-colors ">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-positive/10 border border-positive/20 text-positive">
             <IconSealCheck className="h-6 w-6" />
           </div>
           <div>
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Completed
             </div>
-            <div className="text-2xl font-bold text-status-sage font-display tabular-nums mt-0.5">
+            <div className="text-2xl font-bold text-positive font-display tabular-nums mt-0.5">
               {done.length}
             </div>
             <div className="text-[11px] text-muted-foreground mt-0.5">Encrypted & submitted</div>
@@ -144,7 +151,7 @@ export default async function StudentPage({
         </div>
 
         {/* Total Subjects Card */}
-        <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm flex items-center gap-4 hover:border-primary/40 transition-colors ">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex items-center gap-4 hover:border-primary/40 transition-colors ">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
             <IconClipboardText className="h-6 w-6" />
           </div>
@@ -162,10 +169,10 @@ export default async function StudentPage({
 
       {/* Pending Evaluations List */}
       {pending.length > 0 && (
-        <div id="pending" className="rounded-2xl border border-border bg-white/80 backdrop-blur-md overflow-hidden shadow-beautiful-sm ">
-          <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-muted0">
+        <div id="pending" className="rounded-xl border border-border bg-card overflow-hidden shadow-xs ">
+          <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-muted/50">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-status-gold" />
+              <span className="h-2 w-2 rounded-full bg-gold" />
               <h2 className="text-sm font-bold text-foreground">
                 Pending Appraisals ({pending.length})
               </h2>
@@ -201,12 +208,12 @@ export default async function StudentPage({
                   {s.is_open ? (
                     <Link
                       href={`/student/eval/${s.section_subject_id}`}
-                      className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-[#c0590d] px-4 py-2 text-xs font-semibold text-white shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all min-h-[38px] border border-primary/30"
+                      className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-brand-hover active:scale-[0.98] transition-colors min-h-[38px]"
                     >
                       Start Appraisal
                     </Link>
                   ) : (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-status-gold/15 px-3 py-1 text-xs font-semibold text-status-gold border border-status-gold/30">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold text-gold-text border border-gold/30">
                       Period Closed
                     </span>
                   )}
@@ -219,15 +226,15 @@ export default async function StudentPage({
 
       {/* Completed Evaluations List */}
       {done.length > 0 && (
-        <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md overflow-hidden shadow-beautiful-sm ">
-          <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-muted0">
+        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs ">
+          <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-muted/50">
             <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-status-sage" />
+              <span className="h-2 w-2 rounded-full bg-positive" />
               <h2 className="text-sm font-bold text-foreground">
                 Completed Appraisals ({done.length})
               </h2>
             </div>
-            <span className="text-xs text-status-sage font-medium">
+            <span className="text-xs text-positive font-medium">
               Verified on record
             </span>
           </div>
@@ -255,8 +262,8 @@ export default async function StudentPage({
                 </div>
 
                 <div className="shrink-0 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-status-sage/15 px-3 py-1 text-xs font-semibold text-status-sage border border-status-sage/30">
-                    <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-3 py-1 text-xs font-semibold text-positive border border-positive/30">
+                    <span className="h-1.5 w-1.5 rounded-full bg-positive" />
                     Submitted &amp; Sealed
                   </span>
                 </div>
@@ -268,24 +275,24 @@ export default async function StudentPage({
 
       {/* Past Semesters Section */}
       {dash.past.length > 0 && (
-        <div className="rounded-2xl border border-subtle/80 bg-panel/30 backdrop-blur-md overflow-hidden shadow-beautiful-sm">
-          <div className="p-4 border-b border-subtle/80 bg-panel/40">
-            <h2 className="text-sm font-bold text-cream">
+        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs">
+          <div className="p-4 border-b border-border bg-muted/50">
+            <h2 className="text-sm font-bold text-foreground">
               Evaluation History by Academic Year
             </h2>
           </div>
 
-          <div className="divide-y divide-subtle/40">
+          <div className="divide-y divide-border">
             {dash.past.map((p) => (
               <div
                 key={p.semester_id}
-                className="p-4 flex items-center justify-between text-xs text-cream-dim hover:bg-panel2/30 transition-colors"
+                className="p-4 flex items-center justify-between text-xs text-muted-foreground hover:bg-muted transition-colors"
               >
-                <div className="font-medium text-cream">
+                <div className="font-medium text-foreground">
                   {p.academic_year} · {p.term} Semester
                 </div>
-                <div className="text-cream-muted tabular-nums">
-                  <span className="font-semibold text-cream">{p.completed}</span> of {p.total} completed
+                <div className="text-muted-foreground tabular-nums">
+                  <span className="font-semibold text-foreground">{p.completed}</span> of {p.total} completed
                 </div>
               </div>
             ))}

@@ -295,7 +295,7 @@ export function DeanFacultyTable({
 
         {/* Table Footer Pagination */}
         <div className="p-4 px-6 border-t border-border bg-muted/20 flex items-center justify-between text-xs text-muted-foreground">
-          <span className="tabular-nums">Showing 1 to {filtered.length} of 42 Faculty Members</span>
+          <span className="tabular-nums">Showing 1 to {filtered.length} of {faculty.length} Faculty Members</span>
           <div className="flex items-center gap-2">
             <button
               type="button"

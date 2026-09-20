@@ -10,7 +10,6 @@ import {
   IconGaugeLine,
   IconSignOutLine,
   IconUsersLine,
-  IconBookLine,
   IconClipboardLine,
   IconGearLine,
 } from '@/components/dashboard/StaffScaffold';
@@ -44,22 +43,6 @@ const NAV_CONFIG: Record<
             <rect x="144" y="40" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
             <rect x="40" y="144" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
             <rect x="144" y="144" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
-          </svg>
-        ),
-      },
-      {
-        href: '/dean#roster',
-        label: 'Faculty Appraisal',
-        badge: '42',
-        icon: (
-          <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
-            <circle cx="128" cy="140" r="40" opacity="0.2" />
-            <path d="M196,216a68,68,0,0,0-136,0" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <circle cx="128" cy="140" r="40" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <path d="M197.82,168A52,52,0,0,0,232,216" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <circle cx="196" cy="108" r="32" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <path d="M58.18,168A52,52,0,0,0,24,216" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <circle cx="60" cy="108" r="32" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
           </svg>
         ),
       },
@@ -105,11 +88,6 @@ const NAV_CONFIG: Record<
         badge: 'Active',
         icon: <IconClipboardLine className="w-4 h-4 text-primary" />,
       },
-      {
-        href: '/student#completed',
-        label: 'My Evaluations',
-        icon: <IconBookLine className="w-4 h-4" />,
-      },
     ],
   },
   faculty: {
@@ -120,18 +98,6 @@ const NAV_CONFIG: Record<
         href: '/faculty',
         label: 'Appraisal Results',
         icon: <IconChartLine className="w-4 h-4" />,
-      },
-      {
-        href: '/faculty#classes',
-        label: 'Teaching Classes',
-        badge: 'Active',
-        icon: <IconUsersLine className="w-4 h-4" />,
-      },
-      {
-        href: '/reports',
-        label: 'Accreditation Dossier',
-        dotPulse: true,
-        icon: <IconBookLine className="w-4 h-4" />,
       },
     ],
   },

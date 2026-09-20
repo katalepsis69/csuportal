@@ -53,18 +53,18 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
       case 'admin':
         return 'bg-primary/20 text-primary border-primary/30';
       case 'dean':
-        return 'bg-status-gold/20 text-status-gold border-status-gold/30';
+        return 'bg-gold/10 text-gold-text border-gold/30';
       case 'faculty':
-        return 'bg-status-sage/20 text-status-sage border-status-sage/30';
+        return 'bg-positive/10 text-positive border-positive/30';
       default:
         return 'bg-muted text-foreground border-border';
     }
   }
 
   return (
-    <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md overflow-hidden ">
+    <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs">
       {/* Table Toolbar Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-6 border-b border-border bg-muted0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-6 border-b border-border bg-muted/50">
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-foreground">User Management</span>
           <span className="rounded-full bg-white px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
@@ -168,8 +168,8 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
 
                 {/* Status Badge */}
                 <td className="py-3.5 px-4 whitespace-nowrap">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-status-sage/15 px-2.5 py-0.5 text-[10px] font-semibold text-status-sage border border-status-sage/30">
-                    <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/30">
+                    <span className="h-1.5 w-1.5 rounded-full bg-positive" />
                     Active
                   </span>
                 </td>
@@ -199,7 +199,7 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
                   </div>
 
                   {activeMenuId === u.id && (
-                    <div className="absolute right-5 top-12 z-20 w-44 rounded-xl border border-border bg-white/95 backdrop-blur-xl p-1.5 shadow-2xl text-left">
+                    <div className="absolute right-5 top-12 z-20 w-44 rounded-xl border border-border bg-card p-1.5 shadow-xs text-left">
                       <button
                         type="button"
                         onClick={() => {

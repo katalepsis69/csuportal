@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
-import { AvgBar, SentimentPie } from '@/components/Charts';
+import { SentimentPie } from '@/components/Charts';
 import type { FacultyOverview, Semester } from '@/lib/types';
 import {
   StaffScaffold,
@@ -107,6 +107,15 @@ export default async function FacultyPage({
     avg_rating: s.avg_rating,
   }));
 
+  const perQuestion = overview.per_question ?? [];
+  const questionGroups = perQuestion.reduce<Record<string, typeof perQuestion>>(
+    (acc, q) => {
+      (acc[q.category] ??= []).push(q);
+      return acc;
+    },
+    {},
+  );
+
   const facultyMetrics = [
     {
       label: 'Overall Appraisal Rating',
@@ -175,45 +184,86 @@ export default async function FacultyPage({
         <FacultyClassesTable classes={classes} />
 
         {/* Question-level score bar chart & Sentiment Bento */}
-        <div className="grid gap-5 lg:grid-cols-2">
-          {/* Average Rating per Question */}
+        <div className="grid gap-5 lg:grid-cols-2 lg:items-start">
+          {/* Rubric Breakdown by Category */}
           <div className="rounded-xl border border-border bg-card p-5 shadow-xs">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-semibold text-foreground">Average Rating per Question</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Performance index across each rubric question</p>
+                <h2 className="text-sm font-semibold text-foreground">Rubric Breakdown by Category</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Mean score per rubric question, grouped by category</p>
               </div>
               <span className="rounded-md bg-muted px-2.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border">
                 Scale 1-5
               </span>
             </div>
-            <AvgBar
-              data={(overview.per_question ?? []).map((q, idx) => ({
-                name: `Q${idx + 1}`,
-                value: q.avg_rating,
-              }))}
-            />
+            <div className="space-y-4">
+              {Object.entries(questionGroups).map(([category, questions]) => {
+                const mean =
+                  questions.reduce((a, q) => a + (q.avg_rating ?? 0), 0) / questions.length;
+                return (
+                  <div key={category}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-semibold text-foreground">{category}</span>
+                      <span className="text-xs font-bold text-primary tabular-nums">
+                        {mean.toFixed(2)} <span className="text-muted-foreground/60 font-normal">mean</span>
+                      </span>
+                    </div>
+                    <div className="space-y-1.5">
+                      {questions.map((q) => (
+                        <div key={q.id} className="flex items-center gap-3">
+                          <span className="flex-1 text-[11px] text-muted-foreground truncate" title={q.text}>
+                            {q.text}
+                          </span>
+                          <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden shrink-0">
+                            <div
+                              className="h-full bg-primary rounded-full"
+                              style={{ width: `${((q.avg_rating ?? 0) / 5) * 100}%` }}
+                            />
+                          </div>
+                          <span className="text-[11px] font-semibold text-foreground tabular-nums w-8 text-right">
+                            {(q.avg_rating ?? 0).toFixed(2)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+              {perQuestion.length === 0 && (
+                <p className="py-8 text-center text-xs text-muted-foreground">
+                  No rubric responses recorded for this term.
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Student Feedback Sentiment */}
-          <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <h2 className="text-sm font-semibold text-foreground">Student Feedback Sentiment</h2>
-                <span className="inline-flex items-center gap-1 rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
-                  {positivePct}% Positive
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground mb-4">
-                {sentimentTotal === 0
-                  ? 'No comments submitted yet for this semester.'
-                  : `${Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)}% positive · ${Math.round(
-                      ((overview.sentiment?.negative ?? 0) / sentimentTotal) * 100,
-                    )}% critical ratio`}
-              </p>
+          <div className="rounded-xl border border-border bg-card p-5 shadow-xs">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-foreground">Student Feedback Sentiment</h2>
+              <span className="inline-flex items-center gap-1 rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
+                {positivePct}% Positive
+              </span>
             </div>
-            <div className="w-full h-36 flex items-center justify-center">
-              <SentimentPie counts={overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 }} />
+            <div className="flex flex-col sm:flex-row items-center gap-5">
+              <div className="w-40 shrink-0">
+                <SentimentPie counts={overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 }} />
+              </div>
+              <div className="flex-1 min-w-0 space-y-2">
+                {(overview.comments ?? []).slice(0, 2).map((c, i) => (
+                  <p
+                    key={i}
+                    className="rounded-lg border border-border bg-muted/30 p-3 text-[11px] text-foreground leading-relaxed italic line-clamp-3"
+                  >
+                    &ldquo;{c.comment}&rdquo;
+                  </p>
+                ))}
+                {sentimentTotal === 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    No comments submitted yet for this semester.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -13,7 +13,7 @@ export default async function PortalLayout({ children }: { children: React.React
 
       {/* Main content area (offset by desktop rail width) */}
       <div className="relative z-10 md:pl-64">
-        <main className="mx-auto min-w-0 max-w-6xl p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="mx-auto min-w-0 max-w-7xl 2xl:max-w-[1440px] p-4 sm:p-6 lg:p-8">{children}</main>
       </div>
     </div>
   );

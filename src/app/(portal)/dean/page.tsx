@@ -2,7 +2,6 @@ import { unstable_cache } from 'next/cache';
 import { createClient as createServiceClient } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
-import { AvgBar, SentimentPie } from '@/components/Charts';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
 import type { DeanOverview, Semester } from '@/lib/types';
 import { DeanFacultyTable, type DeanFacultyRow } from '@/components/dashboard/DeanFacultyTable';
@@ -220,20 +219,37 @@ export default async function DeanPage({
       ? ratedFaculty.reduce((acc, f) => acc + (f.overallRating ?? 0), 0) / ratedFaculty.length
       : 4.72;
   const collegeMean = collegeMeanNum.toFixed(2);
+  const flaggedCount = facultyRows.filter((f) => f.isFlagged).length;
+
+  // ponytail: seed RPC returns a single criteria category, which renders as
+  // one row in a void. Average the per-faculty breakdown instead when thin.
+  const breakdownAcc: Record<string, { total: number; n: number }> = {};
+  for (const f of facultyRows)
+    for (const b of f.pedagogicalBreakdown ?? []) {
+      breakdownAcc[b.name] ??= { total: 0, n: 0 };
+      breakdownAcc[b.name].total += b.score;
+      breakdownAcc[b.name].n += 1;
+    }
+  const breakdownAvg = Object.entries(breakdownAcc).map(([name, { total, n }]) => {
+    const score = total / n;
+    return { name, score: score.toFixed(2), pct: Math.min(100, Math.round((score / 5) * 100)) };
+  });
 
   // Criteria averages or fallback realistic benchmarks
   const criteriaData =
-    overview.per_criterion && overview.per_criterion.length > 0
-      ? overview.per_criterion.map((c) => ({
+    (overview.per_criterion?.length ?? 0) > 1
+      ? (overview.per_criterion ?? []).map((c) => ({
           name: c.category,
           score: (c.avg_rating ?? 4.8).toFixed(2),
           pct: Math.min(100, Math.round(((c.avg_rating ?? 4.8) / 5) * 100)),
         }))
-      : [
-          { name: 'Instruction & Teaching Competence', score: '4.81', pct: 96 },
-          { name: 'Subject Mastery & Lab Pedagogy', score: '4.76', pct: 95 },
-          { name: 'Classroom Management & Consultation', score: '4.60', pct: 92 },
-        ];
+      : breakdownAvg.length > 0
+        ? breakdownAvg
+        : [
+            { name: 'Instruction & Teaching Competence', score: '4.81', pct: 96 },
+            { name: 'Subject Mastery & Lab Pedagogy', score: '4.76', pct: 95 },
+            { name: 'Classroom Management & Consultation', score: '4.60', pct: 92 },
+          ];
 
   // Sentiment counts
   const posCount = overview.sentiment?.positive ?? 78;
@@ -315,7 +331,7 @@ export default async function DeanPage({
       {/* ========================================================================= */}
       <section className="grid grid-cols-12 gap-4 sm:gap-5">
         {/* Tile 1 (Wide): Overall College Faculty Score */}
-        <div className="col-span-12 xl:col-span-4 p-5 sm:p-6 rounded-xl bg-card border border-border shadow-xs relative flex flex-col justify-between">
+        <div className="col-span-12 xl:col-span-4 p-5 sm:p-6 rounded-xl bg-card border border-border shadow-xs relative flex flex-col">
           <div>
             <div className="flex items-center justify-between mb-2">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
@@ -383,8 +399,10 @@ export default async function DeanPage({
                 <p className="text-[11px] text-muted-foreground mt-1 tabular-nums">
                   {submittedCount} of {enrolledCount} students
                 </p>
-                <p className="text-[10px] text-positive mt-0.5 font-semibold">
-                  Quorum Met ({participationPct >= 70 ? 'Satisfied' : 'Pending'})
+                <p className={`text-[10px] mt-0.5 font-semibold ${participationPct >= 70 ? 'text-positive' : 'text-amber-600'}`}>
+                  {participationPct >= 70
+                    ? 'Quorum Met (Satisfied)'
+                    : `Quorum Pending (${participationPct}% / 70% min)`}
                 </p>
               </div>
 
@@ -417,7 +435,11 @@ export default async function DeanPage({
 
           <div className="mt-4 pt-2.5 border-t border-border flex items-center justify-between text-[11px] text-muted-foreground">
             <span>CHED Minimum: 70%</span>
-            <span className="text-positive font-semibold">PASS AUDIT</span>
+            {participationPct >= 70 ? (
+              <span className="text-positive font-semibold">PASS AUDIT</span>
+            ) : (
+              <span className="text-amber-600 font-semibold">QUORUM PENDING</span>
+            )}
           </div>
         </div>
 
@@ -505,7 +527,7 @@ export default async function DeanPage({
             </div>
             <div className="mt-1">
               <span className="font-display font-bold text-3xl text-foreground tracking-tight tabular-nums">
-                03
+                {String(flaggedCount).padStart(2, '0')}
               </span>
               <p className="text-xs text-foreground font-semibold leading-tight mt-1">
                 Faculty Flagged for Dean Review
@@ -549,12 +571,24 @@ export default async function DeanPage({
               Scale 1-5
             </span>
           </div>
-          <AvgBar
-            data={(overview.faculty ?? []).map((f) => ({
-              name: (f.full_name || 'Faculty').split(' ')[0],
-              value: f.overall,
-            }))}
-          />
+          <div className="space-y-2.5">
+            {facultyRows.map((f) => (
+              <div key={f.id} className="flex items-center gap-3">
+                <span className="w-20 shrink-0 truncate text-[11px] text-muted-foreground" title={f.name}>
+                  {f.name.replace(/^(Engr\.|Dr\.|Prof\.)\s+/, '').split(' ')[0]}
+                </span>
+                <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted">
+                  <div
+                    className="h-full rounded-full bg-primary"
+                    style={{ width: `${((f.overallRating ?? 0) / 5) * 100}%` }}
+                  />
+                </div>
+                <span className="w-8 shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                  {(f.overallRating ?? 0).toFixed(2)}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Evaluation Criteria Averages */}
@@ -568,43 +602,24 @@ export default async function DeanPage({
               Aggregated
             </span>
           </div>
-          <AvgBar
-            data={(overview.per_criterion ?? []).map((c) => ({
-              name: c.category,
-              value: c.avg_rating,
-            }))}
-          />
+          <div className="space-y-2.5">
+            {criteriaData.map((c) => (
+              <div key={c.name} className="flex items-center gap-3">
+                <span className="flex-1 truncate text-[11px] text-muted-foreground" title={c.name}>
+                  {c.name}
+                </span>
+                <div className="h-1.5 w-24 shrink-0 overflow-hidden rounded-full bg-muted">
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${c.pct}%` }} />
+                </div>
+                <span className="w-8 shrink-0 text-right text-[11px] font-semibold tabular-nums text-foreground">
+                  {c.score}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ========================================================================= */}
-      {/* 5. STUDENT SENTIMENT DISTRIBUTION STRIP                                   */}
-      {/* ========================================================================= */}
-      <section className="rounded-xl border border-border bg-card p-5 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div className="max-w-md space-y-2">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-positive" />
-            <h3 className="text-sm font-bold text-foreground">Student Feedback Sentiment Distribution</h3>
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Automated natural language sentiment classification of qualitative student commentary across English, Tagalog, and Maguindanaon.
-          </p>
-          <div className="mt-3 flex items-center gap-3 text-xs">
-            <span className="text-positive font-semibold tabular-nums">
-              {overview.sentiment?.positive ?? posCount} Positive
-            </span>
-            <span className="text-muted-foreground font-medium tabular-nums">
-              {overview.sentiment?.neutral ?? neuCount} Neutral
-            </span>
-            <span className="text-destructive font-semibold tabular-nums">
-              {overview.sentiment?.negative ?? negCount} Critical
-            </span>
-          </div>
-        </div>
-        <div className="w-52 shrink-0">
-          <SentimentPie counts={overview.sentiment ?? { positive: posCount, neutral: neuCount, negative: negCount }} />
-        </div>
-      </section>
     </div>
   );
 }

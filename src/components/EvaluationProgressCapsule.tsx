@@ -26,7 +26,7 @@ export function EvaluationProgressCapsule({
   const isComplete = ratedCount === totalCount && totalCount > 0;
 
   return (
-    <section className="sticky top-3 z-30 bg-card backdrop-blur-xl border border-border rounded-2xl p-4 shadow-xl flex flex-col md:flex-row items-center justify-between gap-4 mb-6 ">
+    <section className="sticky top-3 z-30 bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
       {/* Progress Info & Percentage */}
       <div className="w-full md:w-5/12 space-y-1.5">
         <div className="flex items-center justify-between text-xs">
@@ -37,7 +37,7 @@ export function EvaluationProgressCapsule({
         </div>
         <div className="w-full bg-white h-2 rounded-full overflow-hidden border border-border">
           <div
-            className="bg-gradient-to-r from-primary to-primary h-full rounded-full shadow-[0_0_12px_rgba(127,29,29,0.5)] transition-all duration-300 ease-out"
+            className="bg-primary h-full rounded-full transition-all duration-300 ease-out"
             style={{ width: `${percentage}%` }}
           />
         </div>
@@ -48,13 +48,13 @@ export function EvaluationProgressCapsule({
               Auto-saving draft…
             </span>
           ) : draftSaved ? (
-            <span className="text-status-gold font-medium flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-status-gold" />
+            <span className="text-gold-text font-medium flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-gold-text" />
               Draft auto-saved &amp; encrypted
             </span>
           ) : isComplete ? (
-            <span className="text-status-sage font-semibold flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
+            <span className="text-positive font-semibold flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-positive" />
               All criteria satisfied
             </span>
           ) : (
@@ -72,13 +72,13 @@ export function EvaluationProgressCapsule({
               href={`#${cat.id}`}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium shrink-0 transition-all ${
                 cat.completed
-                  ? 'bg-white text-foreground border-status-sage/40 hover:border-status-sage'
-                  : 'bg-white/60 text-muted-foreground border-border hover:border-primary/40 hover:text-white'
+                  ? 'bg-card text-foreground border-positive/40 hover:border-positive'
+                  : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/40 hover:text-foreground'
               }`}
             >
               <span
                 className={`h-1.5 w-1.5 rounded-full ${
-                  cat.completed ? 'bg-status-sage' : 'bg-primary'
+                  cat.completed ? 'bg-positive' : 'bg-primary'
                 }`}
               />
               <span className="truncate max-w-[150px]">{cat.name}</span>

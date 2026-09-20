@@ -49,7 +49,7 @@ export function FacultyInspectorDrawer({
     { name: 'Commitment to Teaching', score: 4.9, pct: 98, color: 'bg-primary' },
     { name: 'Instructional Clarity & Algorithms', score: 4.8, pct: 96, color: 'bg-primary' },
     { name: 'Laboratory Pacing & Code Exercises', score: 4.7, pct: 94, color: 'bg-gold' },
-    { name: 'Fairness in Rubrics & Grading', score: 4.9, pct: 98, color: 'bg-status-sage' },
+    { name: 'Fairness in Rubrics & Grading', score: 4.9, pct: 98, color: 'bg-positive' },
   ];
 
   const remarks = faculty.comments || [
