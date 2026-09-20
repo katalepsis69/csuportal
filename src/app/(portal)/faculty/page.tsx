@@ -223,7 +223,7 @@ export default async function FacultyPage({
                 {(overview.comments ?? []).slice(0, 2).map((c, i) => (
                   <p
                     key={i}
-                    className="rounded-lg border border-border bg-muted/30 p-3 text-[11px] text-foreground leading-relaxed italic line-clamp-3"
+                    className="rounded-lg border border-border bg-muted/30 p-3 text-[11px] text-foreground leading-relaxed italic line-clamp-3 hover:border-primary/30 hover:bg-muted/50 transition-colors"
                   >
                     &ldquo;{c.comment}&rdquo;
                   </p>
