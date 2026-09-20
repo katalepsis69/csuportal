@@ -26,7 +26,7 @@ export function EvaluationProgressCapsule({
   const isComplete = ratedCount === totalCount && totalCount > 0;
 
   return (
-    <section className="sticky top-3 z-30 bg-card border border-border rounded-xl p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
+    <section className="sticky top-2 sm:top-3 z-30 bg-card border border-border rounded-xl p-3.5 sm:p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4 mb-6">
       {/* Progress Info & Percentage */}
       <div className="w-full md:w-5/12 space-y-1.5">
         <div className="flex items-center justify-between text-xs">
@@ -35,7 +35,7 @@ export function EvaluationProgressCapsule({
           </span>
           <span className="text-primary font-bold tabular-nums">{percentage}% Completed</span>
         </div>
-        <div className="w-full bg-white h-2 rounded-full overflow-hidden border border-border">
+        <div className="w-full bg-muted h-2 rounded-full overflow-hidden border border-border/80">
           <div
             className="bg-primary h-full rounded-full transition-all duration-300 ease-out"
             style={{ width: `${percentage}%` }}

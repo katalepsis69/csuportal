@@ -3,13 +3,8 @@ import { requireRole } from '@/lib/auth';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
 import { SentimentPie } from '@/components/Charts';
 import type { FacultyOverview, Semester } from '@/lib/types';
-import {
-  StaffScaffold,
-  IconChartLine,
-  IconBookLine,
-  IconUsersLine,
-  IconGearLine,
-} from '@/components/dashboard/StaffScaffold';
+import { StaffScaffold } from '@/components/dashboard/StaffScaffold';
+import { PieChart, Users, BookOpen, Settings } from 'lucide-react';
 import { FacultyClassesTable, type FacultySubjectRow } from '@/components/dashboard/FacultyClassesTable';
 import { SemesterSelect } from '@/components/dashboard/SemesterSelect';
 
@@ -94,7 +89,7 @@ export default async function FacultyPage({
       sublabel: 'Based on institutional rubric',
       color: '#881337',
       sparkline: ratingSparkline,
-      icon: <IconChartLine className="h-4 w-4" />,
+      icon: <PieChart className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Student Responses',
@@ -104,7 +99,7 @@ export default async function FacultyPage({
       sublabel: 'Total answers submitted',
       color: '#15803d',
       sparkline: classSparkline,
-      icon: <IconUsersLine className="h-4 w-4" />,
+      icon: <Users className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Positive Sentiment',
@@ -114,7 +109,7 @@ export default async function FacultyPage({
       trendPositive: sentimentTotal > 0,
       color: '#b45309',
       sparkline: sentimentSparkline,
-      icon: <IconBookLine className="h-4 w-4" />,
+      icon: <BookOpen className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Assigned Classes',
@@ -124,7 +119,7 @@ export default async function FacultyPage({
       sublabel: 'Active teaching loads',
       color: '#881337',
       sparkline: loadsSparkline,
-      icon: <IconGearLine className="h-4 w-4" />,
+      icon: <Settings className="h-4 w-4" aria-hidden="true" />,
     },
   ];
 

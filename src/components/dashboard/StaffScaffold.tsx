@@ -1,43 +1,7 @@
 'use client';
 
 import React from 'react';
-import {
-  IconChartPie,
-  IconUsers,
-  IconFileText,
-  IconGear,
-  IconGauge,
-  IconClipboardText,
-  IconSignOut,
-} from '@/components/icons';
-
-// Semantic icon aliases matching the existing export contract
-export const IconChartLine = IconChartPie;
-export const IconUsersLine = IconUsers;
-export const IconBookLine = IconFileText;
-export const IconGearLine = IconGear;
-export const IconGaugeLine = IconGauge;
-export const IconClipboardLine = IconClipboardText;
-export const IconSignOutLine = IconSignOut;
-
-export function IconSearchLine({ className = 'h-4 w-4' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
-    </svg>
-  );
-}
-
-export function IconDotsLine({ className = 'h-5 w-5' }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <circle cx="12" cy="12" r="1" />
-      <circle cx="12" cy="5" r="1" />
-      <circle cx="12" cy="19" r="1" />
-    </svg>
-  );
-}
+import { Users } from 'lucide-react';
 
 // --- Dynamic SVG Sparkline with Resilient Math and Area Gradient ---
 export function Sparkline({
@@ -111,10 +75,10 @@ export function StaffStatCard({
   const color = metric.color ?? 'var(--primary)';
 
   return (
-    <div className="rounded-xl border border-border bg-card p-5 shadow-xs transition-colors hover:border-primary/30 relative flex flex-col justify-between">
+    <div className="rounded-xl border border-border bg-card p-4 sm:p-5 shadow-xs transition-colors hover:border-primary/30 relative flex flex-col justify-between">
       <div className="flex items-center justify-between">
         <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-foreground/80">
-          {metric.icon ?? <IconUsers className="h-4 w-4" />}
+          {metric.icon ?? <Users className="h-4 w-4" aria-hidden="true" />}
         </div>
         {metric.sparkline && (
           <Sparkline color={color} points={metric.sparkline} />
@@ -175,8 +139,8 @@ export function StaffScaffold({
   return (
     <div className="min-w-0 space-y-6">
       {/* Top Utility Bar (Breadcrumb & Audited Badge) */}
-      <div className="flex items-center justify-between pb-1 text-xs">
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-1 text-xs">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
           {breadcrumb.map((crumb, idx) => (
             <React.Fragment key={crumb}>
               {idx > 0 && <span className="text-muted-foreground/40">/</span>}

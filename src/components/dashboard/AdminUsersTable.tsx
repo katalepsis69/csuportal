@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { IconSearchLine, IconDotsLine } from '@/components/dashboard/StaffScaffold';
+import { Search, MoreVertical } from 'lucide-react';
 import { adminDelete } from '@/lib/actions/admin';
 
 export type UserRow = {
@@ -64,51 +64,56 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs">
       {/* Table Toolbar Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-6 border-b border-border bg-muted/50">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 sm:px-6 border-b border-border bg-muted/50">
         <div className="flex items-center gap-2">
           <span className="text-sm font-bold text-foreground">User Management</span>
-          <span className="rounded-full bg-white px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
+          <span className="rounded-full bg-card px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums shrink-0">
             {filtered.length} of {users.length} accounts
           </span>
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 w-full md:w-auto">
           {/* Search Input */}
-          <div className="relative min-w-[220px]">
-            <IconSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
+          <div className="relative w-full sm:w-auto min-w-0 flex-1 sm:min-w-[220px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
             <input
               type="text"
               placeholder="Search by name, ID, or email…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-xl border border-border bg-white pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary min-h-[38px]"
+              className="w-full rounded-xl border border-border bg-card pl-8 pr-3 py-2 sm:py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary min-h-[40px] sm:min-h-[38px] transition-colors"
             />
           </div>
 
-          {/* Role Filter */}
-          <select
-            value={roleFilter}
-            onChange={(e) => setRoleFilter(e.target.value)}
-            className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer min-h-[38px]"
-          >
-            <option value="all">All Roles</option>
-            <option value="student">Students</option>
-            <option value="faculty">Faculty</option>
-            <option value="dean">Deans</option>
-            <option value="admin">Admins</option>
-          </select>
+          {/* Filter row for mobile */}
+          <div className="flex items-center gap-2">
+            {/* Role Filter */}
+            <select
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              aria-label="Filter user role"
+              className="flex-1 sm:flex-none rounded-xl border border-border bg-card px-3 py-2 sm:py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer min-h-[40px] sm:min-h-[38px] transition-colors"
+            >
+              <option value="all">All Roles</option>
+              <option value="student">Students</option>
+              <option value="faculty">Faculty</option>
+              <option value="dean">Deans</option>
+              <option value="admin">Admins</option>
+            </select>
 
-          {/* Program Filter */}
-          <select
-            value={programFilter}
-            onChange={(e) => setProgramFilter(e.target.value)}
-            className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer min-h-[38px]"
-          >
-            <option value="all">All Programs</option>
-            <option value="BSIT">BSIT</option>
-            <option value="BSCS">BSCS</option>
-          </select>
+            {/* Program Filter */}
+            <select
+              value={programFilter}
+              onChange={(e) => setProgramFilter(e.target.value)}
+              aria-label="Filter user program"
+              className="flex-1 sm:flex-none rounded-xl border border-border bg-card px-3 py-2 sm:py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer min-h-[40px] sm:min-h-[38px] transition-colors"
+            >
+              <option value="all">All Programs</option>
+              <option value="BSIT">BSIT</option>
+              <option value="BSCS">BSCS</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -182,7 +187,7 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
                       <input type="hidden" name="id" value={u.id} />
                       <button
                         type="submit"
-                        className="rounded-lg px-2.5 py-1 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors active:scale-[0.98] min-h-[32px] flex items-center justify-center border border-destructive/20"
+                        className="rounded-lg px-2.5 py-1 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors active:scale-[0.98] min-h-[36px] flex items-center justify-center border border-destructive/20 cursor-pointer"
                         title="Delete profile"
                       >
                         Remove
@@ -191,10 +196,10 @@ export function AdminUsersTable({ users }: { users: UserRow[] }) {
                     <button
                       type="button"
                       onClick={() => setActiveMenuId(activeMenuId === u.id ? null : u.id)}
-                      className="rounded-lg p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors min-h-[32px] min-w-[32px] flex items-center justify-center active:scale-[0.98]"
+                      className="rounded-lg p-2 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-[0.98] cursor-pointer"
                       aria-label="More actions"
                     >
-                      <IconDotsLine className="h-4 w-4" />
+                      <MoreVertical className="h-4 w-4" />
                     </button>
                   </div>
 

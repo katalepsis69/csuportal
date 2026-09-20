@@ -3,16 +3,21 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
+import {
+  LayoutDashboard,
+  FileSpreadsheet,
+  History,
+  Menu,
+  X,
+  ClipboardList,
+  PieChart,
+  Gauge,
+  Users,
+  Settings,
+  LogOut,
+} from 'lucide-react';
 import { signOut } from '@/lib/actions/auth';
 import type { Role } from '@/lib/auth';
-import {
-  IconChartLine,
-  IconGaugeLine,
-  IconSignOutLine,
-  IconUsersLine,
-  IconClipboardLine,
-  IconGearLine,
-} from '@/components/dashboard/StaffScaffold';
 
 type NavItem = {
   href: string;
@@ -33,43 +38,18 @@ const NAV_CONFIG: Record<
       {
         href: '/dean',
         label: 'Overview Dashboard',
-        icon: (
-          <svg className="w-4 h-4 text-primary" viewBox="0 0 256 256" fill="currentColor">
-            <rect x="40" y="40" width="72" height="72" rx="10" opacity="0.2" fill="currentColor" />
-            <rect x="144" y="40" width="72" height="72" rx="10" opacity="0.2" fill="currentColor" />
-            <rect x="40" y="144" width="72" height="72" rx="10" opacity="0.2" fill="currentColor" />
-            <rect x="144" y="144" width="72" height="72" rx="10" fill="currentColor" />
-            <rect x="40" y="40" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
-            <rect x="144" y="40" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
-            <rect x="40" y="144" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
-            <rect x="144" y="144" width="72" height="72" rx="10" stroke="currentColor" strokeWidth="16" fill="none" />
-          </svg>
-        ),
+        icon: <LayoutDashboard className="w-4 h-4 text-primary" />,
       },
       {
         href: '/reports',
         label: 'Accreditation Reports',
         dotPulse: true,
-        icon: (
-          <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
-            <path d="M200,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Z" opacity="0.2" />
-            <polyline points="152 32 152 88 208 88" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <line x1="96" y1="136" x2="160" y2="136" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <line x1="96" y1="168" x2="160" y2="168" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <path d="M48,192V40a8,8,0,0,1,8-8h96l56,56v104" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-          </svg>
-        ),
+        icon: <FileSpreadsheet className="w-4 h-4" />,
       },
       {
         href: '/dean/history',
         label: 'Audit Logs',
-        icon: (
-          <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
-            <path d="M208,40H48A8,8,0,0,0,40,48v64c0,72,88,104,88,104s88-32,88-104V48A8,8,0,0,0,208,40Z" opacity="0.2" />
-            <path d="M208,40H48A8,8,0,0,0,40,48v64c0,72,88,104,88,104s88-32,88-104V48A8,8,0,0,0,208,40Z" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-            <polyline points="88 120 116 148 168 96" fill="none" stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16" />
-          </svg>
-        ),
+        icon: <History className="w-4 h-4" />,
       },
     ],
   },
@@ -81,7 +61,7 @@ const NAV_CONFIG: Record<
         href: '/student',
         label: 'Evaluation Dashboard',
         badge: 'Active',
-        icon: <IconClipboardLine className="w-4 h-4 text-primary" />,
+        icon: <ClipboardList className="w-4 h-4 text-primary" />,
       },
     ],
   },
@@ -92,7 +72,7 @@ const NAV_CONFIG: Record<
       {
         href: '/faculty',
         label: 'Appraisal Results',
-        icon: <IconChartLine className="w-4 h-4" />,
+        icon: <PieChart className="w-4 h-4" />,
       },
     ],
   },
@@ -103,27 +83,27 @@ const NAV_CONFIG: Record<
       {
         href: '/admin',
         label: 'Overview Control',
-        icon: <IconGaugeLine className="w-4 h-4" />,
+        icon: <Gauge className="w-4 h-4" />,
       },
       {
         href: '/admin?tab=users',
         label: 'User Directory',
-        icon: <IconUsersLine className="w-4 h-4" />,
+        icon: <Users className="w-4 h-4" />,
       },
       {
         href: '/admin?tab=semesters',
         label: 'Semesters & Periods',
-        icon: <IconGearLine className="w-4 h-4" />,
+        icon: <Settings className="w-4 h-4" />,
       },
       {
         href: '/admin?tab=questions',
         label: 'Evaluation Rubrics',
-        icon: <IconClipboardLine className="w-4 h-4" />,
+        icon: <ClipboardList className="w-4 h-4" />,
       },
       {
         href: '/reports',
         label: 'Reports Center',
-        icon: <IconChartLine className="w-4 h-4" />,
+        icon: <PieChart className="w-4 h-4" />,
       },
     ],
   },
@@ -208,12 +188,10 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
-            aria-label="Open menu"
-            className="p-1.5 rounded-lg border border-border bg-card text-foreground hover:text-primary transition-colors"
+            aria-label="Open navigation menu"
+            className="min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center rounded-lg border border-border bg-card text-foreground hover:text-primary transition-colors focus-visible:ring-2 focus-visible:ring-primary/40 cursor-pointer"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
+            <Menu className="w-5 h-5" aria-hidden="true" />
           </button>
         </div>
       </header>
@@ -251,9 +229,10 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}
-                  className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground"
+                  aria-label="Close navigation menu"
+                  className="min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center rounded-lg text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
-                  ✕
+                  <X className="w-5 h-5" aria-hidden="true" />
                 </button>
               </div>
 
@@ -304,9 +283,9 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
               <form action={signOut} className="w-full">
                 <button
                   type="submit"
-                  className="w-full flex items-center justify-center gap-2 py-2 rounded-xl bg-muted hover:bg-muted/80 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="w-full min-h-[44px] flex items-center justify-center gap-2 py-2.5 rounded-xl bg-muted hover:bg-muted/80 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                 >
-                  <IconSignOutLine className="w-4 h-4" />
+                  <LogOut className="w-4 h-4" aria-hidden="true" />
                   <span>Exit Session</span>
                 </button>
               </form>
@@ -418,13 +397,9 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
             <form action={signOut} className="w-full">
               <button
                 type="submit"
-                className="w-full text-[11px] text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 transition-colors font-medium py-1.5 rounded-lg hover:bg-muted"
+                className="w-full text-[11px] text-muted-foreground hover:text-foreground flex items-center justify-center gap-1.5 transition-colors font-medium py-1.5 rounded-lg hover:bg-muted cursor-pointer"
               >
-                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
-                </svg>
+                <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
                 <span>Exit Session</span>
               </button>
             </form>

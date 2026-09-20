@@ -76,7 +76,7 @@ export function DeanFacultyTable({
     <>
       <section className="rounded-xl bg-card border border-border shadow-xs overflow-hidden">
         {/* Table Top Utility Bar */}
-        <div className="p-4 px-6 border-b border-border bg-muted/30 flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="p-4 sm:px-6 border-b border-border bg-muted/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="font-display font-bold text-base text-foreground tracking-tight">
               College Faculty Performance Roster
@@ -86,23 +86,23 @@ export function DeanFacultyTable({
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3 w-full sm:w-auto">
             {/* Search bar */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <input
                 type="text"
                 placeholder="Search faculty name or dept..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-card border border-border text-xs text-foreground pl-8 pr-3 py-1.5 rounded-lg w-56 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground/50 font-normal transition-colors"
+                className="bg-card border border-border text-xs text-foreground pl-8 pr-3 py-2 sm:py-1.5 rounded-lg w-full sm:w-56 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground/50 font-normal transition-colors min-h-[40px] sm:min-h-[36px]"
               />
-              <svg className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-3 sm:top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8" />
                 <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
             </div>
 
-            <span className="rounded-full bg-card px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
+            <span className="rounded-full bg-card px-2.5 py-1 text-xs text-muted-foreground border border-border tabular-nums shrink-0 self-start sm:self-auto">
               {filtered.length} Faculty Records
             </span>
           </div>
@@ -302,18 +302,18 @@ export function DeanFacultyTable({
         </div>
 
         {/* Table Footer Pagination */}
-        <div className="p-4 px-6 border-t border-border bg-muted/20 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="p-4 sm:px-6 border-t border-border bg-muted/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
           <span className="tabular-nums">Showing 1 to {filtered.length} of {faculty.length} Faculty Members</span>
           <div className="flex items-center gap-2">
             <button
               type="button"
-              className="px-3 py-1 rounded-lg bg-card border border-border text-muted-foreground/60 cursor-not-allowed text-xs"
+              className="min-h-[36px] px-3 py-1.5 rounded-lg bg-card border border-border text-muted-foreground/60 cursor-not-allowed text-xs"
             >
               Previous
             </button>
             <button
               type="button"
-              className="px-3 py-1 rounded-lg bg-card border border-border hover:bg-muted/50 text-foreground text-xs transition-colors cursor-pointer"
+              className="min-h-[36px] px-3 py-1.5 rounded-lg bg-card border border-border hover:bg-muted/50 text-foreground text-xs transition-colors cursor-pointer"
             >
               Next
             </button>

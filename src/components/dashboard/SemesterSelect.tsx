@@ -28,12 +28,12 @@ export function SemesterSelect({
   }
 
   return (
-    <div className="relative inline-block">
+    <div className="relative inline-block w-full sm:w-auto">
       <select
         value={currentId ?? ''}
         onChange={(e) => handleChange(e.target.value)}
         aria-label="Filter evaluation semester"
-        className="appearance-none rounded-xl border border-border bg-card px-3.5 py-2 pr-8 text-xs font-medium text-foreground hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-xs min-h-[38px] transition-colors"
+        className="w-full sm:w-auto appearance-none rounded-xl border border-border bg-card px-3.5 py-2 pr-8 text-xs font-medium text-foreground hover:border-primary/40 focus:outline-none focus:ring-2 focus:ring-primary/20 cursor-pointer shadow-xs min-h-[38px] transition-colors"
       >
         <option value="">Current semester</option>
         {semesters.map((s) => (

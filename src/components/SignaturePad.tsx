@@ -27,8 +27,8 @@ export default function SignaturePad({
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.strokeStyle = getComputedStyle(document.documentElement)
-      .getPropertyValue('--brand')
-      .trim() || 'var(--primary)';
+      .getPropertyValue('--primary')
+      .trim() || '#7f1d1d';
     ctx.shadowColor = 'rgba(127, 29, 29, 0.4)';
     ctx.shadowBlur = 8;
     ctx.lineWidth = 2.5;
@@ -97,7 +97,7 @@ export default function SignaturePad({
             onClick={() => {
               onChange([]);
             }}
-            className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-primary transition-colors"
+            className="flex items-center gap-1.5 px-2 py-1 min-h-[36px] rounded-lg text-[11px] text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-colors cursor-pointer"
           >
             <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
@@ -125,9 +125,9 @@ export default function SignaturePad({
         </div>
 
         {/* Baseline dotted signature guide rule with caption */}
-        <div className="relative z-10 border-t border-dashed border-border pt-1.5 flex items-center justify-between text-[11px] text-muted-foreground">
+        <div className="relative z-10 border-t border-dashed border-border pt-1.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 text-[11px] text-muted-foreground">
           <span>Sign above using trackpad, mouse, or stylus</span>
-          <span>Stored as normalized vectors, never an image</span>
+          <span className="text-[10px] sm:text-[11px] text-muted-foreground/70">Stored as normalized vectors, never an image</span>
         </div>
       </div>
     </div>

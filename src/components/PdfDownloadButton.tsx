@@ -39,7 +39,12 @@ export default function PdfDownloadButton({
   }
 
   return (
-    <button type="button" className="btn-outline px-3 py-1.5 text-xs" onClick={download} disabled={busy}>
+    <button
+      type="button"
+      className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-border bg-card px-3.5 py-2 text-xs font-semibold text-foreground transition-colors hover:bg-muted active:scale-[0.98] shadow-xs min-h-[38px] disabled:cursor-not-allowed disabled:opacity-50"
+      onClick={download}
+      disabled={busy}
+    >
       {busy ? 'Generating…' : label}
     </button>
   );

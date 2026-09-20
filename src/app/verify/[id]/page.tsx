@@ -49,7 +49,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
   const qrSvg = await QRCode.toString(verifyUrl, { type: 'svg', margin: 1, width: 160 });
 
   return (
-    <main className="mx-auto max-w-2xl space-y-6 p-6 sm:p-10">
+    <main className="mx-auto max-w-2xl space-y-6 p-4 sm:p-8">
       <div>
         <p className="text-xs font-semibold tracking-[0.06em] text-muted-foreground uppercase">
           CSU CETC Portal
@@ -61,7 +61,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
         </p>
       </div>
 
-      <div className="card space-y-4">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs space-y-4">
         <div>
           <p className="text-xs font-semibold tracking-[0.06em] text-muted-foreground uppercase">
             Submission hash
@@ -84,7 +84,7 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
         </div>
       </div>
 
-      <div className="card space-y-4">
+      <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs space-y-4">
         <div>
           <p className="text-xs font-semibold tracking-[0.06em] text-muted-foreground uppercase">
             Signature (JWS, Ed25519)
@@ -93,9 +93,9 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
             {receipt ?? 'signing key not configured'}
           </p>
         </div>
-        <div className="flex items-start gap-6">
-          <div className="h-[160px] w-[160px]" dangerouslySetInnerHTML={{ __html: qrSvg }} />
-          <div className="space-y-2 text-xs text-muted-foreground">
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6">
+          <div className="h-[160px] w-[160px] shrink-0" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+          <div className="space-y-2 text-xs text-muted-foreground text-center sm:text-left">
             <p>Scan to open this receipt.</p>
             <p>
               Verify offline with the public key at{' '}

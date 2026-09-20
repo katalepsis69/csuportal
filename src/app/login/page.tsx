@@ -285,11 +285,11 @@ function LoginContent() {
         </div>
 
         {/* Mobile Portal Switcher */}
-        <div className="w-full max-w-[340px] mt-4 grid grid-cols-2 rounded-xl bg-muted p-1 border border-border">
+        <div className="w-full max-w-xs mt-4 grid grid-cols-2 rounded-xl bg-muted p-1 border border-border">
           <button
             type="button"
             onClick={() => handlePortalChange('student')}
-            className={`rounded-lg py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+            className={`rounded-lg py-2 px-2 text-xs font-semibold transition-all cursor-pointer min-h-[40px] flex items-center justify-center ${
               portal === 'student'
                 ? 'bg-card text-foreground shadow-xs border border-border'
                 : 'text-muted-foreground hover:text-foreground'
@@ -300,7 +300,7 @@ function LoginContent() {
           <button
             type="button"
             onClick={() => handlePortalChange('staff')}
-            className={`rounded-lg py-1.5 text-xs font-semibold transition-all cursor-pointer ${
+            className={`rounded-lg py-2 px-2 text-xs font-semibold transition-all cursor-pointer min-h-[40px] flex items-center justify-center ${
               portal === 'staff'
                 ? 'bg-card text-foreground shadow-xs border border-border'
                 : 'text-muted-foreground hover:text-foreground'
@@ -320,7 +320,7 @@ function LoginContent() {
               <button
                 type="button"
                 onClick={() => handlePortalChange('student')}
-                className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-semibold transition-all duration-200 cursor-pointer min-h-[40px] ${
                   portal === 'student'
                     ? 'bg-card text-foreground shadow-xs border border-border'
                     : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
@@ -332,7 +332,7 @@ function LoginContent() {
               <button
                 type="button"
                 onClick={() => handlePortalChange('staff')}
-                className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                className={`flex items-center justify-center gap-2 rounded-lg py-2 px-3 text-xs font-semibold transition-all duration-200 cursor-pointer min-h-[40px] ${
                   portal === 'staff'
                     ? 'bg-card text-foreground shadow-xs border border-border'
                     : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
@@ -347,7 +347,7 @@ function LoginContent() {
 
         {/* Authentication Card */}
         <div className="w-full max-w-[440px]">
-          <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-xs space-y-5">
+          <div className="rounded-xl border border-border bg-card p-4 sm:p-8 shadow-xs space-y-5">
             {/* Header Brand */}
             <div className="flex items-center justify-between pb-3 border-b border-border">
               <div className="flex items-center gap-3">
@@ -704,7 +704,7 @@ function LoginContent() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 px-4 text-xs transition-colors shadow-xs active:scale-[0.98] disabled:opacity-50 min-h-[42px] mt-2 cursor-pointer"
+                className="w-full rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2.5 px-4 text-xs transition-colors shadow-xs active:scale-[0.98] disabled:opacity-50 min-h-[44px] mt-2 cursor-pointer flex items-center justify-center"
                 disabled={busy}
               >
                 {busy
@@ -763,7 +763,7 @@ function LoginContent() {
                     setError(null);
                     setSuccess(null);
                   }}
-                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-2 cursor-pointer"
+                  className="w-full text-center text-xs text-muted-foreground hover:text-foreground mt-2 cursor-pointer min-h-[36px] flex items-center justify-center"
                 >
                   ← Back to login
                 </button>
@@ -777,13 +777,13 @@ function LoginContent() {
                   <span className="font-semibold uppercase tracking-wider text-[10px]">Demo Test Accounts:</span>
                   <span className="text-[10px] text-primary font-mono">Password: eval1234</span>
                 </div>
-                <div className="grid grid-cols-3 gap-1.5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2">
                   {DEMO_STAFF_ACCOUNTS.map((acc) => (
                     <button
                       key={acc.role}
                       type="button"
                       onClick={() => fillStaffDemo(acc.email)}
-                      className={`flex flex-col items-center justify-center p-2 rounded-lg border text-left transition-all cursor-pointer ${
+                      className={`flex flex-row sm:flex-col items-center justify-between sm:justify-center p-2.5 sm:p-2 rounded-lg border text-left transition-all cursor-pointer min-h-[44px] ${
                         staffEmail === acc.email
                           ? 'border-primary bg-primary/10 text-primary shadow-xs'
                           : 'border-border bg-muted/40 text-foreground hover:border-primary/40 hover:bg-muted/70'
@@ -793,7 +793,7 @@ function LoginContent() {
                       <span className={`text-xs font-bold ${staffEmail === acc.email ? 'text-primary' : 'text-foreground'}`}>
                         {acc.label}
                       </span>
-                      <span className="text-[9px] text-muted-foreground truncate max-w-full font-mono">{acc.email.split('@')[0]}</span>
+                      <span className="text-[10px] sm:text-[9px] text-muted-foreground truncate max-w-full font-mono">{acc.email.split('@')[0]}</span>
                     </button>
                   ))}
                 </div>
@@ -1027,7 +1027,7 @@ function LoginContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-[100dvh] w-full bg-canvas" />}>
+    <Suspense fallback={<div className="min-h-[100dvh] w-full bg-background" />}>
       <LoginContent />
     </Suspense>
   );

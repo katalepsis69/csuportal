@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import { semesterIsOpen, type StudentDashboard } from '@/lib/types';
-import { IconClipboardText, IconHourglass, IconSealCheck } from '@/components/icons';
+import { Hourglass, BadgeCheck, ClipboardList } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 
@@ -35,7 +35,7 @@ export default async function StudentPage({
       {/* Submission Confirmation Banner */}
       {submitted === '1' && (
         <div className="rounded-2xl border border-positive/30 bg-positive/10 p-4 text-sm text-positive flex items-start gap-3 shadow-xs ">
-          <IconSealCheck className="h-5 w-5 shrink-0 text-positive mt-0.5" />
+          <BadgeCheck className="h-5 w-5 shrink-0 text-positive mt-0.5" aria-hidden="true" />
           <div className="flex-1 min-w-0">
             <div className="font-bold text-foreground">Evaluation Submitted Successfully</div>
             <p className="text-xs text-muted-foreground mt-0.5">
@@ -90,7 +90,7 @@ export default async function StudentPage({
       {subjects.length === 0 && (
         <div className="rounded-xl border border-border bg-card p-8 text-center space-y-3 shadow-xs">
           <div className="w-12 h-12 rounded-full bg-muted border border-border mx-auto flex items-center justify-center text-muted-foreground">
-            <IconClipboardText className="h-6 w-6" />
+            <ClipboardList className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
             <h3 className="font-semibold text-sm text-foreground">No Evaluation Schedule Active</h3>
@@ -107,7 +107,7 @@ export default async function StudentPage({
         {/* Pending Card */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex items-center gap-4 hover:border-primary/40 transition-colors ">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gold/10 border border-gold/20 text-gold-text">
-            <IconHourglass className="h-6 w-6" />
+            <Hourglass className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -125,7 +125,7 @@ export default async function StudentPage({
         {/* Completed Card */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex items-center gap-4 hover:border-positive/40 transition-colors ">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-positive/10 border border-positive/20 text-positive">
-            <IconSealCheck className="h-6 w-6" />
+            <BadgeCheck className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -141,7 +141,7 @@ export default async function StudentPage({
         {/* Total Subjects Card */}
         <div className="rounded-xl border border-border bg-card p-5 shadow-xs flex items-center gap-4 hover:border-primary/40 transition-colors ">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 border border-primary/20 text-primary">
-            <IconClipboardText className="h-6 w-6" />
+            <ClipboardList className="h-6 w-6" aria-hidden="true" />
           </div>
           <div>
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -157,8 +157,8 @@ export default async function StudentPage({
 
       {/* Pending Evaluations List */}
       {pending.length > 0 && (
-        <div id="pending" className="rounded-xl border border-border bg-card overflow-hidden shadow-xs ">
-          <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-muted/50">
+        <div id="pending" className="rounded-xl border border-border bg-card overflow-hidden shadow-xs">
+          <div className="flex items-center justify-between p-4 sm:px-6 border-b border-border bg-muted/50">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-gold" />
               <h2 className="text-sm font-bold text-foreground">
@@ -174,7 +174,7 @@ export default async function StudentPage({
             {pending.map((s) => (
               <div
                 key={s.section_subject_id}
-                className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-muted transition-colors"
+                className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 hover:bg-muted transition-colors"
               >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
@@ -192,11 +192,11 @@ export default async function StudentPage({
                   </div>
                 </div>
 
-                <div className="shrink-0 flex items-center gap-2.5">
+                <div className="shrink-0 flex items-center gap-2.5 w-full sm:w-auto">
                   {s.is_open ? (
                     <Link
                       href={`/student/eval/${s.section_subject_id}`}
-                      className="inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-brand-hover active:scale-[0.98] transition-colors min-h-[38px]"
+                      className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground hover:bg-primary/90 active:scale-[0.98] transition-colors min-h-[40px] sm:min-h-[38px] cursor-pointer"
                     >
                       Start Appraisal
                     </Link>
@@ -214,8 +214,8 @@ export default async function StudentPage({
 
       {/* Completed Evaluations List */}
       {done.length > 0 && (
-        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs ">
-          <div className="flex items-center justify-between p-4 px-6 border-b border-border bg-muted/50">
+        <div className="rounded-xl border border-border bg-card overflow-hidden shadow-xs">
+          <div className="flex items-center justify-between p-4 sm:px-6 border-b border-border bg-muted/50">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-positive" />
               <h2 className="text-sm font-bold text-foreground">

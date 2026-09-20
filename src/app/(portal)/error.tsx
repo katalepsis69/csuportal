@@ -35,17 +35,17 @@ export default function Error({
           </p>
         </div>
 
-        <div className="pt-2 flex items-center justify-center gap-3">
+        <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
           <button
             type="button"
             onClick={reset}
-            className="btn py-2 px-5 text-xs font-semibold focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             Try Again
           </button>
           <Link
             href="/"
-            className="btn-outline py-2 px-4 text-xs font-medium focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="inline-flex cursor-pointer items-center justify-center rounded-xl border border-border bg-card px-4 py-2.5 text-xs font-semibold text-foreground transition-colors hover:bg-muted shadow-xs min-h-[40px] focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             Back to Home
           </Link>

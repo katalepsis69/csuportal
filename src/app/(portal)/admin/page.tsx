@@ -16,7 +16,8 @@ import {
 } from '@/lib/actions/admin';
 import type { Semester } from '@/lib/types';
 import { semesterIsOpen } from '@/lib/types';
-import { StaffScaffold, IconUsersLine, IconBookLine, IconGearLine, IconChartLine } from '@/components/dashboard/StaffScaffold';
+import { StaffScaffold } from '@/components/dashboard/StaffScaffold';
+import { Users, BookOpen, PieChart, Settings } from 'lucide-react';
 import { AdminUsersTable, type UserRow } from '@/components/dashboard/AdminUsersTable';
 
 export const dynamic = 'force-dynamic';
@@ -39,7 +40,10 @@ function Del({ table, id }: { table: string; id: string }) {
     <form action={adminDelete}>
       <input type="hidden" name="table" value={table} />
       <input type="hidden" name="id" value={id} />
-      <button type="submit" className="btn-danger">
+      <button
+        type="submit"
+        className="inline-flex cursor-pointer items-center rounded-lg px-2.5 py-1 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-colors border border-destructive/20 min-h-[32px]"
+      >
         Delete
       </button>
     </form>
@@ -152,7 +156,7 @@ export default async function AdminPage({
       sublabel: `${studentCount} Students · ${facultyCount} Faculty`,
       color: '#881337',
       sparkline: userSparkline,
-      icon: <IconUsersLine className="h-4 w-4" />,
+      icon: <Users className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Active Students',
@@ -162,7 +166,7 @@ export default async function AdminPage({
       sublabel: 'Enrolled in portal',
       color: '#15803d',
       sparkline: studentSparkline,
-      icon: <IconBookLine className="h-4 w-4" />,
+      icon: <BookOpen className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Faculty Assigned',
@@ -172,7 +176,7 @@ export default async function AdminPage({
       sublabel: 'Teaching assignments',
       color: '#b45309',
       sparkline: facultySparkline,
-      icon: <IconChartLine className="h-4 w-4" />,
+      icon: <PieChart className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'System Compliance',
@@ -182,7 +186,7 @@ export default async function AdminPage({
       sublabel: 'Evaluation readiness',
       color: '#881337',
       sparkline: complianceSparkline,
-      icon: <IconGearLine className="h-4 w-4" />,
+      icon: <Settings className="h-4 w-4" aria-hidden="true" />,
     },
   ];
 
@@ -195,12 +199,12 @@ export default async function AdminPage({
     >
       <div className="space-y-4">
         {/* Navigation Tabs Bar */}
-        <div className="flex flex-wrap items-center gap-1.5 p-1.5 border border-border bg-muted/60 rounded-xl overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1.5 border border-border bg-muted/60 rounded-xl overflow-x-auto no-scrollbar flex-nowrap">
           {TABS.map((t) => (
             <Link
               key={t.key}
               href={`/admin?tab=${t.key}`}
-              className={`rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-all whitespace-nowrap ${
+              className={`rounded-lg px-3.5 py-2 text-xs font-semibold transition-all whitespace-nowrap min-h-[36px] flex items-center ${
                 t.key === tab
                   ? 'bg-card text-foreground font-bold shadow-xs border border-border'
                   : 'text-muted-foreground hover:text-foreground hover:bg-card/50'
@@ -216,83 +220,121 @@ export default async function AdminPage({
 
         {/* Tab 2: Semesters / Period */}
         {tab === 'semesters' && (
-          <div className="p-3 sm:p-4 space-y-3">
-            <div className="card overflow-x-auto">
-              <h2 className="mb-3 text-sm font-semibold">Semesters</h2>
-              <table className="table">
-                <thead>
-                  <tr className="border-b border-subtle">
-                    <th className="th">AY</th>
-                    <th className="th">Term</th>
-                    <th className="th">Status</th>
-                    <th className="th">Window</th>
-                    <th className="th">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sems.map((s) => (
-                    <tr key={s.id} className="border-b border-subtle">
-                      <td className="td font-medium">{s.academic_year}</td>
-                      <td className="td">{s.term}</td>
-                      <td className="td">
-                        {s.is_current && <span className="badge-brand mr-2">Current</span>}
-                        {semesterIsOpen(s) ? <span className="badge-positive">Open</span> : <span className="badge-gold">Closed</span>}
-                      </td>
-                      <td className="td text-xs text-cream-muted">
-                        {s.opens_at ? new Date(s.opens_at).toLocaleDateString() : '—'} →{' '}
-                        {s.closes_at ? new Date(s.closes_at).toLocaleDateString() : '—'}
-                      </td>
-                      <td className="td">
-                        <div className="flex items-center gap-2">
-                          {!s.is_current && (
-                            <form action={setCurrentSemester}>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+              <div className="p-4 sm:px-6 border-b border-border bg-muted/30">
+                <h2 className="text-sm font-semibold text-foreground">Semesters &amp; Evaluation Periods</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
+                      <th className="py-3 px-4 sm:px-5 font-semibold">AY</th>
+                      <th className="py-3 px-4 font-semibold">Term</th>
+                      <th className="py-3 px-4 font-semibold">Status</th>
+                      <th className="py-3 px-4 font-semibold">Window</th>
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {sems.map((s) => (
+                      <tr key={s.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="py-3.5 px-4 sm:px-5 font-semibold text-foreground">{s.academic_year}</td>
+                        <td className="py-3.5 px-4 text-foreground">{s.term}</td>
+                        <td className="py-3.5 px-4">
+                          {s.is_current && (
+                            <span className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] font-semibold text-primary border border-primary/25 uppercase mr-2">
+                              Current
+                            </span>
+                          )}
+                          {semesterIsOpen(s) ? (
+                            <span className="inline-flex items-center rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25 uppercase">
+                              Open
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full bg-amber-500/10 px-2.5 py-0.5 text-[10px] font-semibold text-amber-600 border border-amber-500/25 uppercase">
+                              Closed
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 text-xs text-muted-foreground tabular-nums">
+                          {s.opens_at ? new Date(s.opens_at).toLocaleDateString() : '—'} →{' '}
+                          {s.closes_at ? new Date(s.closes_at).toLocaleDateString() : '—'}
+                        </td>
+                        <td className="py-3.5 px-4 sm:px-5">
+                          <div className="flex items-center gap-2">
+                            {!s.is_current && (
+                              <form action={setCurrentSemester}>
+                                <input type="hidden" name="id" value={s.id} />
+                                <button type="submit" className="text-xs text-primary font-medium hover:underline cursor-pointer min-h-[32px] px-1">
+                                  Set current
+                                </button>
+                              </form>
+                            )}
+                            <form action={togglePeriod}>
                               <input type="hidden" name="id" value={s.id} />
-                              <button type="submit" className="text-xs text-cream-muted hover:underline">
-                                Set current
+                              <input type="hidden" name="open" value={(!semesterIsOpen(s)).toString()} />
+                              <button type="submit" className="text-xs text-muted-foreground hover:text-foreground font-medium hover:underline cursor-pointer min-h-[32px] px-1">
+                                {semesterIsOpen(s) ? 'Close' : 'Open'}
                               </button>
                             </form>
-                          )}
-                          <form action={togglePeriod}>
-                            <input type="hidden" name="id" value={s.id} />
-                            <input type="hidden" name="open" value={(!semesterIsOpen(s)).toString()} />
-                            <button type="submit" className="text-xs text-cream-muted hover:underline">
-                              {semesterIsOpen(s) ? 'Close' : 'Open'}
-                            </button>
-                          </form>
-                          <Del table="semesters" id={s.id} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                            <Del table="semesters" id={s.id} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
 
-            <div className="card">
-              <h2 className="mb-3 text-sm font-semibold">Add semester</h2>
-              <form action={createSemester} className="grid gap-3 sm:grid-cols-5">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Add semester</h2>
+              <form action={createSemester} className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
                 <div>
-                  <label className="label">Academic Year</label>
-                  <input name="academic_year" placeholder="2026-2027" className="input" required />
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Academic Year</label>
+                  <input
+                    name="academic_year"
+                    placeholder="2026-2027"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    required
+                  />
                 </div>
                 <div>
-                  <label className="label">Term</label>
-                  <select name="term" className="input" required>
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Term</label>
+                  <select
+                    name="term"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
                     <option value="1st">1st</option>
                     <option value="2nd">2nd</option>
                     <option value="midyear">Midyear</option>
                   </select>
                 </div>
                 <div>
-                  <label className="label">Opens at</label>
-                  <input type="datetime-local" name="opens_at" className="input" />
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Opens at</label>
+                  <input
+                    type="datetime-local"
+                    name="opens_at"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                  />
                 </div>
                 <div>
-                  <label className="label">Closes at</label>
-                  <input type="datetime-local" name="closes_at" className="input" />
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Closes at</label>
+                  <input
+                    type="datetime-local"
+                    name="closes_at"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                  />
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="btn">Add</button>
+                  <button
+                    type="submit"
+                    className="w-full inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px]"
+                  >
+                    Add
+                  </button>
                 </div>
               </form>
             </div>
@@ -301,34 +343,63 @@ export default async function AdminPage({
 
         {/* Tab 3: Programs */}
         {tab === 'programs' && (
-          <div className="p-3 sm:p-4 space-y-3">
-            <div className="card overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr className="border-b border-subtle">
-                    <th className="th">Code</th>
-                    <th className="th">Name</th>
-                    <th className="th">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(programs ?? []).map((p) => (
-                    <tr key={p.id} className="border-b border-subtle">
-                      <td className="td font-medium">{p.code}</td>
-                      <td className="td">{p.name}</td>
-                      <td className="td">
-                        <Del table="programs" id={p.id} />
-                      </td>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+              <div className="p-4 sm:px-6 border-b border-border bg-muted/30">
+                <h2 className="text-sm font-semibold text-foreground">Degree Programs</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Code</th>
+                      <th className="py-3 px-4 font-semibold">Name</th>
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {(programs ?? []).map((p) => (
+                      <tr key={p.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="py-3.5 px-4 sm:px-5 font-bold text-foreground">{p.code}</td>
+                        <td className="py-3.5 px-4 text-foreground">{p.name}</td>
+                        <td className="py-3.5 px-4 sm:px-5">
+                          <Del table="programs" id={p.id} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div className="card">
-              <form action={createProgram} className="flex flex-wrap gap-3">
-                <input name="code" placeholder="BSIT" className="input w-28 uppercase" required />
-                <input name="name" placeholder="BS Information Technology" className="input flex-1 min-w-[200px]" required />
-                <button type="submit" className="btn">Add</button>
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Add program</h2>
+              <form action={createProgram} className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-end gap-3">
+                <div className="w-full sm:w-28">
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Code</label>
+                  <input
+                    name="code"
+                    placeholder="BSIT"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground uppercase focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    required
+                  />
+                </div>
+                <div className="flex-1 min-w-[200px]">
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Program Name</label>
+                  <input
+                    name="name"
+                    placeholder="BS Information Technology"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    required
+                  />
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px]"
+                  >
+                    Add
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -336,43 +407,82 @@ export default async function AdminPage({
 
         {/* Tab 4: Sections */}
         {tab === 'sections' && (
-          <div className="p-3 sm:p-4 space-y-3">
-            <div className="card overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr className="border-b border-subtle">
-                    <th className="th">Program</th>
-                    <th className="th">Year</th>
-                    <th className="th">Section</th>
-                    <th className="th">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {secs.map((s) => (
-                    <tr key={s.id} className="border-b border-subtle">
-                      <td className="td font-medium">{s.program?.code}</td>
-                      <td className="td">{s.year_level}</td>
-                      <td className="td">{s.name}</td>
-                      <td className="td">
-                        <Del table="sections" id={s.id} />
-                      </td>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+              <div className="p-4 sm:px-6 border-b border-border bg-muted/30">
+                <h2 className="text-sm font-semibold text-foreground">Academic Sections</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Program</th>
+                      <th className="py-3 px-4 font-semibold">Year</th>
+                      <th className="py-3 px-4 font-semibold">Section</th>
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {secs.map((s) => (
+                      <tr key={s.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="py-3.5 px-4 sm:px-5 font-semibold text-foreground">{s.program?.code}</td>
+                        <td className="py-3.5 px-4 text-foreground">{s.year_level}</td>
+                        <td className="py-3.5 px-4 text-foreground">{s.name}</td>
+                        <td className="py-3.5 px-4 sm:px-5">
+                          <Del table="sections" id={s.id} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div className="card">
-              <form action={createSection} className="flex flex-wrap gap-3">
-                <select name="program_id" className="input w-48" required>
-                  {(programs ?? []).map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.code}
-                    </option>
-                  ))}
-                </select>
-                <input name="year_level" type="number" min={1} max={5} defaultValue={1} className="input w-20" required />
-                <input name="name" placeholder="Section name (e.g. A)" className="input w-36" required />
-                <button type="submit" className="btn">Add</button>
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Add section</h2>
+              <form action={createSection} className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-end gap-3">
+                <div className="w-full sm:w-48">
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Program</label>
+                  <select
+                    name="program_id"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
+                    {(programs ?? []).map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.code}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-full sm:w-24">
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Year</label>
+                  <input
+                    name="year_level"
+                    type="number"
+                    min={1}
+                    max={5}
+                    defaultValue={1}
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    required
+                  />
+                </div>
+                <div className="flex-1 min-w-[140px]">
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Section name</label>
+                  <input
+                    name="name"
+                    placeholder="e.g. A"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    required
+                  />
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px]"
+                  >
+                    Add
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -380,34 +490,63 @@ export default async function AdminPage({
 
         {/* Tab 5: Subjects */}
         {tab === 'subjects' && (
-          <div className="p-3 sm:p-4 space-y-3">
-            <div className="card overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr className="border-b border-subtle">
-                    <th className="th">Code</th>
-                    <th className="th">Name</th>
-                    <th className="th">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(subjects ?? []).map((s) => (
-                    <tr key={s.id} className="border-b border-subtle">
-                      <td className="td font-medium">{s.code}</td>
-                      <td className="td">{s.name}</td>
-                      <td className="td">
-                        <Del table="subjects" id={s.id} />
-                      </td>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+              <div className="p-4 sm:px-6 border-b border-border bg-muted/30">
+                <h2 className="text-sm font-semibold text-foreground">Curriculum Subjects</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Code</th>
+                      <th className="py-3 px-4 font-semibold">Name</th>
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {(subjects ?? []).map((s) => (
+                      <tr key={s.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="py-3.5 px-4 sm:px-5 font-bold text-foreground">{s.code}</td>
+                        <td className="py-3.5 px-4 text-foreground">{s.name}</td>
+                        <td className="py-3.5 px-4 sm:px-5">
+                          <Del table="subjects" id={s.id} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div className="card">
-              <form action={createSubject} className="flex flex-wrap gap-3">
-                <input name="code" placeholder="IT101" className="input w-28 uppercase" required />
-                <input name="name" placeholder="Introduction to Computing" className="input flex-1 min-w-[200px]" required />
-                <button type="submit" className="btn">Add</button>
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Add subject</h2>
+              <form action={createSubject} className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-end gap-3">
+                <div className="w-full sm:w-28">
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Code</label>
+                  <input
+                    name="code"
+                    placeholder="IT101"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground uppercase focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    required
+                  />
+                </div>
+                <div className="flex-1 min-w-[200px]">
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Subject Name</label>
+                  <input
+                    name="name"
+                    placeholder="Introduction to Computing"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    required
+                  />
+                </div>
+                <div>
+                  <button
+                    type="submit"
+                    className="w-full sm:w-auto inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px]"
+                  >
+                    Add
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -415,68 +554,94 @@ export default async function AdminPage({
 
         {/* Tab 6: Assignments */}
         {tab === 'assignments' && (
-          <div className="p-3 sm:p-4 space-y-3">
-            <div className="card overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr className="border-b border-subtle">
-                    <th className="th">Semester</th>
-                    <th className="th">Section</th>
-                    <th className="th">Subject</th>
-                    <th className="th">Faculty</th>
-                    <th className="th">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {assigns.map((a) => (
-                    <tr key={a.id} className="border-b border-subtle">
-                      <td className="td">{a.semester?.academic_year} {a.semester?.term}</td>
-                      <td className="td">{a.section?.name}</td>
-                      <td className="td font-medium">{a.subject?.code} — {a.subject?.name}</td>
-                      <td className="td">{a.faculty?.full_name}</td>
-                      <td className="td"><Del table="section_subjects" id={a.id} /></td>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+              <div className="p-4 sm:px-6 border-b border-border bg-muted/30">
+                <h2 className="text-sm font-semibold text-foreground">Teaching Load Assignments</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Semester</th>
+                      <th className="py-3 px-4 font-semibold">Section</th>
+                      <th className="py-3 px-4 font-semibold">Subject</th>
+                      <th className="py-3 px-4 font-semibold">Faculty</th>
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {assigns.map((a) => (
+                      <tr key={a.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="py-3.5 px-4 sm:px-5 text-muted-foreground">{a.semester?.academic_year} {a.semester?.term}</td>
+                        <td className="py-3.5 px-4 font-medium text-foreground">{a.section?.name}</td>
+                        <td className="py-3.5 px-4 font-semibold text-foreground">{a.subject?.code} — {a.subject?.name}</td>
+                        <td className="py-3.5 px-4 text-foreground">{a.faculty?.full_name}</td>
+                        <td className="py-3.5 px-4 sm:px-5"><Del table="section_subjects" id={a.id} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div className="card">
-              <h2 className="mb-3 text-sm font-semibold">Assign faculty to subject</h2>
-              <form action={createAssignment} className="grid gap-3 sm:grid-cols-5">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Assign faculty to subject</h2>
+              <form action={createAssignment} className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
                 <div>
-                  <label className="label">Semester</label>
-                  <select name="semester_id" className="input" required>
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Semester</label>
+                  <select
+                    name="semester_id"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
                     {sems.map((s) => (
                       <option key={s.id} value={s.id}>{s.academic_year} {s.term}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="label">Section</label>
-                  <select name="section_id" className="input" required>
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Section</label>
+                  <select
+                    name="section_id"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
                     {secs.map((s) => (
                       <option key={s.id} value={s.id}>{s.program?.code} {s.year_level}-{s.name}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="label">Subject</label>
-                  <select name="subject_id" className="input" required>
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Subject</label>
+                  <select
+                    name="subject_id"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
                     {(subjects ?? []).map((s) => (
                       <option key={s.id} value={s.id}>{s.code}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="label">Faculty</label>
-                  <select name="faculty_id" className="input" required>
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Faculty</label>
+                  <select
+                    name="faculty_id"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
                     {(faculty ?? []).map((f) => (
                       <option key={f.id} value={f.id}>{f.full_name}</option>
                     ))}
                   </select>
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="btn">Add</button>
+                  <button
+                    type="submit"
+                    className="w-full inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px]"
+                  >
+                    Add
+                  </button>
                 </div>
               </form>
             </div>
@@ -485,62 +650,98 @@ export default async function AdminPage({
 
         {/* Tab 7: Questions */}
         {tab === 'questions' && (
-          <div className="p-3 sm:p-4 space-y-3">
-            <div className="card overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr className="border-b border-subtle">
-                    <th className="th">#</th>
-                    <th className="th">Category</th>
-                    <th className="th">Question</th>
-                    <th className="th">Active</th>
-                    <th className="th">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(questions ?? []).map((q) => (
-                    <tr key={q.id} className="border-b border-subtle">
-                      <td className="td">{q.sort_order}</td>
-                      <td className="td">
-                        <span className="rounded bg-panel2 px-1.5 py-0.5 text-xs text-cream-muted">
-                          {q.category}
-                        </span>
-                      </td>
-                      <td className="td whitespace-normal">{q.text}</td>
-                      <td className="td">{q.active ? 'Yes' : 'No'}</td>
-                      <td className="td">
-                        <div className="flex items-center gap-2">
-                          <form action={toggleQuestion}>
-                            <input type="hidden" name="id" value={q.id} />
-                            <input type="hidden" name="active" value={(!q.active).toString()} />
-                            <button type="submit" className="text-xs text-cream-muted hover:underline">
-                              {q.active ? 'Deactivate' : 'Activate'}
-                            </button>
-                          </form>
-                          <Del table="questions" id={q.id} />
-                        </div>
-                      </td>
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border bg-card shadow-xs overflow-hidden">
+              <div className="p-4 sm:px-6 border-b border-border bg-muted/30">
+                <h2 className="text-sm font-semibold text-foreground">Evaluation Criteria &amp; Questions</h2>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs">
+                  <thead>
+                    <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
+                      <th className="py-3 px-4 sm:px-5 font-semibold">#</th>
+                      <th className="py-3 px-4 font-semibold">Category</th>
+                      <th className="py-3 px-4 font-semibold">Question</th>
+                      <th className="py-3 px-4 font-semibold">Active</th>
+                      <th className="py-3 px-4 sm:px-5 font-semibold">Actions</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {(questions ?? []).map((q) => (
+                      <tr key={q.id} className="hover:bg-muted/50 transition-colors">
+                        <td className="py-3.5 px-4 sm:px-5 font-medium text-muted-foreground">{q.sort_order}</td>
+                        <td className="py-3.5 px-4">
+                          <span className="rounded-md bg-muted px-2 py-0.5 text-[10px] font-semibold text-foreground border border-border">
+                            {q.category}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 whitespace-normal text-foreground leading-relaxed">{q.text}</td>
+                        <td className="py-3.5 px-4">
+                          {q.active ? (
+                            <span className="inline-flex items-center rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
+                              Active
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-[10px] font-semibold text-muted-foreground border border-border">
+                              Inactive
+                            </span>
+                          )}
+                        </td>
+                        <td className="py-3.5 px-4 sm:px-5">
+                          <div className="flex items-center gap-2">
+                            <form action={toggleQuestion}>
+                              <input type="hidden" name="id" value={q.id} />
+                              <input type="hidden" name="active" value={(!q.active).toString()} />
+                              <button type="submit" className="text-xs text-muted-foreground hover:text-foreground font-medium hover:underline cursor-pointer min-h-[32px] px-1">
+                                {q.active ? 'Deactivate' : 'Activate'}
+                              </button>
+                            </form>
+                            <Del table="questions" id={q.id} />
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div className="card">
-              <form action={createQuestion} className="grid gap-3 sm:grid-cols-4">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Add question</h2>
+              <form action={createQuestion} className="grid gap-3 grid-cols-1 sm:grid-cols-4">
                 <div>
-                  <label className="label">Category</label>
-                  <input name="category" className="input" placeholder="Teaching" required />
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Category</label>
+                  <input
+                    name="category"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    placeholder="Teaching"
+                    required
+                  />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="label">Question</label>
-                  <input name="text" className="input" placeholder="Explains lessons clearly" required />
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Question</label>
+                  <input
+                    name="text"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                    placeholder="Explains lessons clearly"
+                    required
+                  />
                 </div>
                 <div className="flex items-end gap-2">
-                  <div>
-                    <label className="label">Order</label>
-                    <input name="sort_order" type="number" className="input w-16" defaultValue={10} />
+                  <div className="w-20">
+                    <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Order</label>
+                    <input
+                      name="sort_order"
+                      type="number"
+                      className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors"
+                      defaultValue={10}
+                    />
                   </div>
-                  <button type="submit" className="btn">Add</button>
+                  <button
+                    type="submit"
+                    className="flex-1 inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px]"
+                  >
+                    Add
+                  </button>
                 </div>
               </form>
             </div>
@@ -549,13 +750,17 @@ export default async function AdminPage({
 
         {/* Tab 8: Enrollments */}
         {tab === 'enrollments' && (
-          <div className="p-3 sm:p-4 space-y-3">
-            <div className="card">
-              <h2 className="mb-3 text-sm font-semibold">Enroll student in subject</h2>
-              <form action={createEnrollment} className="grid gap-3 sm:grid-cols-3">
+          <div className="space-y-4">
+            <div className="rounded-xl border border-border bg-card p-4 sm:p-6 shadow-xs">
+              <h2 className="mb-3 text-sm font-semibold text-foreground">Enroll student in subject</h2>
+              <form action={createEnrollment} className="grid gap-3 grid-cols-1 sm:grid-cols-3">
                 <div>
-                  <label className="label">Student</label>
-                  <select name="student_id" className="input" required>
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Student</label>
+                  <select
+                    name="student_id"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
                     {(students ?? []).map((s) => (
                       <option key={s.id} value={s.id}>
                         {s.full_name} {s.student_no ? `(${s.student_no})` : ''}
@@ -564,8 +769,12 @@ export default async function AdminPage({
                   </select>
                 </div>
                 <div>
-                  <label className="label">Class (semester · section · subject · faculty)</label>
-                  <select name="section_subject_id" className="input" required>
+                  <label className="mb-1.5 block text-xs font-semibold tracking-[0.05em] text-muted-foreground uppercase">Class (semester · section · subject · faculty)</label>
+                  <select
+                    name="section_subject_id"
+                    className="w-full rounded-xl border border-border bg-card px-3 py-2 text-xs text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors cursor-pointer"
+                    required
+                  >
                     {assigns.map((a) => (
                       <option key={a.id} value={a.id}>
                         {a.semester?.academic_year} {a.semester?.term} · {a.section?.name} · {a.subject?.code} · {a.faculty?.full_name}
@@ -574,10 +783,15 @@ export default async function AdminPage({
                   </select>
                 </div>
                 <div className="flex items-end">
-                  <button type="submit" className="btn">Enroll</button>
+                  <button
+                    type="submit"
+                    className="w-full inline-flex cursor-pointer items-center justify-center rounded-xl bg-primary px-5 py-2 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90 shadow-xs min-h-[40px]"
+                  >
+                    Enroll
+                  </button>
                 </div>
               </form>
-              <p className="mt-4 text-xs text-cream-faint">
+              <p className="mt-4 text-xs text-muted-foreground">
                 {secs.length} sections · {assigns.length} classes · {(students ?? []).length} registered students
               </p>
             </div>

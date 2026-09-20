@@ -40,13 +40,19 @@ export function TactileRatingGroup({
     <div className="bg-muted/40 border border-border rounded-xl p-2.5">
       {/* Top scale anchors */}
       <div className="flex items-center justify-between text-[11px] text-muted-foreground px-1 mb-2 select-none">
-        <span>1: Poor / Strongly Disagree</span>
+        <span className="shrink-0">
+          1<span className="hidden sm:inline">: Poor / Strongly Disagree</span>
+          <span className="sm:hidden"> - Poor</span>
+        </span>
         {value ? (
-          <span className="font-semibold text-primary transition-all">
+          <span className="font-semibold text-primary transition-all truncate max-w-[140px] sm:max-w-none px-1 text-center">
             {ANCHORS[value]}
           </span>
         ) : null}
-        <span>5: Outstanding / Strongly Agree</span>
+        <span className="shrink-0 text-right">
+          5<span className="hidden sm:inline">: Outstanding / Strongly Agree</span>
+          <span className="sm:hidden"> - Best</span>
+        </span>
       </div>
 
       {/* 5-Button Tactile Grid */}
@@ -54,7 +60,7 @@ export function TactileRatingGroup({
         id={`rating-group-${questionId}`}
         role="radiogroup"
         aria-label={`Rating for: ${questionText}`}
-        className="grid grid-cols-5 gap-2"
+        className="grid grid-cols-5 gap-1.5 sm:gap-2"
       >
         {[1, 2, 3, 4, 5].map((n) => {
           const isSelected = value === n;
@@ -69,7 +75,7 @@ export function TactileRatingGroup({
               tabIndex={value === n || (value == null && n === 1) ? 0 : -1}
               onClick={() => onChange(n)}
               onKeyDown={(e) => handleKeyDown(e, n)}
-              className={`py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-bold transition-all duration-150 cursor-pointer select-none active:scale-[0.98] border ${
+              className={`min-h-[44px] py-2.5 sm:py-3 rounded-lg text-sm sm:text-base font-bold transition-all duration-150 cursor-pointer select-none active:scale-[0.98] border flex items-center justify-center ${
                 isSelected
                   ? 'bg-primary text-primary-foreground font-extrabold border-primary shadow-xs'
                   : 'bg-card border-border text-muted-foreground hover:border-primary/40 hover:text-foreground shadow-xs'
