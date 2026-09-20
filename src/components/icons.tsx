@@ -4,9 +4,9 @@
  */
 import type { ComponentType, SVGProps } from 'react';
 import {
-  PieChart, ClipboardList, FileText, Save, Gauge, Settings, History,
-  Hourglass, Moon, Pencil, PenTool, BadgeCheck, PenLine, LogOut, Star,
-  Sun, Users, TriangleAlert,
+  PieChart, ClipboardList, FileText, Save, Gauge, Settings,
+  Hourglass, BadgeCheck, PenLine, LogOut, Star,
+  Users, TriangleAlert,
 } from 'lucide-react';
 
 type IconProps = { className?: string };
@@ -24,15 +24,10 @@ export const IconFileText = wrap(FileText);
 export const IconFloppyDisk = wrap(Save);
 export const IconGauge = wrap(Gauge);
 export const IconGear = wrap(Settings);
-export const IconHistory = wrap(History);
 export const IconHourglass = wrap(Hourglass);
-export const IconMoon = wrap(Moon);
-export const IconPencilSimple = wrap(Pencil);
-export const IconPenNib = wrap(PenTool);
 export const IconSealCheck = wrap(BadgeCheck);
 export const IconSignature = wrap(PenLine);
 export const IconSignOut = wrap(LogOut);
 export const IconStar = wrap(Star);
-export const IconSun = wrap(Sun);
 export const IconUsers = wrap(Users);
 export const IconWarning = wrap(TriangleAlert);
