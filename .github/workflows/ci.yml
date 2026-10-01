@@ -1,0 +1,45 @@
+name: CI
+
+# Build and lint on every push/PR. The PostgREST-level test suite only runs
+# when the live-project secrets are configured: helpers.mjs refuses to touch
+# any project unless ALLOW_TESTS_ON matches the ref baked into the URL
+# (scripts/tests/helpers.mjs), so a missing secret means a clean skip.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: PostgREST-level tests (skips when secrets are not configured)
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.TEST_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.TEST_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.TEST_SUPABASE_SERVICE_ROLE_KEY }}
+          ALLOW_TESTS_ON: ${{ vars.ALLOW_TESTS_ON }}
+        run: |
+          if [ -z "$NEXT_PUBLIC_SUPABASE_URL" ]; then
+            echo "TEST_SUPABASE_URL not set — skipping live tests (configure repo secrets + ALLOW_TESTS_ON to enable)"
+            exit 0
+          fi
+          npm test

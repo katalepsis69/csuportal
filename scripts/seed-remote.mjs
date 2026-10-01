@@ -150,6 +150,14 @@ if (profiles[0].n === 0) {
   profiles = await query('select count(*)::int as n from profiles');
 }
 
+// 0007: the signup trigger hardcodes 'student' — promote demo staff explicitly
+for (const u of DEMO_USERS) {
+  if (u.role !== 'student') {
+    const id = uid(u.email);
+    if (id) await query(`update public.profiles set role = '${esc(u.role)}'::public.role where id = '${id}'`);
+  }
+}
+
 // ── 3. classes + enrollments ──────────────────────────────────
 console.log('— classes + enrollments');
 const [secs, subs, sems] = await Promise.all([

@@ -90,10 +90,10 @@ Commit after every step; tests green between each. Steps 1-5 structural,
 6 cosmetic, 7 features.
 
 1. [x] DONE 2026-09-18: v2 tokens applied to `globals.css` (legacy token names
-   kept as zinc-valued aliases until the sweep; light is now the default theme);
-   added table/tabs/input/label/form/command primitives (brought RHF, zod, cmdk).
-   Build passes, 10/10 tests green.
-   `npx shadcn@latest init` + `add` needed primitives; apply v2 tokens to `globals.css`.
+   kept as zinc-valued aliases until the sweep; light is now the default theme).
+   **Correction (2026-09-30):** the "command" primitive/cmdk never landed —
+   cmdk is not a dependency and no page uses it; zod is used at the server
+   action trust boundary, react-hook-form was skipped (recorded below).
    **In parallel, start collecting the 50-100 hand-labeled comments NOW** (not
    at step 7) - pull from real paper evaluation forms if any exist. Real
    student phrasing and real Taglish is the point; self-written comments are
@@ -102,15 +102,17 @@ Commit after every step; tests green between each. Steps 1-5 structural,
    (`requireProfile`/`requireRole` already covered every page). **Deviation:**
    the proxy is KEPT as `refreshSession` (no redirects) because Server
    Components cannot write cookies — without it Supabase access tokens expire
-   after 1h and students get logged out mid-form. `motion` removed; drawer +
-   backdrop are CSS keyframes; dead `Stagger.tsx` deleted.
+   after 1h and students get logged out mid-form. `src/lib/supabase/middleware.ts`
+   survives as that helper (the file-deletion list above is superseded by this
+   deviation). `motion` removed; drawer + backdrop are CSS keyframes; dead
+   `Stagger.tsx` deleted.
 3. [x] DONE: Drizzle deleted (`drizzle-orm`, `drizzle-kit`, `drizzle.config.ts`,
    `src/db/`, `db:generate`). **Deviations:** `scripts/apply-migrations.ts` is
    KEPT — it is the hand-rolled SQL migration runner, not Drizzle ceremony;
    `postgres` moved to devDependencies (migrations + seeds only); types stay
    hand-written in `lib/types.ts` (no CLI link/config.toml here, so
-   `supabase gen types` has nothing to read). Migration 0006 was applied via
-   `scripts/run-sql.mjs` (Management API — no DATABASE_URL in this env).
+   `supabase gen types` has nothing to read). Migrations run through
+   `scripts/apply-mgmt-api.mjs` (Management API) or `npm run db:apply`.
 4. [x] DONE: `src/lib/sentiment.ts` replaced in place by the lexicon
    (~200 words, Tagalog/English + negation window + multi-word phrases);
    `@huggingface/transformers` deleted; server action classifies at submit and

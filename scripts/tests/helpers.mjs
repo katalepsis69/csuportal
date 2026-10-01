@@ -20,6 +20,16 @@ if (!URL || !ANON || !SERVICE) {
   process.exit(1);
 }
 
+// Safety guard: these tests act on the LIVE project with real row writes and
+// service-role deletes. Refuse to run unless the operator explicitly confirmed
+// the target ref (audit P31).
+const REF = new globalThis.URL(URL).hostname.split('.')[0];
+if (process.env.ALLOW_TESTS_ON !== REF) {
+  console.error(`Safety guard: tests target the live project "${REF}" with service-role power.`);
+  console.error(`If that is intentional, run with ALLOW_TESTS_ON=${REF}`);
+  process.exit(1);
+}
+
 export const admin = createClient(URL, SERVICE, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
@@ -74,15 +84,23 @@ export async function cleanupTestStudent(id) {
   await admin.auth.admin.deleteUser(id);
 }
 
-/** Any section_subject in the current, open semester. */
+/** Derived open state — mirrors public.sem_is_open (0006). */
+export function derivedOpen(sem) {
+  if (sem.manual_override === 'open') return true;
+  if (sem.manual_override === 'closed') return false;
+  if (!sem.opens_at || !sem.closes_at) return sem.is_open;
+  const now = Date.now();
+  return now >= new Date(sem.opens_at).getTime() && now <= new Date(sem.closes_at).getTime();
+}
+
+/** Any section_subject in the current semester whose DERIVED open state is open. */
 export async function pickOpenClass() {
   const { data, error } = await admin
     .from('section_subjects')
-    .select('id, semesters!inner(is_current, is_open)')
-    .eq('semesters.is_current', true)
-    .eq('semesters.is_open', true)
-    .limit(1);
+    .select('id, semesters!inner(is_current, is_open, manual_override, opens_at, closes_at)')
+    .eq('semesters.is_current', true);
   if (error) throw new Error(`pickOpenClass: ${error.message}`);
-  if (!data?.length) throw new Error('no open class found — seed first');
-  return data[0].id;
+  const open = (data ?? []).filter((row) => derivedOpen(row.semesters));
+  if (!open.length) throw new Error('no open class found — seed first');
+  return open[0].id;
 }

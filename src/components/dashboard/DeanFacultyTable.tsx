@@ -6,27 +6,11 @@ import { FacultyInspectorDrawer } from './FacultyInspectorDrawer';
 export type DeanFacultyRow = {
   id: string;
   name: string;
-  title?: string;
-  department: string;
   sectionsCount: number;
   responsesReceived: number;
-  totalStudents: number;
   overallRating: number | null;
   ratingLabel?: string;
-  sentimentRatio: { positive: number; neutral: number; negative: number };
   isFlagged?: boolean;
-  dossierId?: string;
-  evaluationsReceived?: number;
-  subjectsCount?: number;
-  pedagogicalBreakdown?: { name: string; score: number; pct: number; color?: string }[];
-  comments?: {
-    type: 'POSITIVE' | 'CONSTRUCTIVE';
-    course: string;
-    section: string;
-    timeAgo: string;
-    text: string;
-    hash: string;
-  }[];
 };
 
 export function DeanFacultyTable({
@@ -45,12 +29,7 @@ export function DeanFacultyTable({
   const filtered = useMemo(() => {
     return faculty.filter((f) => {
       const q = search.toLowerCase().trim();
-      return (
-        !q ||
-        f.name.toLowerCase().includes(q) ||
-        f.department.toLowerCase().includes(q) ||
-        (f.title && f.title.toLowerCase().includes(q))
-      );
+      return !q || f.name.toLowerCase().includes(q);
     });
   }, [faculty, search]);
 
@@ -82,7 +61,7 @@ export function DeanFacultyTable({
               College Faculty Performance Roster
             </h2>
             <p className="text-xs text-muted-foreground">
-              Ranked list of evaluated instructors across Computer, Civil, Electrical &amp; Mechanical programs
+              Evaluated faculty across the college · {semesterLabel}
             </p>
           </div>
 
@@ -91,10 +70,10 @@ export function DeanFacultyTable({
             <div className="relative w-full sm:w-auto">
               <input
                 type="text"
-                placeholder="Search faculty name or dept..."
+                placeholder="Search faculty name..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-card border border-border text-xs text-foreground pl-8 pr-3 py-2 sm:py-1.5 rounded-lg w-full sm:w-56 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground/50 font-normal transition-colors min-h-[40px] sm:min-h-[36px]"
+                className="bg-card border border-border text-xs text-foreground pl-8 pr-3 py-2 sm:py-1.5 rounded-lg w-full sm:w-56 focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground font-normal transition-colors min-h-[40px] sm:min-h-[36px]"
               />
               <svg className="w-3.5 h-3.5 text-muted-foreground absolute left-2.5 top-3 sm:top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8" />
@@ -114,20 +93,15 @@ export function DeanFacultyTable({
             <thead>
               <tr className="border-b border-border bg-muted/40 text-[10px] uppercase text-muted-foreground tracking-wider">
                 <th className="py-3 px-5 font-semibold">Faculty Instructor</th>
-                <th className="py-3 px-4 font-semibold">Department</th>
                 <th className="py-3 px-4 font-semibold text-center">Sections</th>
                 <th className="py-3 px-4 font-semibold text-center">Responses</th>
                 <th className="py-3 px-4 font-semibold">Appraisal Score</th>
-                <th className="py-3 px-4 font-semibold">Sentiment Ratio</th>
                 <th className="py-3 px-5 font-semibold text-right">Dossier Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border text-xs">
               {filtered.map((f) => {
                 const isSelected = selectedFaculty?.id === f.id && isDrawerOpen;
-                const pos = f.sentimentRatio?.positive ?? 0;
-                const neu = f.sentimentRatio?.neutral ?? 0;
-                const neg = f.sentimentRatio?.negative ?? 0;
                 const score = f.overallRating != null ? f.overallRating.toFixed(2) : '—';
 
                 return (
@@ -167,25 +141,15 @@ export function DeanFacultyTable({
                             }`}
                           >
                             <span>{f.name}</span>
-                            {isSelected && (
-                              <span className="w-1.5 h-1.5 rounded-full bg-primary" title="Currently Selected in Drawer" />
-                            )}
                             {f.isFlagged && (
                               <span className="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-destructive/15 text-destructive border border-destructive/25">
                                 FLAGGED
                               </span>
                             )}
                           </div>
-                          <span className="text-[11px] text-muted-foreground">{f.title || 'Faculty Member • Tenured'}</span>
+                          <span className="text-[11px] text-muted-foreground">Faculty</span>
                         </div>
                       </div>
-                    </td>
-
-                    {/* Department */}
-                    <td className="py-3.5 px-4">
-                      <span className="px-2 py-0.5 rounded bg-muted text-[11px] text-foreground border border-border">
-                        {f.department}
-                      </span>
                     </td>
 
                     {/* Sections */}
@@ -193,8 +157,7 @@ export function DeanFacultyTable({
 
                     {/* Responses */}
                     <td className="py-3.5 px-4 text-center tabular-nums">
-                      <span className="font-medium text-foreground">{f.responsesReceived}</span>{' '}
-                      <span className="text-muted-foreground text-[10px]">/ {f.totalStudents}</span>
+                      <span className="font-medium text-foreground">{f.responsesReceived}</span>
                     </td>
 
                     {/* Appraisal Score */}
@@ -211,41 +174,18 @@ export function DeanFacultyTable({
                         >
                           {score}
                         </span>
-                        <span
-                          className={`px-1.5 py-0.5 rounded text-[9px] font-semibold border ${
-                            f.isFlagged
-                              ? 'bg-destructive/10 text-destructive border-destructive/25'
-                              : f.overallRating == null
-                              ? 'bg-muted text-muted-foreground border-border'
-                              : f.overallRating >= 4.8
-                              ? 'bg-positive/10 text-positive border-positive/25'
-                              : 'bg-muted text-foreground border-border'
-                          }`}
-                        >
-                          {f.ratingLabel || (f.overallRating == null ? 'No Evaluations' : f.overallRating >= 4.8 ? 'Outstanding' : 'Very Satisfactory')}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Sentiment Ratio */}
-                    <td className="py-3.5 px-4">
-                      <div className="w-32">
-                        {pos + neu + neg > 0 ? (
-                          <>
-                            <div className="flex justify-between text-[10px] text-muted-foreground mb-1 tabular-nums">
-                              <span>{pos}% Pos</span>
-                              <span className={f.isFlagged ? 'text-destructive font-semibold' : ''}>
-                                {neg}% Neg
-                              </span>
-                            </div>
-                            <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden flex">
-                              <div className="bg-positive h-full" style={{ width: `${pos}%` }} />
-                              <div className="bg-amber-500 h-full" style={{ width: `${neu}%` }} />
-                              <div className="bg-destructive h-full" style={{ width: `${neg}%` }} />
-                            </div>
-                          </>
-                        ) : (
-                          <span className="text-[11px] text-muted-foreground/60">—</span>
+                        {f.overallRating != null && (
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[9px] font-semibold border ${
+                              f.isFlagged
+                                ? 'bg-destructive/10 text-destructive border-destructive/25'
+                                : f.overallRating >= 4.8
+                                ? 'bg-positive/10 text-positive border-positive/25'
+                                : 'bg-muted text-foreground border-border'
+                            }`}
+                          >
+                            {f.ratingLabel || (f.overallRating >= 4.8 ? 'Outstanding' : 'Very Satisfactory')}
+                          </span>
                         )}
                       </div>
                     </td>
@@ -261,17 +201,6 @@ export function DeanFacultyTable({
                           <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
                             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
                           </svg>
-                        </button>
-                      ) : f.isFlagged ? (
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleSelect(f);
-                          }}
-                          className="px-2.5 py-1 rounded-lg bg-destructive/10 hover:bg-destructive/20 text-destructive font-semibold text-[11px] border border-destructive/25 transition-colors cursor-pointer"
-                        >
-                          Dean Audit
                         </button>
                       ) : (
                         <button
@@ -292,7 +221,7 @@ export function DeanFacultyTable({
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-muted-foreground text-xs">
+                  <td colSpan={5} className="py-8 text-center text-muted-foreground text-xs">
                     No faculty records matching your filter.
                   </td>
                 </tr>
@@ -300,35 +229,14 @@ export function DeanFacultyTable({
             </tbody>
           </table>
         </div>
-
-        {/* Table Footer Pagination */}
-        <div className="p-4 sm:px-6 border-t border-border bg-muted/20 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-muted-foreground">
-          <span className="tabular-nums">Showing 1 to {filtered.length} of {faculty.length} Faculty Members</span>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              className="min-h-[36px] px-3 py-1.5 rounded-lg bg-card border border-border text-muted-foreground/60 cursor-not-allowed text-xs"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              className="min-h-[36px] px-3 py-1.5 rounded-lg bg-card border border-border hover:bg-muted/50 text-foreground text-xs transition-colors cursor-pointer"
-            >
-              Next
-            </button>
-          </div>
-        </div>
       </section>
 
       {/* Slide-over / Pinned Faculty Inspector Drawer */}
       <FacultyInspectorDrawer
         faculty={selectedFaculty}
-        semesterLabel={semesterLabel}
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
       />
     </>
   );
 }
-

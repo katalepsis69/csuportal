@@ -62,7 +62,7 @@ export default async function HistoryPage({
           </Link>
           {ay && (
             <>
-              <span className="text-muted-foreground/60">›</span>
+              <span className="text-muted-foreground">›</span>
               <Link href={qs({ term: '', subject: '', faculty: '' })} className="hover:text-foreground transition-colors font-medium">
                 {ay}
               </Link>
@@ -70,7 +70,7 @@ export default async function HistoryPage({
           )}
           {term && (
             <>
-              <span className="text-muted-foreground/60">›</span>
+              <span className="text-muted-foreground">›</span>
               <Link href={qs({ subject: '', faculty: '' })} className="hover:text-foreground transition-colors font-medium">
                 {term} semester
               </Link>
@@ -78,7 +78,7 @@ export default async function HistoryPage({
           )}
           {subject && (
             <>
-              <span className="text-muted-foreground/60">›</span>
+              <span className="text-muted-foreground">›</span>
               <Link href={qs({ faculty: '' })} className="hover:text-foreground transition-colors font-medium">
                 Subject {String(rows[0]?.code ?? subject).slice(0, 8)}
               </Link>
@@ -86,7 +86,7 @@ export default async function HistoryPage({
           )}
           {faculty && (
             <>
-              <span className="text-muted-foreground/60">›</span>
+              <span className="text-muted-foreground">›</span>
               <span className="text-foreground font-semibold">Faculty detail</span>
             </>
           )}

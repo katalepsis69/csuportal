@@ -6,6 +6,21 @@ const securityHeaders = [
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains" },
+  // report-only until validated against every page; tighten to enforcing CSP later
+  {
+    key: "Content-Security-Policy-Report-Only",
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: blob:",
+      "font-src 'self' data:",
+      "connect-src 'self' https://*.supabase.co",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join("; "),
+  },
 ];
 
 const nextConfig: NextConfig = {
@@ -14,7 +29,7 @@ const nextConfig: NextConfig = {
   productionBrowserSourceMaps: false,
   // ponytail: tree-shake heavy client libs, no new deps
   experimental: {
-    optimizePackageImports: ["recharts", "motion", "@react-pdf/renderer"],
+    optimizePackageImports: ["recharts", "@react-pdf/renderer"],
   },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];

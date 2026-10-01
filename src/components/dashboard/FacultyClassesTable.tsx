@@ -49,7 +49,7 @@ export function FacultyClassesTable({
             placeholder="Search classes by code or title…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-border bg-card pl-8 pr-3 py-2 sm:py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] sm:min-h-[38px] transition-colors"
+            className="w-full rounded-xl border border-border bg-card pl-8 pr-3 py-2 sm:py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] sm:min-h-[38px] transition-colors"
           />
         </div>
       </div>
@@ -62,8 +62,7 @@ export function FacultyClassesTable({
               <th className="py-3 px-5 font-semibold">Subject Code &amp; Title</th>
               <th className="py-3 px-4 font-semibold">Section</th>
               <th className="py-3 px-4 font-semibold">Student Submissions</th>
-              <th className="py-3 px-4 font-semibold">Class Rating</th>
-              <th className="py-3 px-5 text-right font-semibold">Term Status</th>
+              <th className="py-3 px-5 text-right font-semibold">Class Rating</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -90,28 +89,20 @@ export function FacultyClassesTable({
                 </td>
 
                 {/* Class Rating */}
-                <td className="py-3.5 px-4 whitespace-nowrap">
-                  <div className="flex items-center gap-1.5">
+                <td className="py-3.5 px-5 text-right whitespace-nowrap">
+                  <div className="flex items-center gap-1.5 justify-end">
                     <span className="font-bold text-sm text-primary tabular-nums">
                       {c.avg_rating != null ? c.avg_rating.toFixed(2) : '—'}
                     </span>
-                    <span className="text-[10px] text-muted-foreground/60">/ 5.0</span>
+                    <span className="text-[10px] text-muted-foreground">/ 5.0</span>
                   </div>
-                </td>
-
-                {/* Status */}
-                <td className="py-3.5 px-5 text-right whitespace-nowrap">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
-                    <span className="h-1.5 w-1.5 rounded-full bg-positive" />
-                    Active Term
-                  </span>
                 </td>
               </tr>
             ))}
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-muted-foreground text-xs">
+                <td colSpan={4} className="py-8 text-center text-muted-foreground text-xs">
                   No assigned teaching subjects found for this semester.
                 </td>
               </tr>

@@ -26,13 +26,17 @@ function loadKey(): Promise<CryptoKey | null> {
   if (!privateKeyPromise) {
     const raw = process.env.RECEIPT_SIGNING_KEY;
     if (!raw) {
+      console.warn('[receipt] RECEIPT_SIGNING_KEY not set; receipts will be unsigned');
       privateKeyPromise = Promise.resolve(null);
     } else {
       // accept raw base64 PKCS8 (npm run db:key output) or a full PEM
       const pem = raw.startsWith('-----')
         ? raw
         : `-----BEGIN PRIVATE KEY-----\n${raw}\n-----END PRIVATE KEY-----`;
-      privateKeyPromise = importPKCS8(pem, ALG, { extractable: true }).catch(() => null);
+      privateKeyPromise = importPKCS8(pem, ALG, { extractable: true }).catch((err) => {
+        console.error('[receipt] RECEIPT_SIGNING_KEY is malformed; receipts will be unsigned:', err instanceof Error ? err.message : err);
+        return null;
+      });
     }
   }
   return privateKeyPromise;

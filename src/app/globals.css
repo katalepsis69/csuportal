@@ -108,9 +108,14 @@ body {
 }
 
 /* barely-there elevation: hierarchy comes from spacing + type, not shadows */
-@utility drawer-shadow {
-  box-shadow: -8px 0 24px -12px rgba(0, 0, 0, 0.18);
-}
 @utility shadow-xs {
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* horizontal scroll containers without a visible scrollbar */
+@utility no-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }

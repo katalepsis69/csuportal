@@ -34,6 +34,7 @@ export default async function EvalPage({ params }: { params: Promise<{ id: strin
       subjectCode={row.subject_code}
       subjectName={row.subject_name}
       facultyName={row.faculty_name}
+      sectionName={row.section_name}
       closesAt={row.closes_at}
       questions={questions}
       draft={draft ?? null}

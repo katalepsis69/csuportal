@@ -142,6 +142,15 @@ async function seedDemo() {
   }
 
   const uid = (email: string) => byEmail.get(email);
+
+  // 0007: the signup trigger hardcodes 'student' — promote demo staff explicitly
+  for (const u of DEMO_USERS) {
+    if (u.role !== 'student') {
+      const id = uid(u.email);
+      if (id) await sql`update profiles set role = ${u.role}::public.role where id = ${id}`;
+    }
+  }
+
   const maria = uid('maria@cetc.test');
   const jose = uid('jose@cetc.test');
   const ana = uid('ana@cetc.test');

@@ -29,6 +29,8 @@ export default function EvalForm({
   subjectCode,
   subjectName,
   facultyName,
+  sectionName,
+  closesAt,
   questions,
   draft = null,
 }: {
@@ -36,11 +38,15 @@ export default function EvalForm({
   subjectCode: string;
   subjectName: string;
   facultyName: string;
+  sectionName: string;
   closesAt: string | null;
   questions: Question[];
   draft?: Draft;
 }) {
   const router = useRouter();
+  // ponytail: relative days is intentionally computed at render (it must not go stale)
+  // eslint-disable-next-line react-hooks/purity -- Date.now is the point here
+  const daysLeft = closesAt ? Math.max(0, Math.ceil((new Date(closesAt).getTime() - Date.now()) / 86400000)) : null;
   const [ratings, setRatings] = useState<Record<string, number>>(() => {
     const initial: Record<string, number> = {};
     for (const a of draft?.answers ?? []) initial[a.question_id] = a.rating;
@@ -164,9 +170,6 @@ export default function EvalForm({
           <span className="text-foreground font-medium">{subjectCode} Form</span>
         </nav>
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] bg-white text-primary border border-border">
-            Term 2025-2026
-          </span>
           <button
             type="button"
             onClick={handleSaveDraft}
@@ -199,7 +202,6 @@ export default function EvalForm({
                 <span className="px-2 py-0.5 text-[10px] font-semibold bg-primary/20 text-primary rounded border border-primary/30">
                   Faculty Member
                 </span>
-                <span className="text-xs text-muted-foreground truncate">Dept. of Computer Science</span>
               </div>
               <h2 className="text-lg sm:text-2xl font-bold font-display text-foreground tracking-tight">
                 {facultyName}
@@ -210,21 +212,18 @@ export default function EvalForm({
             </div>
           </div>
 
-          {/* Right Class Meta Metrics */}
+          {/* Right Class Meta (real values only) */}
           <div className="flex flex-wrap md:flex-col items-start md:items-end gap-2 border-t md:border-t-0 md:border-l border-border pt-3 md:pt-0 md:pl-6 text-xs">
             <div className="flex items-center gap-2 text-foreground">
-              <span>Section: <strong className="font-semibold text-primary">BSCS 3-A</strong></span>
-              <span className="text-foreground/20">•</span>
-              <span>3.0 Units</span>
-            </div>
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <span>Mon/Wed 10:00 AM–12:00 PM</span>
-              <span className="text-foreground/20">•</span>
-              <span>CETC Lab 2</span>
+              <span>Section: <strong className="font-semibold text-primary">{sectionName}</strong></span>
             </div>
             <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-card border border-primary/30 text-primary text-[11px] mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
-              <span>Closes: Oct 15, 2026 (7 days remaining)</span>
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
+              <span>
+                {closesAt
+                  ? `Closes ${new Date(closesAt).toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })}${daysLeft != null ? ` (${daysLeft} day${daysLeft === 1 ? '' : 's'} left)` : ''}`
+                  : 'No close date set'}
+              </span>
             </div>
           </div>
         </div>
@@ -341,7 +340,7 @@ export default function EvalForm({
         </div>
         <div className="space-y-2">
           <textarea
-            className="w-full bg-card border border-border rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-inner leading-relaxed min-h-[110px]"
+            className="w-full bg-card border border-border rounded-xl p-3.5 sm:p-4 text-xs sm:text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all shadow-inner leading-relaxed min-h-[110px]"
             placeholder="Highlight instructional strengths or specific areas where teaching methodology could be enhanced…"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
@@ -352,13 +351,11 @@ export default function EvalForm({
               {sentiment ? (
                 <>
                   <span className="h-1.5 w-1.5 rounded-full bg-gold-text animate-pulse" />
-                  <span>Silent sentiment tone: <strong className="capitalize text-foreground">{sentiment.label}</strong></span>
+                  <span>Draft tone (display only): <strong className="capitalize text-foreground">{sentiment.label}</strong></span>
                 </>
-              ) : (
-                <span>Silent sentiment analysis: Positive / Constructive</span>
-              )}
+              ) : null}
             </span>
-            <span className="tabular-nums text-muted-foreground/70">{comment.length} / 2,000 characters</span>
+            <span className="tabular-nums text-muted-foreground">{comment.length} / 2,000 characters</span>
           </div>
         </div>
       </section>

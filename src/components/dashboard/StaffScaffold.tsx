@@ -138,23 +138,18 @@ export function StaffScaffold({
 }) {
   return (
     <div className="min-w-0 space-y-6">
-      {/* Top Utility Bar (Breadcrumb & Audited Badge) */}
+      {/* Top Utility Bar (Breadcrumb) */}
       <div className="flex flex-wrap items-center justify-between gap-2 pb-1 text-xs">
         <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">
           {breadcrumb.map((crumb, idx) => (
             <React.Fragment key={crumb}>
-              {idx > 0 && <span className="text-muted-foreground/40">/</span>}
+              {idx > 0 && <span className="text-muted-foreground">/</span>}
               <span className={idx === breadcrumb.length - 1 ? 'font-semibold text-foreground' : 'text-muted-foreground'}>
                 {crumb}
               </span>
             </React.Fragment>
           ))}
         </nav>
-
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/10 px-2.5 py-0.5 text-[10px] font-semibold text-positive border border-positive/25">
-          <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />
-          Audited &amp; Sealed
-        </span>
       </div>
 
       {/* Action Header Banner */}

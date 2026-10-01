@@ -36,7 +36,9 @@ const SubmitSchema = z.object({
     .optional(),
   signaturePoints: z
     .array(z.array(z.object({ x: z.number(), y: z.number() })))
-    .max(200, 'Signature has too many strokes.'),
+    .max(200, 'Signature has too many strokes.')
+    // ponytail: total point budget; the RPC also enforces a 64KB jsonb ceiling
+    .refine((strokes) => strokes.reduce((n, s) => n + s.length, 0) <= 2000, 'Signature is too complex.'),
   answers: z
     .array(
       z.object({
@@ -63,6 +65,9 @@ const FRIENDLY: Record<string, string> = {
   already_submitted: 'You already submitted an evaluation for this subject.',
   comment_too_long: 'Comment is too long (max 2,000 characters).',
   payload_too_large: 'Draft is too large.',
+  invalid_answers: 'Some ratings are no longer valid. Please reload the form and try again.',
+  duplicate_answers: 'Each question may only be rated once.',
+  signature_too_large: 'Signature is too complex. Please redraw it more simply.',
 };
 
 async function getClient() {
@@ -112,13 +117,22 @@ export async function submitEvaluation(input: SubmitInput): Promise<SubmitResult
     p_payload_hash: valid.payloadHash ?? null,
   });
 
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    console.error('[submitEvaluation] rpc failed:', error.message);
+    if (error.code === '23505' || /duplicate key/i.test(error.message)) {
+      return { ok: false, error: FRIENDLY.already_submitted };
+    }
+    if (/no valid answers/i.test(error.message)) {
+      return { ok: false, error: 'Please rate all questions before submitting.' };
+    }
+    return { ok: false, error: error.message };
+  }
 
   const result = data as SubmitResult;
   if (!result?.ok) {
     return { ok: false, error: FRIENDLY[result?.error ?? ''] ?? 'Submission failed.' };
   }
-  revalidateTag('evals', 'max'); // refresh the cached dean overview
+  revalidateTag('evaluations', 'max'); // refresh the cached dean overview
   return { ok: true };
 }
 
@@ -145,7 +159,10 @@ export async function saveDraft(input: DraftInput): Promise<SubmitResult> {
     p_anonymous: valid.anonymous,
   });
 
-  if (error) return { ok: false, error: error.message };
+  if (error) {
+    console.error('[saveDraft] rpc failed:', error.message);
+    return { ok: false, error: error.message };
+  }
 
   const result = data as SubmitResult;
   if (!result?.ok) {

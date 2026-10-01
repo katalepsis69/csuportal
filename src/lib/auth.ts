@@ -41,7 +41,15 @@ const getProfile = cache(async (): Promise<Profile | null> => {
 /** Returns the signed-in user's profile, or redirects to login. */
 export async function requireProfile(): Promise<Profile> {
   const profile = await getProfile();
-  if (!profile) redirect('/login');
+  if (!profile) {
+    // distinguish "not signed in" from "signed in but the trigger never made a
+    // profile" so the latter gets an explainable screen instead of a login loop
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    redirect(user ? '/login?error=account-incomplete' : '/login');
+  }
   return profile;
 }
 

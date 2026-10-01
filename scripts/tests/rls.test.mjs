@@ -4,7 +4,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { rest, signIn } from './helpers.mjs';
+import { admin, rest, signIn } from './helpers.mjs';
 
 test('student sees only their own evaluations', async () => {
   const s = await signIn('student1@cetc.test');
@@ -127,4 +127,58 @@ test('drafts are student-scoped', async () => {
     method: 'DELETE',
   });
   assert.equal(del.ok, true, 'draft cleanup failed');
+});
+
+test('user cannot promote themselves via profiles (0007 column grants)', async () => {
+  const s = await signIn('student1@cetc.test');
+  await rest(s.token)(`/profiles?id=eq.${s.id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ role: 'admin' }),
+  });
+  const after = await rest(s.token)(`/profiles?id=eq.${s.id}&select=role`);
+  const role = after.body[0]?.role;
+  if (role !== 'student') {
+    // pre-0007 behavior: put it back, then fail loudly
+    await admin.from('profiles').update({ role: 'student' }).eq('id', s.id);
+    assert.fail('self-promotion accepted — apply migration 0007');
+  }
+});
+
+test('evaluation_comments cannot be forged onto another class (0007 attribution bind)', async () => {
+  const s = await signIn('student1@cetc.test');
+  const { data: evalRows } = await admin
+    .from('evaluations')
+    .select('id, section_subject_id, semester_id')
+    .eq('student_id', s.id)
+    .limit(1);
+  const evalRow = evalRows?.[0];
+  if (!evalRow) return; // nothing to test against
+
+  // a real class in the same semester that is NOT the evaluation's class, so
+  // every FK is satisfied and only the policy can reject the insert
+  const { data: otherClass } = await admin
+    .from('section_subjects')
+    .select('id')
+    .eq('semester_id', evalRow.semester_id)
+    .neq('id', evalRow.section_subject_id)
+    .limit(1);
+  if (!otherClass?.length) return;
+
+  const res = await rest(s.token)('/evaluation_comments', {
+    method: 'POST',
+    body: JSON.stringify({
+      evaluation_id: evalRow.id,
+      section_subject_id: otherClass[0].id,
+      semester_id: evalRow.semester_id,
+      comment: 'rls forgery probe',
+    }),
+  });
+  if (res.ok) {
+    await admin
+      .from('evaluation_comments')
+      .delete()
+      .eq('evaluation_id', evalRow.id)
+      .eq('section_subject_id', otherClass[0].id);
+    assert.fail('comment forgery accepted — apply migration 0007');
+  }
 });

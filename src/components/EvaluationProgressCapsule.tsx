@@ -45,12 +45,12 @@ export function EvaluationProgressCapsule({
           {savingDraft ? (
             <span className="text-muted-foreground animate-pulse flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-              Auto-saving draft…
+              Saving draft…
             </span>
           ) : draftSaved ? (
             <span className="text-gold-text font-medium flex items-center gap-1">
               <span className="h-1.5 w-1.5 rounded-full bg-gold-text" />
-              Draft auto-saved &amp; encrypted
+              Draft saved
             </span>
           ) : isComplete ? (
             <span className="text-positive font-semibold flex items-center gap-1">
@@ -82,7 +82,7 @@ export function EvaluationProgressCapsule({
                 }`}
               />
               <span className="truncate max-w-[150px]">{cat.name}</span>
-              <span className="text-[10px] text-muted-foreground/60">({cat.count})</span>
+              <span className="text-[10px] text-muted-foreground">({cat.count})</span>
             </a>
           ))}
         </div>

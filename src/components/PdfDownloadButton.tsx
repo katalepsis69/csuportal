@@ -18,9 +18,11 @@ export default function PdfDownloadButton({
   label?: string;
 }) {
   const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   async function download() {
     setBusy(true);
+    setFailed(false);
     try {
       const [{ buildDocument }, { pdf }] = await Promise.all([
         import('@/components/pdf/documents'),
@@ -33,6 +35,9 @@ export default function PdfDownloadButton({
       a.download = filename.endsWith('.pdf') ? filename : `${filename}.pdf`;
       a.click();
       URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('[pdf] export failed:', err);
+      setFailed(true);
     } finally {
       setBusy(false);
     }
@@ -45,7 +50,7 @@ export default function PdfDownloadButton({
       onClick={download}
       disabled={busy}
     >
-      {busy ? 'Generating…' : label}
+      {failed ? 'Export failed, try again' : busy ? 'Generating…' : label}
     </button>
   );
 }

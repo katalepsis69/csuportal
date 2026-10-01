@@ -237,7 +237,7 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
               </div>
 
               <div className="mt-6 space-y-1.5">
-                <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground/80 uppercase font-semibold">
+                <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground uppercase font-semibold">
                   {config.sectionTitle}
                 </div>
                 {config.items.map((item) => {
@@ -325,7 +325,7 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
 
           {/* Navigation Links Group */}
           <div className="mt-6 space-y-1">
-            <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground/80 uppercase font-semibold">
+            <div className="px-3 pb-2 text-[10px] tracking-wider text-muted-foreground uppercase font-semibold">
               {config.sectionTitle}
             </div>
 
@@ -359,18 +359,6 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                 </Link>
               );
             })}
-          </div>
-
-          {/* Academic Session & Security Status */}
-          <div className="mt-8 p-3 rounded-xl bg-muted/50 border border-border">
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1">
-              <span>Academic Period</span>
-              <span className="text-foreground font-semibold tabular-nums">AY 2026–2027</span>
-            </div>
-            <div className="flex items-center gap-1.5 text-[10px] font-medium text-positive">
-              <span className="h-1.5 w-1.5 rounded-full bg-positive" />
-              <span>{role === 'student' ? 'Evaluation Window Active' : 'Quorum & RLS Active'}</span>
-            </div>
           </div>
         </div>
 

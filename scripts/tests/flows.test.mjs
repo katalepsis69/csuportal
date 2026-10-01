@@ -9,6 +9,7 @@ import {
   admin,
   cleanupTestStudent,
   createTestStudent,
+  derivedOpen,
   pickOpenClass,
   rest,
   signIn,
@@ -38,14 +39,13 @@ test('full evaluation flow: draft, submit with hash, dedupe, persistence', async
     const r = rest(s.token);
 
     // ── 1. not-enrolled guard: a class the student is NOT in ──
-    const { data: otherClass } = await admin
+    const { data: otherCandidates } = await admin
       .from('section_subjects')
-      .select('id, semesters!inner(is_current, is_open)')
+      .select('id, semesters!inner(is_current, is_open, manual_override, opens_at, closes_at)')
       .eq('semesters.is_current', true)
-      .eq('semesters.is_open', true)
-      .neq('id', classId)
-      .limit(1);
-    if (otherClass?.length) {
+      .neq('id', classId);
+    const otherClass = (otherCandidates ?? []).filter((row) => derivedOpen(row.semesters));
+    if (otherClass.length) {
       const nope = await r('/rpc/rpc_save_draft', {
         method: 'POST',
         body: JSON.stringify({

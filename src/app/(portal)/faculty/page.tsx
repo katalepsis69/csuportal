@@ -65,60 +65,31 @@ export default async function FacultyPage({
     {},
   );
 
-  const questionRatings = perQuestion.map((q) => q.avg_rating ?? 0).filter((r) => r > 0);
-  const ratingSparkline = questionRatings.length > 0 ? questionRatings : [0, 0];
-
-  const classEvals = (overview.per_subject ?? []).map((s) => s.evals);
-  const classSparkline = classEvals.length > 0 ? classEvals : [0, 0];
-
-  const sentimentSparkline = [
-    overview.sentiment?.negative ?? 0,
-    overview.sentiment?.neutral ?? 0,
-    overview.sentiment?.positive ?? 0,
-  ];
-
-  const loadsSparkline = classes.length > 0 ? classes.map((c, i) => c.evals || i + 1) : [0, 0];
   const totalEvals = classes.reduce((sum, c) => sum + (c.evals ?? 0), 0);
 
   const facultyMetrics = [
     {
       label: 'Overall Appraisal Rating',
       value: overview.overall != null ? `${overview.overall.toFixed(2)} / 5.0` : '—',
-      trend: overview.overall != null ? 'OFFICIAL' : 'PENDING',
-      trendPositive: overview.overall != null,
-      sublabel: 'Based on institutional rubric',
-      color: '#881337',
-      sparkline: ratingSparkline,
+      sublabel: 'Mean of all rubric ratings received',
       icon: <PieChart className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Student Responses',
       value: overview.per_question?.[0]?.responses ?? totalEvals,
-      trend: totalEvals > 0 ? 'RECEIVED' : 'ENROLLED',
-      trendPositive: true,
       sublabel: 'Total answers submitted',
-      color: '#15803d',
-      sparkline: classSparkline,
       icon: <Users className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Positive Sentiment',
       value: sentimentTotal > 0 ? `${positivePct}%` : '—',
       sublabel: `${overview.sentiment?.positive ?? 0} positive student remarks`,
-      trend: sentimentTotal > 0 ? 'LOGGED' : 'PENDING',
-      trendPositive: sentimentTotal > 0,
-      color: '#b45309',
-      sparkline: sentimentSparkline,
       icon: <BookOpen className="h-4 w-4" aria-hidden="true" />,
     },
     {
       label: 'Assigned Classes',
       value: `${classes.length} Sections`,
-      trend: `${totalEvals} EVALS`,
-      trendPositive: true,
       sublabel: 'Active teaching loads',
-      color: '#881337',
-      sparkline: loadsSparkline,
       icon: <Settings className="h-4 w-4" aria-hidden="true" />,
     },
   ];
@@ -170,7 +141,7 @@ export default async function FacultyPage({
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-xs font-semibold text-foreground">{category}</span>
                       <span className="text-xs font-bold text-primary tabular-nums">
-                        {mean.toFixed(2)} <span className="text-muted-foreground/60 font-normal">mean</span>
+                        {mean.toFixed(2)} <span className="text-muted-foreground font-normal">mean</span>
                       </span>
                     </div>
                     <div className="space-y-1.5">
@@ -244,7 +215,7 @@ export default async function FacultyPage({
                 Direct, unedited feedback from enrolled students across all class sections.
               </p>
             </div>
-            <span className="text-[11px] text-muted-foreground/70 font-mono">Encrypted &amp; De-identified</span>
+            <span className="text-[11px] text-muted-foreground font-mono">Anonymous by design</span>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">

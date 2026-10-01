@@ -9,7 +9,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // everything except cron (secret-authed), next internals, static files
-    '/((?!api/cron|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
+    // everything except next internals and static files
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',
   ],
 };

@@ -127,7 +127,7 @@ export default function SignaturePad({
         {/* Baseline dotted signature guide rule with caption */}
         <div className="relative z-10 border-t border-dashed border-border pt-1.5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-1 text-[11px] text-muted-foreground">
           <span>Sign above using trackpad, mouse, or stylus</span>
-          <span className="text-[10px] sm:text-[11px] text-muted-foreground/70">Stored as normalized vectors, never an image</span>
+          <span className="text-[10px] sm:text-[11px] text-muted-foreground">Stored as normalized vectors, never an image</span>
         </div>
       </div>
     </div>

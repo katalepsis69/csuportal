@@ -39,7 +39,7 @@ export default async function StudentPage({
           <div className="flex-1 min-w-0">
             <div className="font-bold text-foreground">Evaluation Submitted Successfully</div>
             <p className="text-xs text-muted-foreground mt-0.5">
-              Your feedback has been recorded anonymously and encrypted with a digital tamper seal.
+              Your feedback has been recorded anonymously with a signed verification receipt.
             </p>
             {hash && (
               <div className="mt-2 rounded-lg bg-white/80 border border-positive/20 px-3 py-1.5 text-[11px] text-foreground break-all">
@@ -134,7 +134,7 @@ export default async function StudentPage({
             <div className="text-2xl font-bold text-positive font-display tabular-nums mt-0.5">
               {done.length}
             </div>
-            <div className="text-[11px] text-muted-foreground mt-0.5">Encrypted & submitted</div>
+            <div className="text-[11px] text-muted-foreground mt-0.5">Submitted &amp; recorded</div>
           </div>
         </div>
 
@@ -166,7 +166,7 @@ export default async function StudentPage({
               </h2>
             </div>
             <span className="text-xs text-muted-foreground">
-              Complete before semester close
+              Complete before the window closes — saved drafts cannot be recovered after close
             </span>
           </div>
 
@@ -187,7 +187,7 @@ export default async function StudentPage({
                   </div>
                   <div className="text-sm font-medium text-foreground">{s.subject_name}</div>
                   <div className="text-xs text-muted-foreground flex items-center gap-1.5 pt-0.5">
-                    <span className="text-muted-foreground/60">Instructor:</span>
+                    <span className="text-muted-foreground">Instructor:</span>
                     <span className="font-medium text-foreground">{s.faculty_name}</span>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export default async function StudentPage({
                   </div>
                   <div className="text-sm font-medium text-foreground">{s.subject_name}</div>
                   <div className="text-xs text-muted-foreground flex items-center gap-1.5 pt-0.5">
-                    <span className="text-muted-foreground/60">Instructor:</span>
+                    <span className="text-muted-foreground">Instructor:</span>
                     <span className="font-medium text-foreground">{s.faculty_name}</span>
                   </div>
                 </div>
@@ -252,7 +252,7 @@ export default async function StudentPage({
                 <div className="shrink-0 flex items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 rounded-full bg-positive/15 px-3 py-1 text-xs font-semibold text-positive border border-positive/30">
                     <span className="h-1.5 w-1.5 rounded-full bg-positive" />
-                    Submitted &amp; Sealed
+                    Submitted
                   </span>
                 </div>
               </div>

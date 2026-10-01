@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
 import type { DeanOverview, Semester } from '@/lib/types';
+import { semesterIsOpen } from '@/lib/types';
 import { DeanFacultyTable, type DeanFacultyRow } from '@/components/dashboard/DeanFacultyTable';
 import { SemesterSelect } from '@/components/dashboard/SemesterSelect';
 
@@ -36,10 +37,12 @@ const getDeanOverview = unstable_cache(
       const supabase = createServiceClient(url, key);
       const { data, error } = await supabase.rpc('rpc_dean_overview', { p_semester_id: semesterId });
       if (error || !data) {
+        console.error('[dean:overview] rpc failed:', error?.message ?? 'no data');
         return EMPTY_DEAN_OVERVIEW;
       }
       return data as DeanOverview;
-    } catch {
+    } catch (err) {
+      console.error('[dean:overview] unexpected failure:', err);
       return EMPTY_DEAN_OVERVIEW;
     }
   },
@@ -83,15 +86,12 @@ export default async function DeanPage({
     return {
       id: f.id,
       name: f.full_name || 'Faculty Member',
-      title: 'Faculty Member',
-      department: 'College of Engineering & Technology',
       sectionsCount: f.loads ?? 0,
       responsesReceived: f.evals ?? 0,
-      totalStudents: f.evals ?? 0,
       overallRating: score,
       ratingLabel:
         score == null
-          ? 'No Evaluations'
+          ? undefined
           : score >= 4.8
           ? 'Outstanding'
           : score >= 4.5
@@ -99,15 +99,7 @@ export default async function DeanPage({
           : score >= 4.25
           ? 'Satisfactory'
           : 'Action Required',
-      sentimentRatio: {
-        positive: 0,
-        neutral: 0,
-        negative: 0,
-      },
       isFlagged,
-      dossierId: `FC-${f.id.slice(0, 8)}`,
-      pedagogicalBreakdown: [],
-      comments: [],
     };
   });
 
@@ -149,12 +141,8 @@ export default async function DeanPage({
           <div>
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-xs text-muted-foreground">CSU CETC PORTAL</span>
-              <span className="text-xs text-muted-foreground/40">/</span>
+              <span className="text-xs text-muted-foreground">/</span>
               <span className="text-xs font-semibold text-primary">EXECUTIVE APPRAISAL</span>
-              <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-positive/10 text-positive border border-positive/25 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-positive animate-pulse" />
-                AUDITED &amp; SEALED
-              </span>
             </div>
             <h1 className="font-display font-bold text-2xl lg:text-3xl text-foreground tracking-tight">
               Dean Appraisal &amp; Faculty Analytics
@@ -162,7 +150,13 @@ export default async function DeanPage({
             <p className="text-xs sm:text-sm text-muted-foreground mt-1 flex flex-wrap items-center gap-2 font-normal">
               <span>{label}</span>
               <span className="w-1 h-1 rounded-full bg-muted-foreground/40" />
-              <span>Evaluation Window Closed (100% Institutional Audited)</span>
+              <span>
+                {semester
+                  ? semesterIsOpen(semester)
+                    ? 'Evaluation window open'
+                    : 'Evaluation window closed'
+                  : 'No active semester data'}
+              </span>
             </p>
           </div>
 
@@ -231,13 +225,13 @@ export default async function DeanPage({
           <div className="mt-4 pt-3.5 border-t border-border space-y-2.5">
             {criteriaData.length > 0 ? (
               criteriaData.slice(0, 3).map((crit, idx) => {
-                const barColors = ['bg-primary', 'bg-primary/80', 'bg-accent'];
+                const barColors = ['bg-primary', 'bg-primary/80', 'bg-zinc-400'];
                 return (
                   <div key={crit.name}>
                     <div className="flex justify-between text-[11px] mb-1">
                       <span className="text-muted-foreground">{crit.name}</span>
                       <span className="font-semibold text-foreground tabular-nums">
-                        {crit.score} <span className="text-muted-foreground/60 font-normal">/ 5.0</span>
+                        {crit.score} <span className="text-muted-foreground font-normal">/ 5.0</span>
                       </span>
                     </div>
                     <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden">
@@ -274,7 +268,7 @@ export default async function DeanPage({
                 <p className="text-[11px] text-muted-foreground mt-1 tabular-nums">
                   {submittedCount} of {enrolledCount} students
                 </p>
-                <p className={`text-[10px] mt-0.5 font-semibold ${participationPct >= 70 ? 'text-positive' : 'text-amber-600'}`}>
+                <p className={`text-[10px] mt-0.5 font-semibold ${participationPct >= 70 ? 'text-positive' : 'text-amber-700'}`}>
                   {participationPct >= 70
                     ? 'Quorum Met (Satisfied)'
                     : `Quorum Pending (${participationPct}% / 70% min)`}
@@ -313,7 +307,7 @@ export default async function DeanPage({
             {participationPct >= 70 ? (
               <span className="text-positive font-semibold">PASS AUDIT</span>
             ) : (
-              <span className="text-amber-600 font-semibold">QUORUM PENDING</span>
+              <span className="text-amber-700 font-semibold">QUORUM PENDING</span>
             )}
           </div>
         </div>
@@ -417,18 +411,9 @@ export default async function DeanPage({
                 Faculty Flagged for Dean Review
               </p>
               <p className="text-[10px] text-muted-foreground mt-1">
-                Rating &lt; 4.25 or negative sentiment &gt; 15%
+                Overall rating below 4.25
               </p>
             </div>
-          </div>
-
-          <div className="mt-3 pt-2.5 border-t border-border">
-            <button
-              type="button"
-              className="w-full text-center py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-[11px] font-semibold border border-primary/20 transition-colors cursor-pointer active:scale-[0.98]"
-            >
-              Filter Flagged Rows
-            </button>
           </div>
         </div>
       </section>

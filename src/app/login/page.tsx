@@ -8,15 +8,10 @@ import { resolveLoginEmail, registerStudent, requestPasswordReset } from '@/lib/
 type PortalType = 'student' | 'staff';
 type FormMode = 'login' | 'signup' | 'forgot';
 
-const DEMO_STAFF_ACCOUNTS = [
-  { role: 'Admin', email: 'admin@cetc.test', label: 'Admin', desc: 'Curriculum & User Management' },
-  { role: 'Dean', email: 'dean@cetc.test', label: 'Dean', desc: 'College Analytics & Reports' },
-  { role: 'Faculty', email: 'maria@cetc.test', label: 'Faculty', desc: 'Class Evaluations & Scores' },
-];
-
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const urlError = searchParams.get('error');
 
   // Portal switcher state: 'student' or 'staff'
   const initialPortal: PortalType = searchParams.get('portal') === 'staff' ? 'staff' : 'student';
@@ -73,15 +68,6 @@ function LoginContent() {
 
   function markTouched(field: string) {
     setTouched((prev) => ({ ...prev, [field]: true }));
-  }
-
-  // Quick fill staff demo credentials
-  function fillStaffDemo(email: string) {
-    setStaffEmail(email);
-    setPassword('eval1234');
-    setError(null);
-    setSuccess(null);
-    setTouched({ staffEmail: true, password: true });
   }
 
   // Real-time field validations
@@ -441,6 +427,12 @@ function LoginContent() {
             )}
 
             {/* Notifications */}
+            {!error && urlError === 'account-incomplete' && (
+              <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5 text-xs text-destructive flex items-center gap-2">
+                <span>⚠</span>
+                <span>Your account exists but its profile is incomplete. Please contact the portal administrator.</span>
+              </div>
+            )}
             {error && (
               <div className="rounded-lg border border-destructive/25 bg-destructive/10 px-3.5 py-2.5 text-xs text-destructive flex items-center gap-2">
                 <span>⚠</span>
@@ -469,7 +461,7 @@ function LoginContent() {
                       <input
                         id="studentName"
                         type="text"
-                        className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
+                        className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                           touched.name && !isNameValid
                             ? 'border-destructive ring-1 ring-destructive/30'
                             : 'border-border'
@@ -495,7 +487,7 @@ function LoginContent() {
                     <input
                       id="studentIdInput"
                       type="text"
-                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
+                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                         touched.studentId && !isStudentIdValid
                           ? 'border-destructive ring-1 ring-destructive/30'
                           : 'border-border'
@@ -523,7 +515,7 @@ function LoginContent() {
                       <input
                         id="studentEmailInput"
                         type="email"
-                        className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
+                        className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                           touched.studentEmail && !isStudentEmailValid
                             ? 'border-destructive ring-1 ring-destructive/30'
                             : 'border-border'
@@ -591,7 +583,7 @@ function LoginContent() {
                     <input
                       id="staffEmailInput"
                       type="email"
-                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
+                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] transition-colors ${
                         touched.staffEmail && !isStaffEmailValid
                           ? 'border-destructive ring-1 ring-destructive/30'
                           : 'border-border'
@@ -637,7 +629,7 @@ function LoginContent() {
                     <input
                       id="passwordInput"
                       type={showPassword ? 'text' : 'password'}
-                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] pr-10 transition-colors ${
+                      className={`w-full rounded-lg border bg-card px-3.5 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 min-h-[40px] pr-10 transition-colors ${
                         touched.password && !isPasswordValid
                           ? 'border-destructive ring-1 ring-destructive/30'
                           : 'border-border'
@@ -677,7 +669,7 @@ function LoginContent() {
                     <div className="mt-1.5 flex items-center gap-1.5 text-xs">
                       <svg
                         className={`h-3.5 w-3.5 shrink-0 transition-colors ${
-                          password.length >= 8 ? 'text-positive' : 'text-muted-foreground/40'
+                          password.length >= 8 ? 'text-positive' : 'text-muted-foreground'
                         }`}
                         viewBox="0 0 16 16"
                         fill="none"
@@ -769,39 +761,6 @@ function LoginContent() {
                 </button>
               )}
             </form>
-
-            {/* ================= STAFF DEMO CREDENTIALS QUICK-FILL ================= */}
-            {portal === 'staff' && mode === 'login' && (
-              <div className="pt-4 border-t border-border space-y-2.5">
-                <div className="flex items-center justify-between text-[11px] text-muted-foreground">
-                  <span className="font-semibold uppercase tracking-wider text-[10px]">Demo Test Accounts:</span>
-                  <span className="text-[10px] text-primary font-mono">Password: eval1234</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-2">
-                  {DEMO_STAFF_ACCOUNTS.map((acc) => (
-                    <button
-                      key={acc.role}
-                      type="button"
-                      onClick={() => fillStaffDemo(acc.email)}
-                      className={`flex flex-row sm:flex-col items-center justify-between sm:justify-center p-2.5 sm:p-2 rounded-lg border text-left transition-all cursor-pointer min-h-[44px] ${
-                        staffEmail === acc.email
-                          ? 'border-primary bg-primary/10 text-primary shadow-xs'
-                          : 'border-border bg-muted/40 text-foreground hover:border-primary/40 hover:bg-muted/70'
-                      }`}
-                      title={acc.desc}
-                    >
-                      <span className={`text-xs font-bold ${staffEmail === acc.email ? 'text-primary' : 'text-foreground'}`}>
-                        {acc.label}
-                      </span>
-                      <span className="text-[10px] sm:text-[9px] text-muted-foreground truncate max-w-full font-mono">{acc.email.split('@')[0]}</span>
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[10px] text-muted-foreground/70 text-center pt-1">
-                  Accounts provisioned by Dean&apos;s Office &amp; IT Services.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </section>
@@ -842,84 +801,14 @@ function LoginContent() {
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 rounded-full bg-positive/10 px-3 py-1 text-xs font-semibold text-positive border border-positive/25">
                 <span className="h-2 w-2 rounded-full bg-positive animate-pulse" />
-                CHED-Aligned &amp; Cryptographically Blinded
+                Confidential &amp; Anonymous
               </div>
               <h2 className="text-xl xl:text-2xl font-bold text-foreground font-display leading-snug">
-                Confidential, tamper-evident student appraisal for academic quality assurance.
+                Anonymous student appraisals for academic quality assurance.
               </h2>
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Student identities are isolated via zero-knowledge hashing before evaluation scores reach faculty dossiers or dean analytics. Every submission generates an immutable verification receipt.
+                Comment text is stored apart from student identity, faculty see only aggregated results, and every submission generates a signed verification receipt.
               </p>
-            </div>
-
-            {/* High-Fidelity Student Portal Dashboard Mockup */}
-            <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-              {/* Window bar */}
-              <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-destructive/70 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-positive/70 inline-block" />
-                  <span className="ml-2 text-[11px] text-muted-foreground font-mono">portal.csu.edu.ph/student</span>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-card px-2 py-0.5 text-[10px] font-medium text-primary border border-border">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-                  AY 2026–2027 Active
-                </span>
-              </div>
-
-              {/* Mockup Dashboard Content */}
-              <div className="p-4 space-y-3.5">
-                {/* Stats Bar */}
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Enrolled</span>
-                    <div className="text-base font-bold text-foreground tabular-nums">6 Subjects</div>
-                  </div>
-                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Completed</span>
-                    <div className="text-base font-bold text-positive tabular-nums">4 Evaluated</div>
-                  </div>
-                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Pending</span>
-                    <div className="text-base font-bold text-amber-600 tabular-nums">2 Left</div>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className="space-y-1">
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-muted-foreground font-medium">Semester Evaluation Progress</span>
-                    <span className="text-primary font-bold tabular-nums">66%</span>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
-                    <div className="h-full rounded-full bg-primary transition-all" style={{ width: '66%' }} />
-                  </div>
-                </div>
-
-                {/* Subject Rows Preview */}
-                <div className="space-y-1.5 pt-1">
-                  <div className="flex items-center justify-between rounded-lg bg-muted/20 px-3 py-2 text-xs border border-border">
-                    <div className="truncate">
-                      <span className="font-semibold text-foreground">IT211</span>
-                      <span className="text-muted-foreground ml-1.5">Web Systems &amp; Tech · Engr. Jose Rizal Jr.</span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-positive/10 text-positive border border-positive/25 shrink-0">
-                      Completed ✓
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-lg bg-muted/20 px-3 py-2 text-xs border border-border">
-                    <div className="truncate">
-                      <span className="font-semibold text-foreground">IT201</span>
-                      <span className="text-muted-foreground ml-1.5">Data Structures · Prof. Maria Santos</span>
-                    </div>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/10 text-amber-600 border border-amber-500/25 shrink-0">
-                      Pending ⏳
-                    </span>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         )}
@@ -934,83 +823,11 @@ function LoginContent() {
                 Office of the Dean · Academic Governance
               </div>
               <h2 className="text-xl xl:text-2xl font-bold text-foreground font-display leading-snug">
-                “Academic leadership and faculty excellence drive curriculum integrity and student success across every engineering and computing program.”
+                Faculty evaluation results for the College of Engineering, Technology and Computing.
               </h2>
-              <p className="text-xs text-muted-foreground">
-                — <span className="text-foreground font-semibold">Dr. Elena Reyes</span>, Dean, College of Engineering, Technology &amp; Computing
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Participation, per-question rubric averages, and anonymous student feedback for every class, with exportable reports for accreditation and quality assurance.
               </p>
-            </div>
-
-            {/* High-Fidelity Executive Analytics Dashboard Mockup */}
-            <div className="rounded-xl border border-border bg-card shadow-lg overflow-hidden">
-              {/* Window bar */}
-              <div className="flex items-center justify-between border-b border-border bg-muted/40 px-4 py-2.5">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-destructive/70 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-500/70 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-positive/70 inline-block" />
-                  <span className="ml-2 text-[11px] text-muted-foreground font-mono">portal.csu.edu.ph/dean/analytics</span>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-card px-2 py-0.5 text-[10px] font-medium text-positive border border-border">
-                  <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />
-                  1st Sem AY 2026–2027 Active
-                </span>
-              </div>
-
-              {/* Mockup Executive Analytics Content */}
-              <div className="p-4 space-y-3.5">
-                {/* Executive Metric Cards */}
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Compliance</span>
-                    <div className="text-base font-bold text-positive tabular-nums">94.2%</div>
-                    <span className="text-[9px] text-muted-foreground tabular-nums">1,240 Evaluated</span>
-                  </div>
-                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Faculty</span>
-                    <div className="text-base font-bold text-foreground tabular-nums">48 Active</div>
-                    <span className="text-[9px] text-muted-foreground">100% Assigned</span>
-                  </div>
-                  <div className="rounded-lg bg-muted/30 p-2.5 border border-border">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wider font-semibold">Quality Index</span>
-                    <div className="text-base font-bold text-primary tabular-nums">4.82 / 5.0</div>
-                    <span className="text-[9px] text-muted-foreground">College Mean</span>
-                  </div>
-                </div>
-
-                {/* Departmental Response Rates */}
-                <div className="space-y-2 pt-1">
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-muted-foreground font-medium">BS Information Technology (BSIT)</span>
-                      <span className="text-primary font-bold tabular-nums">96.4%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                      <div className="h-full rounded-full bg-primary transition-all" style={{ width: '96.4%' }} />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-muted-foreground font-medium">BS Computer Science (BSCS)</span>
-                      <span className="text-primary font-bold tabular-nums">91.8%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                      <div className="h-full rounded-full bg-primary transition-all" style={{ width: '91.8%' }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Institutional Compliance Badges */}
-                <div className="flex items-center justify-between pt-2 border-t border-border text-[10px]">
-                  <span className="inline-flex items-center gap-1 text-positive font-semibold">
-                    <span>✓</span> CHED Memorandum Compliant
-                  </span>
-                  <span className="text-muted-foreground">
-                    AACCUP Level III Accredited
-                  </span>
-                </div>
-              </div>
             </div>
           </div>
         )}

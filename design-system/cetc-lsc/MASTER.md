@@ -37,18 +37,20 @@ states, focus rings, and chart highlights - never as decoration.
 
 ## Typography
 
-- One family: **Inter** (`next/font`, weights 400/600 only).
+- One family: **Inter** (`next/font`): 400/500 as `--font-sans`, 600/700 as
+  `--font-display` (the two `next/font` instances in `src/app/layout.tsx`).
 - `tabular-nums` on every number in tables, KPI cards, and stat values.
 - Scale: page title 24px/600 / card title 16px/600 / body 14px/400 /
   meta 12px / KPI value 28px/600. Line-height 1.5.
 
 ## Layout & space
 
-- Content centered, `max-w-6xl`, never touching screen edges.
+- Content centered, `max-w-7xl` (capped at 1440px on 2xl screens), never
+  touching screen edges.
 - `p-6`+ inside cards, `gap-6` grids - gaps between containers exceed
   inner padding (Gestalt: air lives between cards, not inside them).
 - Shadows barely exist: `shadow-xs` only. Hierarchy from spacing and type.
-- Sidebar 240px desktop only, role-specific sections (RLS-aligned) -
+- Sidebar 256px (`w-64`) desktop only, role-specific sections (RLS-aligned) -
   same nav contract as before.
 - Star-rating inputs: 44x44px minimum touch targets.
 
@@ -80,16 +82,13 @@ look intentional.
 `lucide-react` (already installed). `aria-hidden`, sized via className.
 No emoji as icons.
 
-## Components (shadcn/ui)
+## Components
 
-Use shadcn primitives as generated - Button, Card, Table, Tabs, Dialog,
-Command (cmdk palette), Badge, Form (RHF+zod). Token edits in this file are
-the only theme work.
-
-**Transitional note:** the legacy class contract in `globals.css`
-(`.btn/.card/.table/.badge/...`) is retained while page markup migrates to
-shadcn primitives page by page. It is re-skinned to these tokens - no new
-markup should be written against it.
+No component library in the tree: pages are hand-built Tailwind against these
+tokens, with `globals.css` carrying the shared primitives (`:focus-visible`
+ring, `shadow-xs`, `no-scrollbar`). Introduce a shadcn primitive only when a
+page genuinely needs it (dialog, command palette); token edits in this file
+remain the only theme work.
 
 ## What this file supersedes
 

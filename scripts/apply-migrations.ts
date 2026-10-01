@@ -16,7 +16,7 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 if (!existsSync('supabase/migrations')) {
-  console.error('supabase/migrations not found — run `npm run db:generate` first');
+  console.error('supabase/migrations not found — nothing to apply');
   process.exit(1);
 }
 

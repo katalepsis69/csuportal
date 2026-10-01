@@ -1,0 +1,31 @@
+name: Supabase keep-alive
+
+# Free-tier Supabase projects pause after 7 idle days; the app has no cron by
+# design (light-stack revision), so this workflow IS the keep-alive: one real
+# REST read per day counts as activity and keeps the project awake.
+#
+# Required repo secrets:
+#   KEEPALIVE_SUPABASE_URL          — e.g. https://<ref>.supabase.co
+#   KEEPALIVE_SERVICE_ROLE_KEY      — service_role key (server-only secret)
+on:
+  schedule:
+    - cron: '23 4 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: REST read (counts as project activity)
+        env:
+          URL: ${{ secrets.KEEPALIVE_SUPABASE_URL }}
+          KEY: ${{ secrets.KEEPALIVE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$URL" ] || [ -z "$KEY" ]; then
+            echo "keep-alive secrets not set — nothing to do"; exit 1
+          fi
+          code=$(curl -s -o /dev/null -w "%{http_code}" \
+            "$URL/rest/v1/profiles?select=id&limit=1" \
+            -H "apikey: $KEY" -H "Authorization: Bearer $KEY")
+          echo "REST ping HTTP $code"
+          if [ "$code" != "200" ]; then exit 1; fi
