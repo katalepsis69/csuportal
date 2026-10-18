@@ -18,6 +18,7 @@ import type { Semester } from '@/lib/types';
 import { semesterIsOpen } from '@/lib/types';
 import { StaffScaffold, IconUsersLine, IconBookLine, IconGearLine, IconChartLine } from '@/components/dashboard/StaffScaffold';
 import { AdminUsersTable, type UserRow } from '@/components/dashboard/AdminUsersTable';
+import { DbNotice } from '@/components/DbNotice';
 
 export const dynamic = 'force-dynamic';
 
@@ -59,7 +60,7 @@ export default async function AdminPage({
 
   const supabase = await createClient();
   const [
-    { data: allProfiles },
+    { data: allProfiles, error: profilesError },
     { data: semesters },
     { data: programs },
     { data: sections },
@@ -84,6 +85,17 @@ export default async function AdminPage({
       .order('created_at'),
     supabase.from('questions').select('*').order('sort_order'),
   ]);
+
+  if (profilesError) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold font-display tracking-tight text-foreground">
+          Administration &amp; system setup
+        </h1>
+        <DbNotice detail={profilesError.message} />
+      </div>
+    );
+  }
 
   const profilesList = (allProfiles ?? []) as UserRow[];
   const studentCount = profilesList.filter((p) => p.role === 'student').length;

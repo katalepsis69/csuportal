@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import { AvgBar, SentimentPie } from '@/components/Charts';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
+import { DbNotice } from '@/components/DbNotice';
 import { semesterIsOpen, type DeanOverview, type Semester } from '@/lib/types';
 import { DeanFacultyTable, type DeanFacultyRow } from '@/components/dashboard/DeanFacultyTable';
 
@@ -32,11 +33,27 @@ export default async function DeanPage({
   const supabase = await createClient();
 
   const semesterId = typeof sem === 'string' ? sem : null;
-  const [{ data: semesters }, { data, error }] = await Promise.all([
+  const [
+    { data: semesters, error: semestersError },
+    { data, error },
+  ] = await Promise.all([
     supabase.from('semesters').select('*').order('academic_year', { ascending: false }),
     supabase.rpc('rpc_dean_overview', { p_semester_id: semesterId }),
   ]);
-  const overview = error ? null : ((data as DeanOverview | null) ?? null);
+
+  const loadError = semestersError ?? error;
+  if (loadError) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold font-display tracking-tight text-foreground">
+          Dean Appraisal &amp; Faculty Analytics
+        </h1>
+        <DbNotice detail={loadError.message} />
+      </div>
+    );
+  }
+
+  const overview = (data as DeanOverview | null) ?? null;
   const semestersList = (semesters ?? []) as Semester[];
   const current = semestersList.find((s) => s.is_current) ?? null;
   const semester = overview?.semester ?? current;

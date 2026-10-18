@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
+import { DbNotice } from '@/components/DbNotice';
 import { AvgBar, SentimentPie } from '@/components/Charts';
 import type { FacultyOverview, Semester } from '@/lib/types';
 import {
@@ -24,17 +25,34 @@ export default async function FacultyPage({
   const supabase = await createClient();
 
   const semesterId = typeof sem === 'string' && sem ? sem : null;
-  const [{ data: semesters }, { data, error }] = await Promise.all([
+  const [
+    { data: semesters, error: semestersError },
+    { data, error },
+  ] = await Promise.all([
     supabase.from('semesters').select('*').order('academic_year', { ascending: false }),
     supabase.rpc('rpc_faculty_overview', { p_semester_id: semesterId }),
   ]);
-  const overview = (error ? null : (data as FacultyOverview | null)) ?? {
-    per_question: [],
-    per_subject: [],
-    sentiment: { positive: 0, neutral: 0, negative: 0 },
-    comments: [],
-    overall: null,
-  };
+
+  const loadError = semestersError ?? error;
+  if (loadError) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold font-display tracking-tight text-foreground">
+          Teaching performance and feedback
+        </h1>
+        <DbNotice detail={loadError.message} />
+      </div>
+    );
+  }
+
+  const overview =
+    (data as FacultyOverview | null) ?? {
+      per_question: [],
+      per_subject: [],
+      sentiment: { positive: 0, neutral: 0, negative: 0 },
+      comments: [],
+      overall: null,
+    };
 
   const semestersList = (semesters ?? []) as Semester[];
   const selected =

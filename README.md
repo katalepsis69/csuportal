@@ -90,9 +90,11 @@ k6 run -e VUS=500 k6/submit-load.js    # load gate; run scripts/loadtest-setup.m
 4. **Backups**: set the repo secret `DATABASE_URL_DIRECT` (session pooler 5432 or direct URL);
    `backup.yml` pg_dumps daily to artifacts kept 90 days. Test one restore before any review:
    `pg_restore --clean --if-exists -d "$NEW_DB_URL" backup-*.dump`.
-5. Note: free Supabase projects **pause after one week of inactivity** and there are no
-   automatic backups. There is no cron in this app by design — if the project pauses, run any
-   query (or `npm run db:push`) to wake it.
+5. Note: free Supabase projects **pause after one week of inactivity** and there are no automatic
+   backups. A paused project's hostname stops resolving, so pages show "Cannot read evaluation
+   data" rather than fake numbers. Wake it from the dashboard (Settings → restore project) — the
+   Management API has no resume endpoint. If you want it automatic, add a daily keep-alive query
+   (a Vercel Cron hitting one endpoint is the usual answer; it was deleted here on purpose).
 
 ## Creating real users
 

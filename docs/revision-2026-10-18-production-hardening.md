@@ -53,8 +53,16 @@ else may present information the database did not produce.
 `npm install` (six declared packages were missing from `node_modules`), then `npm run lint`
 clean, `npx tsc --noEmit` clean, `npm run build` green.
 
+9. **Outage is not empty data.** Removing the mock fallbacks created a new failure mode: a DB that
+   does not answer rendered the same "nothing submitted yet" panel as a genuinely empty database —
+   and on Supabase free that is not hypothetical (the pilot project went `INACTIVE` during this
+   pass, and the app has no keep-alive cron by design). Every dashboard page and the reports and
+   history pages now capture the query error and show `<DbNotice>` instead of zeros.
+
 `npm test` and migration 0007 must be run against the live project by the operator — the suite
-creates and removes a throwaway student, so it is not run here without a go-ahead.
+creates and removes a throwaway student, so it is not run here without a go-ahead. Both are
+further blocked until the paused project is resumed in the dashboard; the Management API exposes
+no resume endpoint.
 
 ## Known, deliberately not fixed
 

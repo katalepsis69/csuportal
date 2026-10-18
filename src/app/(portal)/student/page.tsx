@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import { semesterIsOpen, type StudentDashboard } from '@/lib/types';
 import { IconClipboardText, IconHourglass, IconSealCheck } from '@/components/icons';
+import { DbNotice } from '@/components/DbNotice';
 
 export const dynamic = 'force-dynamic';
 
@@ -28,8 +29,18 @@ export default async function StudentPage({
   const receiptId = typeof r === 'string' && UUID.test(r) ? r : null;
 
   const supabase = await createClient();
-  const { data } = await supabase.rpc('rpc_student_dashboard');
-  const dash = (data ?? null) as StudentDashboard | null;
+  const { data, error } = await supabase.rpc('rpc_student_dashboard');
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl sm:text-3xl font-bold font-display tracking-tight text-foreground">
+          Faculty Evaluations
+        </h1>
+        <DbNotice detail={error.message} />
+      </div>
+    );
+  }
+  const dash = data as StudentDashboard | null;
 
   const subjects = dash?.subjects ?? [];
   const semester = dash?.current_semester ?? null;

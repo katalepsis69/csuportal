@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import type { HistoryRow } from '@/lib/types';
+import { DbNotice } from '@/components/DbNotice';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,12 +21,21 @@ export default async function HistoryPage({
   const faculty = typeof sp.faculty === 'string' && sp.faculty ? sp.faculty : null;
 
   const supabase = await createClient();
-  const { data } = await supabase.rpc('rpc_history', {
+  const { data, error } = await supabase.rpc('rpc_history', {
     p_academic_year: ay,
     p_term: term,
     p_subject_id: subject,
     p_faculty_id: faculty,
   });
+
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-xl font-semibold">Evaluation History</h1>
+        <DbNotice detail={error.message} />
+      </div>
+    );
+  }
   const payload = (data ?? []) as unknown;
   const rows = Array.isArray(payload) ? (payload as HistoryRow[]) : [];
   const detail = !Array.isArray(payload)

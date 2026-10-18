@@ -2,6 +2,7 @@
 import { createClient } from '@/lib/supabase/server';
 import { requireRole } from '@/lib/auth';
 import PdfDownloadButton from '@/components/PdfDownloadButton';
+import { DbNotice } from '@/components/DbNotice';
 import type { Semester } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -30,10 +31,22 @@ export default async function ReportsPage({
   const facultyId = typeof sp.faculty === 'string' && sp.faculty ? sp.faculty : null;
 
   const supabase = await createClient();
-  const [{ data: semesters }, { data: faculty }] = await Promise.all([
+  const [
+    { data: semesters, error: semestersError },
+    { data: faculty },
+  ] = await Promise.all([
     supabase.from('semesters').select('*').order('academic_year', { ascending: false }),
     supabase.from('profiles').select('id, full_name').eq('role', 'faculty').order('full_name'),
   ]);
+
+  if (semestersError) {
+    return (
+      <div className="space-y-4">
+        <h1 className="text-xl font-semibold">Reports</h1>
+        <DbNotice detail={semestersError.message} />
+      </div>
+    );
+  }
   const sems = (semesters ?? []) as unknown as Semester[];
   const semester = sems.find((s) => s.id === sem) ?? null;
 
