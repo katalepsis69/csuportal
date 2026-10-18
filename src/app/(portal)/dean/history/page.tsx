@@ -32,15 +32,16 @@ export default async function HistoryPage({
     ? (payload as { per_question: HistoryRow[]; comments: HistoryRow[] })
     : { per_question: [], comments: [] };
 
+  // Must mirror rpc_history's branch order in supabase/migrations/0007.
   const level: Level = !ay
     ? 'years'
     : !term
       ? 'terms'
-      : !subject
-        ? 'subjects'
-        : !faculty
-          ? 'faculty'
-          : 'detail';
+      : faculty
+        ? 'detail'
+        : !subject
+          ? 'subjects'
+          : 'faculty';
 
   const qs = (extra: Record<string, string>) => {
     const p = new URLSearchParams();

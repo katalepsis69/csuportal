@@ -35,27 +35,27 @@ export function EvaluationProgressCapsule({
           </span>
           <span className="text-primary font-bold tabular-nums">{percentage}% Completed</span>
         </div>
-        <div className="w-full bg-white h-2 rounded-full overflow-hidden border border-border">
+        <div className="w-full bg-muted h-2 rounded-full overflow-hidden border border-border">
           <div
-            className="bg-gradient-to-r from-primary to-primary h-full rounded-full shadow-[0_0_12px_rgba(127,29,29,0.5)] transition-all duration-300 ease-out"
+            className="bg-primary h-full rounded-full transition-all duration-300 ease-out"
             style={{ width: `${percentage}%` }}
           />
         </div>
         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
           {savingDraft ? (
-            <span className="text-muted-foreground animate-pulse flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-ping" />
-              Auto-saving draft…
+            <span className="text-muted-foreground flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+              Saving draft…
             </span>
           ) : draftSaved ? (
-            <span className="text-status-gold font-medium flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-status-gold" />
-              Draft auto-saved &amp; encrypted
+            <span className="text-gold-text font-medium flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-gold" />
+              Draft saved to your account
             </span>
           ) : isComplete ? (
-            <span className="text-status-sage font-semibold flex items-center gap-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
-              All criteria satisfied
+            <span className="text-positive font-semibold flex items-center gap-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-positive" />
+              All criteria rated
             </span>
           ) : (
             <span>{totalCount - ratedCount} questions remaining</span>

@@ -31,12 +31,12 @@ export function FacultyClassesTable({
   }, [classes, search]);
 
   return (
-    <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md overflow-hidden ">
+    <div className="rounded-2xl border border-border bg-card overflow-hidden">
       {/* Table Toolbar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-6 border-b border-border bg-muted0">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 px-6 border-b border-border bg-muted/60">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-foreground">Assigned Teaching Loads</span>
-          <span className="rounded-full bg-white px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
+          <span className="text-sm font-semibold text-foreground">Teaching loads with results</span>
+          <span className="rounded-full bg-card px-2.5 py-0.5 text-xs text-muted-foreground border border-border tabular-nums">
             {filtered.length} of {classes.length} classes
           </span>
         </div>
@@ -45,11 +45,12 @@ export function FacultyClassesTable({
         <div className="relative min-w-[240px]">
           <IconSearchLine className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
-            type="text"
+            type="search"
             placeholder="Search classes by code or title…"
+            aria-label="Search classes"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full rounded-xl border border-border bg-white pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary min-h-[38px]"
+            className="w-full rounded-xl border border-border bg-card pl-8 pr-3 py-1.5 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none min-h-[38px]"
           />
         </div>
       </div>
@@ -58,12 +59,11 @@ export function FacultyClassesTable({
       <div className="overflow-x-auto">
         <table className="w-full text-left text-xs">
           <thead>
-            <tr className="border-b border-border bg-white/30 text-muted-foreground uppercase tracking-wider text-[10px]">
+            <tr className="border-b border-border bg-muted/40 text-muted-foreground uppercase tracking-wider text-[10px]">
               <th className="py-3 px-5 font-semibold">Subject Code &amp; Title</th>
               <th className="py-3 px-4 font-semibold">Section</th>
               <th className="py-3 px-4 font-semibold">Student Submissions</th>
               <th className="py-3 px-4 font-semibold">Class Rating</th>
-              <th className="py-3 px-5 text-right font-semibold">Term Status</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -95,24 +95,16 @@ export function FacultyClassesTable({
                     <span className="font-bold text-sm text-primary tabular-nums">
                       {c.avg_rating != null ? c.avg_rating.toFixed(2) : '—'}
                     </span>
-                    <span className="text-[10px] text-muted-foreground/60">/ 5.0</span>
+                    <span className="text-[10px] text-muted-foreground">/ 5.0</span>
                   </div>
-                </td>
-
-                {/* Status */}
-                <td className="py-3.5 px-5 text-right whitespace-nowrap">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-status-sage/15 px-2.5 py-0.5 text-[10px] font-semibold text-status-sage border border-status-sage/30">
-                    <span className="h-1.5 w-1.5 rounded-full bg-status-sage" />
-                    Active Term
-                  </span>
                 </td>
               </tr>
             ))}
 
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="py-8 text-center text-muted-foreground text-xs">
-                  No assigned teaching subjects found for this semester.
+                <td colSpan={4} className="py-10 text-center text-muted-foreground text-xs">
+                  No teaching load with results for this period.
                 </td>
               </tr>
             )}

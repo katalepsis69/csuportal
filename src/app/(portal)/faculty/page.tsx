@@ -14,89 +14,39 @@ import { FacultyClassesTable, type FacultySubjectRow } from '@/components/dashbo
 
 export const dynamic = 'force-dynamic';
 
-const DEFAULT_FACULTY_OVERVIEW: FacultyOverview = {
-  overall: 4.82,
-  per_question: [
-    { id: 'q1', text: 'Demonstrates learning sensitivity', category: 'Teaching', sort_order: 1, avg_rating: 4.90, responses: 48 },
-    { id: 'q2', text: 'Comes to class prepared', category: 'Teaching', sort_order: 2, avg_rating: 4.85, responses: 48 },
-    { id: 'q3', text: 'Holds consultation hours', category: 'Teaching', sort_order: 3, avg_rating: 4.80, responses: 48 },
-    { id: 'q4', text: 'Explains complex algorithms', category: 'Mastery', sort_order: 4, avg_rating: 4.88, responses: 48 },
-    { id: 'q5', text: 'Integrates practical coding', category: 'Mastery', sort_order: 5, avg_rating: 4.75, responses: 48 },
-    { id: 'q6', text: 'Provides transparent feedback', category: 'Mastery', sort_order: 6, avg_rating: 4.70, responses: 48 },
-  ],
-  per_subject: [
-    {
-      subject_code: 'CS 214',
-      subject_name: 'Data Structures & Algorithms',
-      section_name: 'BSCS 3-A',
-      evals: 42,
-      avg_rating: 4.85,
-    },
-    {
-      subject_code: 'CS 314',
-      subject_name: 'Advanced Database Systems',
-      section_name: 'BSIT 3-B',
-      evals: 38,
-      avg_rating: 4.78,
-    },
-  ],
-  sentiment: {
-    positive: 38,
-    neutral: 4,
-    negative: 2,
-  },
-  comments: [
-    {
-      comment: 'Engr. Santos explains recursion, binary trees, and graph traversals better than anyone. Very approachable and supportive during lab debugging sessions.',
-      label: 'positive',
-      at: new Date().toISOString(),
-    },
-    {
-      comment: 'Problem sets were challenging and required deep thought, but the grading rubric was transparent and feedback returned quickly.',
-      label: 'positive',
-      at: new Date().toISOString(),
-    },
-    {
-      comment: 'Always on time for consultation hours and provides clear real-world industry examples of algorithms.',
-      label: 'positive',
-      at: new Date().toISOString(),
-    },
-  ],
-};
-
 export default async function FacultyPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const profile = await requireRole('faculty', 'dean', 'admin');
+  const profile = await requireRole('faculty');
   const { sem } = await searchParams;
   const supabase = await createClient();
 
-  const semesterId = typeof sem === 'string' ? sem : null;
-  const [{ data: semesters }, { data }] = await Promise.all([
+  const semesterId = typeof sem === 'string' && sem ? sem : null;
+  const [{ data: semesters }, { data, error }] = await Promise.all([
     supabase.from('semesters').select('*').order('academic_year', { ascending: false }),
     supabase.rpc('rpc_faculty_overview', { p_semester_id: semesterId }),
   ]);
-  const overviewData = (data ?? {}) as FacultyOverview;
-  const overview =
-    overviewData.per_subject && overviewData.per_subject.length > 0
-      ? overviewData
-      : DEFAULT_FACULTY_OVERVIEW;
+  const overview = (error ? null : (data as FacultyOverview | null)) ?? {
+    per_question: [],
+    per_subject: [],
+    sentiment: { positive: 0, neutral: 0, negative: 0 },
+    comments: [],
+    overall: null,
+  };
 
-  const semesterLabel =
-    (semesters as Semester[] | null)?.find((s) => s.id === semesterId)
-      ? `${(semesters as Semester[]).find((s) => s.id === semesterId)!.academic_year} ${(
-          semesters as Semester[]
-        ).find((s) => s.id === semesterId)!.term}`
-      : 'AY 2025–2026 1st Sem';
+  const semestersList = (semesters ?? []) as Semester[];
+  const selected =
+    semestersList.find((s) => s.id === semesterId) ??
+    semestersList.find((s) => s.is_current) ??
+    null;
+  const semesterLabel = selected ? `${selected.academic_year} ${selected.term}` : 'All semesters';
 
-  const sentimentTotal =
-    (overview.sentiment?.positive ?? 0) + (overview.sentiment?.neutral ?? 0) + (overview.sentiment?.negative ?? 0);
-  const positivePct =
-    sentimentTotal > 0
-      ? Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)
-      : 90;
+  const sentiment = overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 };
+  const sentimentTotal = sentiment.positive + sentiment.neutral + sentiment.negative;
+  const positivePct = sentimentTotal > 0 ? Math.round((sentiment.positive / sentimentTotal) * 100) : null;
+  const responseCount = (overview.per_subject ?? []).reduce((sum, s) => sum + s.evals, 0);
 
   const classes: FacultySubjectRow[] = (overview.per_subject ?? []).map((s) => ({
     subject_code: s.subject_code,
@@ -106,64 +56,58 @@ export default async function FacultyPage({
     avg_rating: s.avg_rating,
   }));
 
-  const facultyMetrics = [
+  const metrics = [
     {
-      label: 'Overall Appraisal Rating',
-      value: `${overview.overall != null ? overview.overall.toFixed(2) : '4.82'} / 5.0`,
-      trend: '+0.12',
-      trendPositive: true,
+      label: 'Overall rating',
+      value: overview.overall != null ? `${overview.overall.toFixed(2)} / 5.0` : '—',
+      sublabel: 'Mean of all questions',
       color: 'var(--primary)',
-      sparkline: [4.6, 4.65, 4.72, 4.75, 4.8, 4.82, 4.84, 4.85],
       icon: <IconChartLine className="h-4 w-4" />,
     },
     {
-      label: 'Student Responses',
-      value: overview.per_question?.[0]?.responses ?? 80,
-      sublabel: 'Total answers submitted',
-      trend: '+15.2%',
-      trendPositive: true,
-      color: '#6FA86F',
-      sparkline: [12, 18, 22, 28, 35, 40, 44, 48],
+      label: 'Student responses',
+      value: String(responseCount),
+      sublabel: 'Evaluations received',
+      color: 'var(--positive)',
       icon: <IconUsersLine className="h-4 w-4" />,
     },
     {
-      label: 'Positive Sentiment',
-      value: `${positivePct}%`,
-      sublabel: `${overview.sentiment?.positive ?? 38} positive student remarks`,
-      trend: 'High',
-      trendPositive: true,
-      color: '#B58A3C',
-      sparkline: [75, 78, 80, 82, 85, 86, 88, 90],
+      label: 'Positive sentiment',
+      value: positivePct != null ? `${positivePct}%` : '—',
+      sublabel:
+        sentimentTotal > 0
+          ? `${sentiment.positive} positive · ${sentiment.negative} critical of ${sentimentTotal} comments`
+          : 'No comments yet',
+      color: 'var(--gold)',
       icon: <IconBookLine className="h-4 w-4" />,
     },
     {
-      label: 'Assigned Classes',
-      value: `${classes.length || 2} Sections`,
-      sublabel: 'Active teaching loads',
-      trend: 'Active',
-      trendPositive: true,
+      label: 'Assigned classes',
+      value: String(classes.length),
+      sublabel: semesterLabel,
       color: 'var(--primary)',
-      sparkline: [1, 1, 2, 2, 2, 2, 2, 2],
       icon: <IconGearLine className="h-4 w-4" />,
     },
   ];
 
+  const noData = responseCount === 0;
+
   return (
     <StaffScaffold
-      breadcrumb={['CSU CETC Portal', 'Faculty Space', 'My Evaluation Results']}
-      title="Teaching Performance & Feedback"
-      subtitle={`Student evaluation summaries and classroom appraisal for ${semesterLabel}.`}
-      metrics={facultyMetrics}
+      breadcrumb={['CSU CETC Portal', 'Faculty Space', 'My evaluation results']}
+      title="Teaching performance and feedback"
+      subtitle={`Student evaluation summaries for ${semesterLabel}. Results appear only after students submit; comments carry no identifying information. ${profile.full_name}`}
+      metrics={metrics}
       actionButton={
         <div className="flex flex-wrap items-center gap-2">
           <form method="get" className="flex items-center gap-1.5">
             <select
               name="sem"
               defaultValue={semesterId ?? ''}
-              className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs text-foreground focus:border-primary focus:outline-none cursor-pointer min-h-[36px]"
+              className="rounded-xl border border-border bg-card px-3 py-1.5 text-xs text-foreground focus:border-primary cursor-pointer min-h-[36px]"
             >
-              <option value="">Current semester</option>
-              {(semesters as Semester[] | null)?.map((s) => (
+              <option value="">All semesters</option>
+              {semestersList.map((s) => (
                 <option key={s.id} value={s.id}>
                   {s.academic_year} {s.term}
                   {s.is_current ? ' (current)' : ''}
@@ -172,7 +116,7 @@ export default async function FacultyPage({
             </select>
             <button
               type="submit"
-              className="rounded-xl border border-border bg-white px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-zinc-50 transition-colors min-h-[36px] active:scale-[0.98]"
+              className="rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground hover:bg-muted transition-colors min-h-[36px]"
             >
               Filter
             </button>
@@ -181,25 +125,32 @@ export default async function FacultyPage({
             type="faculty"
             filename={`faculty-results-${semesterLabel.replace(/\s+/g, '-')}.pdf`}
             data={{ overview, facultyName: profile.full_name, semesterLabel }}
-            label="Download Appraisal PDF"
+            label="Download results PDF"
           />
         </div>
       }
     >
       <div className="space-y-6">
-        {/* Classes Table */}
+        {noData && (
+          <div className="card text-center py-10">
+            <p className="text-sm font-semibold text-foreground">No results yet</p>
+            <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+              Nothing has been submitted for {semesterLabel}. Your scores and comments appear here
+              once your students complete their evaluations.
+            </p>
+          </div>
+        )}
+
         <FacultyClassesTable classes={classes} />
 
-        {/* Question-level score bar chart & Sentiment Bento */}
         <div className="grid gap-5 lg:grid-cols-2">
-          {/* Average Rating per Question */}
-          <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm ">
+          <div className="card">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-sm font-semibold text-foreground">Average Rating per Question</h2>
-                <p className="text-xs text-muted-foreground mt-0.5">Performance index across each rubric question</p>
+                <h2 className="text-sm font-semibold text-foreground">Average rating per question</h2>
+                <p className="text-xs text-muted-foreground mt-0.5">Mean score for each rubric question</p>
               </div>
-              <span className="rounded-md bg-white px-2.5 py-0.5 text-[10px] text-muted-foreground border border-border">
+              <span className="rounded-md bg-muted px-2.5 py-0.5 text-[10px] text-muted-foreground border border-border">
                 Scale 1-5
               </span>
             </div>
@@ -211,55 +162,64 @@ export default async function FacultyPage({
             />
           </div>
 
-          {/* Student Feedback Sentiment */}
-          <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm flex flex-col justify-between ">
+          <div className="card flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-1">
-                <h2 className="text-sm font-semibold text-foreground">Student Feedback Sentiment</h2>
-                <span className="inline-flex items-center gap-1 rounded-full bg-status-sage/15 px-2 py-0.5 text-[10px] text-status-sage border border-status-sage/30">
-                  {positivePct}% Positive
-                </span>
+                <h2 className="text-sm font-semibold text-foreground">Student feedback sentiment</h2>
+                {positivePct != null && (
+                  <span className="inline-flex items-center rounded-full bg-positive/10 px-2 py-0.5 text-[10px] text-positive border border-positive/25">
+                    {positivePct}% positive
+                  </span>
+                )}
               </div>
               <p className="text-xs text-muted-foreground mb-4">
                 {sentimentTotal === 0
-                  ? 'No comments submitted yet for this semester.'
-                  : `${Math.round(((overview.sentiment?.positive ?? 0) / sentimentTotal) * 100)}% positive · ${Math.round(
-                      ((overview.sentiment?.negative ?? 0) / sentimentTotal) * 100,
-                    )}% critical ratio`}
+                  ? 'No comments submitted for this period.'
+                  : `${sentiment.positive} positive · ${sentiment.neutral} neutral · ${sentiment.negative} critical`}
               </p>
             </div>
             <div className="w-full h-36 flex items-center justify-center">
-              <SentimentPie counts={overview.sentiment ?? { positive: 0, neutral: 0, negative: 0 }} />
+              <SentimentPie counts={sentiment} />
             </div>
           </div>
         </div>
 
-        {/* Anonymous Student Comments Roster */}
-        <div className="rounded-2xl border border-border bg-white/80 backdrop-blur-md p-5 shadow-beautiful-sm space-y-4 ">
+        <div className="card space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-sm font-semibold text-foreground">
-                Anonymous Student Commentary ({overview.comments?.length ?? 0})
+                Anonymous student comments ({overview.comments?.length ?? 0})
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Direct, unedited feedback from enrolled students across all class sections.
+                Written feedback as submitted. Names are never attached to comments.
               </p>
             </div>
-            <span className="text-[11px] text-muted-foreground/60">Encrypted &amp; De-identified</span>
+            <span className="text-[11px] text-muted-foreground">Identity-free by schema</span>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            {(overview.comments ?? []).slice(0, 10).map((c, i) => (
+            {(overview.comments ?? []).slice(0, 20).map((c, i) => (
               <div
                 key={i}
-                className="rounded-xl border border-border bg-white/60 p-4 text-xs text-foreground leading-relaxed hover:border-primary/30 transition-colors shadow-sm italic"
+                className="rounded-xl border border-border bg-muted/40 p-4 text-xs text-foreground leading-relaxed"
               >
-                &ldquo;{c.comment}&rdquo;
+                <span
+                  className={`inline-block mb-2 px-1.5 py-0.5 rounded text-[9px] font-semibold uppercase border ${
+                    c.label === 'positive'
+                      ? 'bg-positive/10 text-positive border-positive/20'
+                      : c.label === 'negative'
+                        ? 'bg-negative/10 text-negative border-negative/20'
+                        : 'bg-card text-muted-foreground border-border'
+                  }`}
+                >
+                  {c.label ?? 'neutral'}
+                </span>
+                <p>{c.comment}</p>
               </div>
             ))}
             {(overview.comments ?? []).length === 0 && (
               <p className="text-xs text-muted-foreground col-span-2 py-4 text-center">
-                No written comments recorded for this term.
+                No written comments recorded for this period.
               </p>
             )}
           </div>

@@ -11,8 +11,9 @@ export async function signOut() {
 
 /**
  * Resolves a login identifier (email or student_no) to the auth.users email.
+ * Returns null when no account matches — the caller must not guess an address.
  */
-export async function resolveLoginEmail(identifier: string): Promise<string> {
+export async function resolveLoginEmail(identifier: string): Promise<string | null> {
   const trimmed = identifier.trim();
   if (trimmed.includes('@')) return trimmed;
 
@@ -38,8 +39,7 @@ export async function resolveLoginEmail(identifier: string): Promise<string> {
     }
   }
 
-  const clean = trimmed.toLowerCase().replace(/[^a-z0-9_-]/g, '');
-  return `${clean}@student.cetc.edu`;
+  return null;
 }
 
 /**
@@ -60,7 +60,10 @@ export async function registerStudent(input: {
 
   if (!fullName) return { ok: false, error: 'Please enter your name.' };
   if (!studentNo) return { ok: false, error: 'Please enter your student ID.' };
-  if (emailInput && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
+  if (!emailInput) {
+    return { ok: false, error: 'An email address is required — password recovery is sent there.' };
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailInput)) {
     return { ok: false, error: 'Please enter a valid email address.' };
   }
   if (!password || password.length < 8) {
@@ -100,8 +103,7 @@ export async function registerStudent(input: {
     programId = prog?.id ?? null;
   }
 
-  const clean = studentNo.toLowerCase().replace(/[^a-z0-9_-]/g, '');
-  const email = emailInput || `${clean}@student.cetc.edu`;
+  const email = emailInput;
 
   const { data: newUser, error: createError } = await admin.auth.admin.createUser({
     email,
@@ -140,6 +142,7 @@ export async function registerStudent(input: {
  */
 export async function requestPasswordReset(identifier: string): Promise<{ ok: boolean; error?: string }> {
   const email = await resolveLoginEmail(identifier);
+  if (!email) return { ok: false, error: 'No account matches that student ID or email.' };
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email);
   if (error) {

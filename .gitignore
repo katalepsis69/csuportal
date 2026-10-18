@@ -43,7 +43,9 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
-.env*
+
+# the template is part of the repo; real env files are not
+!.env.example
 
 # k6 load test env (generated, contains test creds)
 k6/loadtest-env.json

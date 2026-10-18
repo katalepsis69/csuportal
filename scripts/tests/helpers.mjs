@@ -74,15 +74,24 @@ export async function cleanupTestStudent(id) {
   await admin.auth.admin.deleteUser(id);
 }
 
-/** Any section_subject in the current, open semester. */
+/** Any section_subject whose semester is open right now (derived state). */
 export async function pickOpenClass() {
   const { data, error } = await admin
     .from('section_subjects')
-    .select('id, semesters!inner(is_current, is_open)')
+    .select('id, semesters!inner(id, is_current, is_open, manual_override, opens_at, closes_at)')
     .eq('semesters.is_current', true)
-    .eq('semesters.is_open', true)
-    .limit(1);
+    .limit(200);
   if (error) throw new Error(`pickOpenClass: ${error.message}`);
-  if (!data?.length) throw new Error('no open class found — seed first');
-  return data[0].id;
+
+  // mirrors public.sem_is_open(): override, then window, then the legacy flag
+  const isOpen = (s) => {
+    if (s.manual_override) return s.manual_override === 'open';
+    if (!s.opens_at || !s.closes_at) return s.is_open;
+    const now = Date.now();
+    return now >= Date.parse(s.opens_at) && now <= Date.parse(s.closes_at);
+  };
+
+  const open = (data ?? []).filter((r) => isOpen(r.semesters));
+  if (!open.length) throw new Error('no open class found — seed first');
+  return open[0].id;
 }

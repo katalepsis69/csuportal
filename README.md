@@ -1,92 +1,119 @@
 # CETC Faculty Evaluation Portal
 
-Zero-cost production stack per the [stack plan](../1789278694789-zero-cost-production-stack.md) (Rev 2):
-Next.js 16 + Supabase (Postgres, Auth, RLS) + Vercel Hobby. Everything runs on free tiers.
+Faculty evaluation system for the College of Engineering, Technology and Computing, Cotabato
+State University. Four roles — student, faculty, dean, admin — on a zero-cost stack:
+Next.js 16 + Supabase (Postgres, Auth, RLS) + Vercel Hobby.
+
+There is no demo data in the UI. Every panel shows what the database actually contains;
+an empty database renders an empty state. Sample data comes only from the optional seeder.
 
 ## Stack
 
 | Layer | Choice |
 |---|---|
-| App | Next.js 16 App Router (server actions, no ISR on authed pages) |
-| DB + Auth | Supabase free (RLS is the authorization layer — see `supabase/migrations/0001_rls_and_functions.sql`) |
-| Schema | Drizzle schema-as-code (`src/db/schema.ts`) → `drizzle-kit generate` |
-| Data access | supabase-js with the user's session cookie → every query passes RLS. Aggregates via SECURITY INVOKER SQL functions (`rpc_*`) |
-| Sentiment | transformers.js v4 **in the browser** — `twn39/multilingual-sentiment-analysis-ONNX` (23 languages incl. Tagalog + English). Zero server cost, never blocks submit (fails → Neutral) |
-| E-signature | Canvas → stroke points JSON (~1–2KB), redrawn on PDFs. Never base64 PNG in the DB |
-| Reports | @react-pdf/renderer in the browser (6 report types) + Recharts dashboards |
-| Cron | Vercel Cron daily → `/api/cron/daily` (service-role key): keeps Supabase unpauased (free projects pause after 1 week idle) + auto opens/closes eval periods |
-| Backups | pg_dump GitHub Action (`.github/workflows/backup.yml`) — the ONLY backup on Supabase free |
+| App | Next.js 16 App Router, server actions, `force-dynamic` on all authenticated pages (no ISR, no shared HTML cache) |
+| DB + Auth | Supabase free. **RLS is the authorization layer** — `supabase/migrations/0001_rls_and_functions.sql`, hardened in `0003` |
+| Schema | Plain SQL migrations in `supabase/migrations/` (0000 → 0007), applied by script. No ORM |
+| Data access | supabase-js with the signed-in user's session → every query passes RLS. Aggregates run in `rpc_*` SQL functions |
+| Sentiment | Tagalog/English lexicon (`src/lib/sentiment.ts`) — deterministic, zero network. Computed server-side at submit; the browser tag is display-only |
+| E-signature | Canvas → normalized stroke points as JSON (~1–2 KB), redrawn on PDFs. Never base64 images in the DB |
+| Receipts | Ed25519 JWS (`jose`) over the stored evaluation, public key at `/.well-known/receipt-jwks.json`, QR-linked `/verify/[id]` |
+| Reports | `@react-pdf/renderer` in the browser (6 report types) + Recharts dashboards |
+| Eval period | Derived, no cron: `manual_override ?? (now between opens_at and closes_at)` (`sem_is_open()`) |
+| Backups | `pg_dump` GitHub Action (`.github/workflows/backup.yml`) — the only backup on Supabase free |
 
 ## Roles
 
-- **student** — sees assigned subjects (current semester), submits one evaluation per subject: 1–5 ratings, optional comment (auto-sentiment client-side), e-signature, anonymous toggle
-- **faculty** — own results: per-question averages, per-subject breakdown, sentiment pie, anonymous comments, PDF export. Student identity is never visible (enforced by RLS + view)
-- **dean** — department dashboard (participation, faculty ranking, per-criterion), history drill-down (AY → term → subject → faculty), all reports
-- **admin** — CRUD: programs, sections, subjects, faculty assignments, questions, semesters/eval-period open-close, enrollments
+- **student** — sees assigned subjects for the current semester, submits one evaluation per
+  subject: 1–5 ratings, optional comment, e-signature, anonymous toggle; gets a verifiable receipt
+- **faculty** — own results only: per-question averages, per-subject breakdown, sentiment counts,
+  anonymous comments, PDF export. Student identity is unreachable (see below)
+- **dean** — department dashboard (participation, ranking, per-criterion), faculty dossier,
+  history drill-down (AY → term → subject → faculty), all reports
+- **admin** — programs, sections, subjects, faculty assignments, questions, semesters and the
+  open/close toggle, enrollments
 
-## Setup (fresh Supabase project)
+## Setup
 
-1. **Create project** at supabase.com (free). No credit card needed.
-2. **Get credentials** → put in `.env.local` (copy `.env.example`):
-   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — Settings → API
-   - `SUPABASE_SERVICE_ROLE_KEY` — Settings → API (server-only; the cron uses it)
-3. **Migrations** (creates tables + RLS + functions) — two options:
+1. **Create a Supabase project** (free, no card) and copy `.env.example` to `.env.local`:
+   `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`.
+2. **Signing key for receipts**: `npm run db:key` writes `RECEIPT_SIGNING_KEY` to `.env.local`.
+   Without it, receipts render as an unsigned hash instead of a verifiable JWS.
+3. **Apply migrations** — either way:
    ```bash
-   # A. no DB password needed (Management API):
-   node scripts/apply-mgmt-api.mjs   # needs SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF in .env.local
-   # B. with a direct Postgres connection:
-   npm run db:generate && npm run db:apply   # DATABASE_URL = pooler port 6543
+   npm run db:push    # Management API: needs SUPABASE_ACCESS_TOKEN + SUPABASE_PROJECT_REF
+   npm run db:apply   # direct Postgres: needs DATABASE_URL (pooler port 6543)
    ```
-4. **Seed demo data** (optional but recommended for the defense demo):
+   Migration **0007 is required by the current app** (`rpc_receipt_for`, the single-current-
+   semester index, and the corrected `rpc_history` branch order).
+4. **Optional demo data** (a handful of users, two semesters, one semester of evaluations):
    ```bash
-   node scripts/seed-remote.mjs   # same env as option A
+   node scripts/seed-remote.mjs   # or: npm run db:seed with DATABASE_URL
    ```
-   Creates demo users (password `eval1234`): `admin@`, `dean@`, `maria@`/`jose@`/`ana@` (faculty),
-   `student1..5@cetc.test`, plus subjects/classes/enrollments and a past semester with evaluations.
-   Without the service key it seeds only reference data.
-5. **Run** `npm run dev` → http://localhost:3000
+   Seeded accounts use password `eval1234`: `admin@`, `dean@`, `maria@`/`jose@`/`ana@`
+   (`@cetc.test`) and `student1..5@cetc.test`. Nothing in the UI hardcodes these.
+5. `npm run dev` → http://localhost:3000
+
+## Gates
+
+```bash
+npm run lint     # eslint
+npx tsc --noEmit # typecheck (also runs inside next build)
+npm run build    # production build
+npm test         # RLS + flow tests against the LIVE project (needs .env.local + seed + 0007)
+npm run sentiment:eval labeled.jsonl   # lexicon accuracy over hand-labeled comments
+k6 run -e VUS=500 k6/submit-load.js    # load gate; run scripts/loadtest-setup.mjs first
+```
+
+## Security model
+
+- All runtime DB access uses the signed-in user's JWT. The service-role key is used only by
+  the student self-registration/admin-lookup action, the test suite, and the seeders.
+- The public `/verify/[id]` route reads through `rpc_receipt_for`, a SECURITY DEFINER function
+  that returns five non-identifying columns — not through the service role.
+- **Anonymity is structural.** Comments live in `evaluation_comments`, which has no student
+  column, so the identity join cannot be written. Faculty read results through the
+  `faculty_evaluations` view; the dean sees sentiment labels via `comment_labels` (no text) and
+  text only through dean-gated RPCs.
+- Students insert evaluations only for their own enrollments, one per subject (unique
+  constraint), only while `sem_is_open()` (checked inside `rpc_submit_evaluation`).
+- `evaluations` have no UPDATE/DELETE policy — submissions are immutable.
+- One current semester is enforced by a partial unique index, not by app code.
 
 ## Deploy (Vercel, $0)
 
-1. Push to GitHub → import in Vercel (Hobby plan, no card).
-2. Set env vars in Vercel: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
-   `SUPABASE_SERVICE_ROLE_KEY`, `CRON_SECRET` (random string).
-3. `vercel.json` registers the daily cron (01:00 UTC, Hobby precision ±59 min).
-4. **Backups**: add repo secret `DATABASE_URL_DIRECT` (session pooler port 5432 or direct URL)
-   → `.github/workflows/backup.yml` pg_dumps daily, artifacts kept 90 days.
-   Test one restore before the defense: download artifact →
+1. Push to GitHub → import in Vercel (Hobby).
+2. Env vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`,
+   `SUPABASE_SERVICE_ROLE_KEY`, `RECEIPT_SIGNING_KEY`, `NEXT_PUBLIC_SITE_URL` (canonical origin
+   for receipt QR codes).
+3. Apply migration 0007 (step 3 above) before deploying — the receipt page depends on it.
+4. **Backups**: set the repo secret `DATABASE_URL_DIRECT` (session pooler 5432 or direct URL);
+   `backup.yml` pg_dumps daily to artifacts kept 90 days. Test one restore before any review:
    `pg_restore --clean --if-exists -d "$NEW_DB_URL" backup-*.dump`.
+5. Note: free Supabase projects **pause after one week of inactivity** and there are no
+   automatic backups. There is no cron in this app by design — if the project pauses, run any
+   query (or `npm run db:push`) to wake it.
 
 ## Creating real users
 
-Supabase Dashboard → Authentication → Add user → set **user metadata** so the trigger
-creates the right profile:
+Supabase Dashboard → Authentication → Add user, with **user metadata** so the trigger creates
+the matching profile:
 
 ```json
 { "role": "student", "full_name": "Juan Dela Cruz", "student_no": "2026-0001" }
 ```
 
-Roles: `admin` / `dean` / `faculty` / `student` (default). Then use Admin → Enrollments
-to assign students to classes.
-
-## Security model (RLS)
-
-- All runtime DB access uses the signed-in user's JWT — server code cannot bypass RLS.
-- Students: insert evaluations only for their own enrollments (RLS), one per subject
-  (unique constraint), period must be open (checked in `rpc_submit_evaluation`).
-- Faculty: read results **only** through `faculty_evaluations` view — it has no
-  `student_id` column at all, anonymous or not.
-- Dean/admin: full read; admin-only writes on all reference tables.
-- `evaluations` have no UPDATE/DELETE policy — submissions are immutable.
+Roles: `admin` / `dean` / `faculty` / `student` (default). Then Admin → Enrollments to place
+students in classes. Password and email changes happen in Supabase Auth, not in this app.
 
 ## Free-tier watchlist
 
 | Resource | Cap | This app |
 |---|---|---|
-| Supabase DB | 500MB | 48k eval rows over 4 semesters ≈ tens of MB (signatures are stroke points, not images) |
-| Supabase pause | 1 week idle | daily cron keeps it alive |
+| Supabase DB | 500 MB | 48k evaluations over 4 semesters ≈ tens of MB (stroke points, not images) |
+| Supabase pause | 1 week idle | manual wake, or a daily keep-alive query if you want it automatic |
 | Supabase backups | none on free | GitHub Action pg_dump |
-| Vercel Hobby | 100GB transfer, 1M invocations/mo | well under for 2k students |
-| Vercel cron | 1/day per job, ±59 min | fine for open/close |
+| Vercel Hobby | 100 GB transfer, 1M invocations/mo | well under for ~2k students |
 
-If caps are ever hit: Cloudflare Workers + Neon escape hatch is documented in the stack plan.
+Escape hatch if caps are ever hit: Cloudflare Workers + Neon (documented in the original
+stack plan).

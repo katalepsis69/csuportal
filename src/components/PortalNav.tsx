@@ -19,8 +19,6 @@ type NavItem = {
   href: string;
   label: string;
   icon: React.ReactNode;
-  badge?: string;
-  dotPulse?: boolean;
 };
 
 const NAV_CONFIG: Record<
@@ -50,7 +48,6 @@ const NAV_CONFIG: Record<
       {
         href: '/dean#roster',
         label: 'Faculty Appraisal',
-        badge: '42',
         icon: (
           <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
             <circle cx="128" cy="140" r="40" opacity="0.2" />
@@ -66,7 +63,6 @@ const NAV_CONFIG: Record<
       {
         href: '/reports',
         label: 'Accreditation Reports',
-        dotPulse: true,
         icon: (
           <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
             <path d="M200,32H56A16,16,0,0,0,40,48V208a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V48A16,16,0,0,0,200,32Z" opacity="0.2" />
@@ -79,7 +75,7 @@ const NAV_CONFIG: Record<
       },
       {
         href: '/dean/history',
-        label: 'Audit Logs',
+        label: 'Semester History',
         icon: (
           <svg className="w-4 h-4" viewBox="0 0 256 256" fill="currentColor">
             <path d="M208,40H48A8,8,0,0,0,40,48v64c0,72,88,104,88,104s88-32,88-104V48A8,8,0,0,0,208,40Z" opacity="0.2" />
@@ -100,9 +96,8 @@ const NAV_CONFIG: Record<
         icon: <IconGaugeLine className="w-4 h-4" />,
       },
       {
-        href: '/student/eval/cs214',
+        href: '/student#pending',
         label: 'Evaluate Faculty',
-        badge: 'Active',
         icon: <IconClipboardLine className="w-4 h-4 text-primary" />,
       },
       {
@@ -120,18 +115,6 @@ const NAV_CONFIG: Record<
         href: '/faculty',
         label: 'Appraisal Results',
         icon: <IconChartLine className="w-4 h-4" />,
-      },
-      {
-        href: '/faculty#classes',
-        label: 'Teaching Classes',
-        badge: 'Active',
-        icon: <IconUsersLine className="w-4 h-4" />,
-      },
-      {
-        href: '/reports',
-        label: 'Accreditation Dossier',
-        dotPulse: true,
-        icon: <IconBookLine className="w-4 h-4" />,
       },
     ],
   },
@@ -196,21 +179,14 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
       .join('')
       .toUpperCase() || 'CU';
 
-  const roleSubtitle =
-    role === 'dean'
-      ? 'DEAN / EXEC'
-      : role === 'student'
-      ? 'BSCS-3A • CETC'
-      : role === 'faculty'
-      ? 'FACULTY / DEPT'
-      : 'SYSADMIN';
+  const roleSubtitle = {
+    dean: 'Dean',
+    student: 'Student',
+    faculty: 'Faculty',
+    admin: 'Administrator',
+  }[role];
 
-  const displayName =
-    role === 'dean' && (!fullName || fullName === 'User')
-      ? 'Dr. Roberto Al-Rashid'
-      : role === 'student' && (!fullName || fullName === 'User')
-      ? 'Juan Dela Cruz'
-      : fullName;
+  const displayName = fullName || 'Unnamed account';
 
   return (
     <>
@@ -310,11 +286,6 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                         <span>{item.label}</span>
                       </div>
                       {active && <span className="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_var(--primary)]" />}
-                      {item.badge && !active && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                          {item.badge}
-                        </span>
-                      )}
                     </Link>
                   );
                 })}
@@ -403,42 +374,9 @@ export function RailNav({ role, fullName }: { role: Role; fullName: string }) {
                   </div>
 
                   {active && <span className="w-1.5 h-1.5 rounded-full bg-primary" />}
-                  {item.badge && !active && (
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
-                      {item.badge}
-                    </span>
-                  )}
-                  {item.dotPulse && !active && (
-                    <span className="w-2 h-2 rounded-full bg-status-sage/80 animate-pulse" />
-                  )}
                 </Link>
               );
             })}
-          </div>
-
-          {/* System Diagnostic Widget */}
-          <div className="mt-8 p-3 rounded-xl bg-white/60 border border-border">
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground mb-1.5">
-              <span>{role === 'student' ? 'Session Progress' : 'Ledger Integrity'}</span>
-              <span className={role === 'student' ? 'text-primary font-semibold' : 'text-status-sage font-semibold'}>
-                {role === 'student' ? '70%' : '100% Valid'}
-              </span>
-            </div>
-            <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
-              <div
-                className={`h-full rounded-full transition-all duration-500 ${
-                  role === 'student'
-                    ? 'bg-gradient-to-r from-primary to-primary w-[70%]'
-                    : 'bg-gradient-to-r from-primary to-status-sage w-full'
-                }`}
-              />
-            </div>
-            <p className="text-[10px] text-muted-foreground/70 mt-1.5 flex items-center gap-1">
-              <svg className="w-3 h-3 text-status-sage" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              </svg>
-              <span>{role === 'student' ? 'Encrypted Draft Active' : 'SHA-256 Ledger Synchronized'}</span>
-            </p>
           </div>
         </div>
 

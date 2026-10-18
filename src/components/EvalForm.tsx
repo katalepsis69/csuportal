@@ -28,13 +28,16 @@ export default function EvalForm({
   sectionSubjectId,
   subjectCode,
   subjectName,
+  sectionName,
   facultyName,
+  closesAt,
   questions,
   draft = null,
 }: {
   sectionSubjectId: string;
   subjectCode: string;
   subjectName: string;
+  sectionName: string | null;
   facultyName: string;
   closesAt: string | null;
   questions: Question[];
@@ -130,7 +133,11 @@ export default function EvalForm({
       payloadHash,
     });
     if (result.ok) {
-      router.push(`/student?submitted=1&h=${payloadHash.slice(0, 16)}`);
+      router.push(
+        `/student?submitted=1&h=${payloadHash.slice(0, 16)}${
+          result.evaluationId ? `&r=${result.evaluationId}` : ''
+        }`,
+      );
       router.refresh();
     } else {
       setError(result.error ?? 'Submission failed.');
@@ -152,6 +159,10 @@ export default function EvalForm({
     };
   });
 
+  const closesLabel = closesAt
+    ? `closes ${new Date(closesAt).toLocaleDateString()}`
+    : null;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-5xl mx-auto pb-32">
       {/* 0. BREADCRUMBS & TOP UTILITY BAR (Matching download.htm) */}
@@ -164,9 +175,6 @@ export default function EvalForm({
           <span className="text-foreground font-medium">{subjectCode} Form</span>
         </nav>
         <div className="flex items-center gap-3">
-          <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded text-[11px] bg-white text-primary border border-border">
-            Term 2025-2026
-          </span>
           <button
             type="button"
             onClick={handleSaveDraft}
@@ -200,9 +208,8 @@ export default function EvalForm({
             <div className="space-y-1">
               <div className="inline-flex items-center gap-2">
                 <span className="px-2 py-0.5 text-[10px] font-semibold bg-primary/20 text-primary rounded border border-primary/30">
-                  Faculty Member
+                  Instructor
                 </span>
-                <span className="text-xs text-muted-foreground">Dept. of Computer Science</span>
               </div>
               <h2 className="text-xl sm:text-2xl font-bold font-display text-foreground tracking-tight">
                 {facultyName}
@@ -215,20 +222,22 @@ export default function EvalForm({
 
           {/* Right Class Meta Metrics */}
           <div className="flex flex-wrap md:flex-col items-start md:items-end gap-2 border-t md:border-t-0 md:border-l border-border pt-4 md:pt-0 md:pl-6 text-xs">
-            <div className="flex items-center gap-2 text-foreground">
-              <span>Section: <strong className="font-semibold text-primary">BSCS 3-A</strong></span>
-              <span className="text-foreground/20">•</span>
-              <span>3.0 Units</span>
-            </div>
+            {sectionName && (
+              <div className="flex items-center gap-2 text-foreground">
+                <span>
+                  Section: <strong className="font-semibold text-primary">{sectionName}</strong>
+                </span>
+              </div>
+            )}
             <div className="flex items-center gap-2 text-muted-foreground">
-              <span>Mon/Wed 10:00 AM–12:00 PM</span>
-              <span className="text-foreground/20">•</span>
-              <span>CETC Lab 2</span>
+              <span>Instructor: {facultyName}</span>
             </div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white border border-primary/30 text-primary text-[11px] mt-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
-              <span>Closes: Oct 15, 2026 (7 days remaining)</span>
-            </div>
+            {closesLabel && (
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-card border border-primary/30 text-primary text-[11px] mt-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <span>Evaluation window {closesLabel}</span>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -413,7 +422,13 @@ export default function EvalForm({
               {ratedCount} of {questions.length} Criteria Answered
             </span>
             <span className="text-[11px] text-muted-foreground hidden sm:inline">
-              {allRated && signed ? 'Ready for final encrypted submission' : `Ready for final submission after remaining ${Math.max(0, questions.length - ratedCount)} questions`}
+              {allRated && signed
+                ? 'Ready to submit'
+                : !allRated
+                  ? `${questions.length - ratedCount} question${
+                      questions.length - ratedCount === 1 ? '' : 's'
+                    } left`
+                  : 'Signature required'}
             </span>
           </div>
         </div>
@@ -432,7 +447,7 @@ export default function EvalForm({
           <button
             type="submit"
             disabled={!canSubmit}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-primary to-[#c0590d] text-white text-xs font-bold shadow-[0_4px_20px_rgba(127,29,29,0.35)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed border border-primary/30"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-primary text-white text-xs font-bold hover:bg-brand-hover active:scale-[0.98] transition-all disabled:opacity-40 disabled:cursor-not-allowed border border-primary/30"
           >
             <span>{busy ? 'Submitting…' : 'Submit Evaluation'}</span>
             <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

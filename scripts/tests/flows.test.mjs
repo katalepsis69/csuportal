@@ -40,9 +40,8 @@ test('full evaluation flow: draft, submit with hash, dedupe, persistence', async
     // ── 1. not-enrolled guard: a class the student is NOT in ──
     const { data: otherClass } = await admin
       .from('section_subjects')
-      .select('id, semesters!inner(is_current, is_open)')
+      .select('id, semesters!inner(is_current)')
       .eq('semesters.is_current', true)
-      .eq('semesters.is_open', true)
       .neq('id', classId)
       .limit(1);
     if (otherClass?.length) {

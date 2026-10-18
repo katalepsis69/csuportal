@@ -8,12 +8,6 @@ import { resolveLoginEmail, registerStudent, requestPasswordReset } from '@/lib/
 type PortalType = 'student' | 'staff';
 type FormMode = 'login' | 'signup' | 'forgot';
 
-const DEMO_STAFF_ACCOUNTS = [
-  { role: 'Admin', email: 'admin@cetc.test', label: 'Admin', desc: 'Curriculum & User Management' },
-  { role: 'Dean', email: 'dean@cetc.test', label: 'Dean', desc: 'College Analytics & Reports' },
-  { role: 'Faculty', email: 'maria@cetc.test', label: 'Faculty', desc: 'Class Evaluations & Scores' },
-];
-
 function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,15 +67,6 @@ function LoginContent() {
 
   function markTouched(field: string) {
     setTouched((prev) => ({ ...prev, [field]: true }));
-  }
-
-  // Quick fill staff demo credentials
-  function fillStaffDemo(email: string) {
-    setStaffEmail(email);
-    setPassword('eval1234');
-    setError(null);
-    setSuccess(null);
-    setTouched({ staffEmail: true, password: true });
   }
 
   // Real-time field validations
@@ -173,6 +158,11 @@ function LoginContent() {
           }
 
           const resolvedEmail = await resolveLoginEmail(studentId);
+          if (!resolvedEmail) {
+            setError('No account matches that Student ID. Register first or contact the office.');
+            setBusy(false);
+            return;
+          }
           const { error: signInErr } = await supabase.auth.signInWithPassword({
             email: resolvedEmail,
             password,
@@ -477,7 +467,7 @@ function LoginContent() {
                             ? 'border-negative focus:border-negative ring-1 ring-negative/30'
                             : ''
                         }`}
-                        placeholder="e.g. Juan Dela Cruz"
+                        placeholder="Full name as it appears on your record"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         onBlur={() => markTouched('name')}
@@ -599,7 +589,7 @@ function LoginContent() {
                           ? 'border-negative focus:border-negative ring-1 ring-negative/30'
                           : ''
                       }`}
-                      placeholder="admin@cetc.test or name@csu.edu.ph"
+                      placeholder="name@csu.edu.ph"
                       value={staffEmail}
                       onChange={(e) => setStaffEmail(e.target.value)}
                       onBlur={() => markTouched('staffEmail')}
@@ -769,36 +759,6 @@ function LoginContent() {
               )}
             </form>
 
-            {/* ================= STAFF DEMO CREDENTIALS QUICK-FILL ================= */}
-            {portal === 'staff' && mode === 'login' && (
-              <div className="pt-3 border-t border-subtle/70 space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-cream-muted">
-                  <span className="font-semibold uppercase tracking-wider text-[10px]">Demo Test Accounts:</span>
-                  <span className="text-[10px] text-brand-text">Password: eval1234</span>
-                </div>
-                <div className="grid grid-cols-3 gap-1.5">
-                  {DEMO_STAFF_ACCOUNTS.map((acc) => (
-                    <button
-                      key={acc.role}
-                      type="button"
-                      onClick={() => fillStaffDemo(acc.email)}
-                      className={`flex flex-col items-center justify-center p-2 rounded-lg border text-left transition-all ${
-                        staffEmail === acc.email
-                          ? 'border-brand bg-brand/15 text-cream shadow-xs'
-                          : 'border-subtle bg-panel/50 text-cream-dim hover:text-cream hover:border-cream-muted/40 hover:bg-panel'
-                      }`}
-                      title={acc.desc}
-                    >
-                      <span className="text-xs font-bold text-cream">{acc.label}</span>
-                      <span className="text-[9px] text-cream-muted truncate max-w-full">{acc.email.split('@')[0]}</span>
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[10px] text-cream-faint text-center pt-1">
-                  Accounts provisioned by Dean&apos;s Office & IT Services.
-                </p>
-              </div>
-            )}
           </div>
         </div>
       </section>
@@ -836,185 +796,34 @@ function LoginContent() {
           </span>
         </div>
 
-        {/* ================= STUDENT ACTIVE SHOWCASE ================= */}
-        {portal === 'student' && (
-          <div className="relative z-10 my-auto py-6 space-y-6 max-w-xl transition-all duration-300">
-            {/* Quote & Stars */}
-            <div className="space-y-2.5">
-              <div className="flex items-center gap-1 text-gold-text text-sm" aria-label="5 out of 5 stars">
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span>★</span>
-                <span className="text-xs text-cream-muted ml-2 font-medium">Student Verified</span>
-              </div>
-              <p className="text-lg xl:text-xl font-medium text-cream leading-snug">
-                “Objective student feedback is the cornerstone of academic excellence and continuous curriculum innovation at Cotabato State University.”
-              </p>
-              <p className="text-xs text-cream-muted">
-                — <span className="text-cream font-semibold">Faculty Evaluation Committee</span>, CSU CETC
-              </p>
-            </div>
-
-            {/* High-Fidelity Student Portal Dashboard Mockup */}
-            <div className="rounded-2xl border border-subtle bg-bg2/90 shadow-2xl overflow-hidden backdrop-blur-sm">
-              {/* Window bar */}
-              <div className="flex items-center justify-between border-b border-subtle bg-panel/70 px-4 py-2.5">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
-                  <span className="ml-2 text-[11px] text-cream-muted">portal.csu.edu.ph/student</span>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-brand-text border border-subtle">
-                  <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-                  AY 2026–2027 Active
-                </span>
-              </div>
-
-              {/* Mockup Dashboard Content */}
-              <div className="p-4 space-y-3.5">
-                {/* Stats Bar */}
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Enrolled</span>
-                    <div className="text-base font-bold text-cream">6 Subjects</div>
-                  </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Completed</span>
-                    <div className="text-base font-bold text-positive">4 Evaluated</div>
-                  </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Pending</span>
-                    <div className="text-base font-bold text-gold-text">2 Left</div>
-                  </div>
-                </div>
-
-                {/* Progress bar */}
-                <div className="space-y-1">
-                  <div className="flex justify-between text-[11px]">
-                    <span className="text-cream-dim">Semester Evaluation Progress</span>
-                    <span className="text-brand-text font-bold">66%</span>
-                  </div>
-                  <div className="h-2 w-full rounded-full bg-panel overflow-hidden">
-                    <div className="h-full rounded-full bg-brand transition-all" style={{ width: '66%' }} />
-                  </div>
-                </div>
-
-                {/* Subject Rows Preview */}
-                <div className="space-y-1.5 pt-1">
-                  <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
-                    <div className="truncate">
-                      <span className="font-bold text-cream">IT211</span>
-                      <span className="text-cream-muted ml-1.5">Web Systems & Tech · Engr. Jose Rizal Jr.</span>
-                    </div>
-                    <span className="badge badge-positive shrink-0 text-[10px]">Completed ✓</span>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-lg bg-panel/40 px-3 py-2 text-xs border border-subtle/60">
-                    <div className="truncate">
-                      <span className="font-bold text-cream">IT201</span>
-                      <span className="text-cream-muted ml-1.5">Data Structures · Prof. Maria Santos</span>
-                    </div>
-                    <span className="badge badge-gold shrink-0 text-[10px]">Pending ⏳</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ================= STAFF ACTIVE SHOWCASE ================= */}
-        {portal === 'staff' && (
-          <div className="relative z-10 my-auto py-6 space-y-6 max-w-xl transition-all duration-300">
-            {/* Executive Quote */}
-            <div className="space-y-2.5">
-              <div className="inline-flex items-center gap-1.5 rounded-full bg-brand/15 px-3 py-1 text-[11px] font-semibold text-brand-text border border-brand/30">
-                <span className="h-1.5 w-1.5 rounded-full bg-brand animate-pulse" />
-                Office of the Dean · Academic Governance
-              </div>
-              <p className="text-lg xl:text-xl font-medium text-cream leading-snug">
-                “Academic leadership and faculty excellence drive curriculum integrity and student success across every engineering and computing program.”
-              </p>
-              <p className="text-xs text-cream-muted">
-                — <span className="text-cream font-semibold">Dr. Elena Reyes</span>, Dean, College of Engineering, Technology & Computing
-              </p>
-            </div>
-
-            {/* High-Fidelity Executive Analytics Dashboard Mockup */}
-            <div className="rounded-2xl border border-subtle bg-bg2/90 shadow-2xl overflow-hidden backdrop-blur-sm">
-              {/* Window bar */}
-              <div className="flex items-center justify-between border-b border-subtle bg-panel/70 px-4 py-2.5">
-                <div className="flex items-center gap-1.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-negative/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-gold/80 inline-block" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-positive/80 inline-block" />
-                  <span className="ml-2 text-[11px] text-cream-muted">portal.csu.edu.ph/dean/analytics</span>
-                </div>
-                <span className="inline-flex items-center gap-1 rounded-full bg-bg2 px-2 py-0.5 text-[10px] font-medium text-positive border border-subtle">
-                  <span className="h-1.5 w-1.5 rounded-full bg-positive animate-pulse" />
-                  1st Sem AY 2026–2027 Active
-                </span>
-              </div>
-
-              {/* Mockup Executive Analytics Content */}
-              <div className="p-4 space-y-3.5">
-                {/* Executive Metric Cards */}
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Compliance</span>
-                    <div className="text-base font-bold text-positive">94.2%</div>
-                    <span className="text-[9px] text-cream-muted">1,240 Evaluated</span>
-                  </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Faculty</span>
-                    <div className="text-base font-bold text-cream">48 Active</div>
-                    <span className="text-[9px] text-cream-muted">100% Assigned</span>
-                  </div>
-                  <div className="rounded-lg bg-panel/60 p-2.5 border border-subtle">
-                    <span className="text-[10px] text-cream-muted uppercase tracking-wider font-semibold">Quality Index</span>
-                    <div className="text-base font-bold text-gold-text">4.82 / 5.0</div>
-                    <span className="text-[9px] text-cream-muted">College Mean</span>
-                  </div>
-                </div>
-
-                {/* Departmental Response Rates */}
-                <div className="space-y-2 pt-1">
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-cream-dim">BS Information Technology (BSIT)</span>
-                      <span className="text-brand-text font-bold">96.4%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-panel overflow-hidden">
-                      <div className="h-full rounded-full bg-brand transition-all" style={{ width: '96.4%' }} />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <div className="flex justify-between text-[11px]">
-                      <span className="text-cream-dim">BS Computer Science (BSCS)</span>
-                      <span className="text-brand-text font-bold">91.8%</span>
-                    </div>
-                    <div className="h-1.5 w-full rounded-full bg-panel overflow-hidden">
-                      <div className="h-full rounded-full bg-brand transition-all" style={{ width: '91.8%' }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Institutional Compliance Badges */}
-                <div className="flex items-center justify-between pt-2 border-t border-subtle/50 text-[10px]">
-                  <span className="inline-flex items-center gap-1 text-positive font-medium">
-                    <span>✓</span> CHED Memorandum Compliant
-                  </span>
-                  <span className="text-cream-muted">
-                    AACCUP Level III Accredited
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* What the portal does */}
+        <div className="relative z-10 my-auto py-6 space-y-5 max-w-xl">
+          <p className="text-lg xl:text-xl font-medium text-cream leading-snug">
+            Each semester CETC students review their instructors. This portal collects those
+            evaluations and turns them into the reports the college needs.
+          </p>
+          <ul className="space-y-2.5 text-xs text-cream-muted">
+            <li className="flex gap-2">
+              <span className="text-brand">•</span>
+              <span>Comments are stored in a table that carries no student identifier — the link to who
+              wrote one is never created.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-brand">•</span>
+              <span>Each submission is signed with the portal&apos;s Ed25519 key, so a receipt can be
+              verified without trusting the database.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-brand">•</span>
+              <span>Ratings, comments and access are enforced by Postgres row-level security, not by the
+              browser.</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-brand">•</span>
+              <span>One evaluation per enrolled subject per semester, immutable once submitted.</span>
+            </li>
+          </ul>
+        </div>
 
         {/* Footer */}
         <div className="relative z-10 text-xs text-cream-faint border-t border-subtle pt-4 flex items-center justify-between">

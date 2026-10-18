@@ -28,6 +28,7 @@ export type StudentSubject = {
   faculty_name: string;
   is_open: boolean;
   closes_at: string | null;
+  evaluation_id: string | null;
   completed: boolean;
 };
 

@@ -1,6 +1,5 @@
 'use server';
 
-import { revalidateTag } from 'next/cache';
 import { z } from 'zod';
 
 export type SubmitInput = {
@@ -20,7 +19,7 @@ export type DraftInput = {
   answers: { question_id: string; rating: number }[];
 };
 
-export type SubmitResult = { ok: boolean; error?: string };
+export type SubmitResult = { ok: boolean; error?: string; evaluationId?: string };
 
 // trust boundary schemas (client payloads are untrusted by definition)
 const SubmitSchema = z.object({
@@ -110,12 +109,11 @@ export async function submitEvaluation(input: SubmitInput): Promise<SubmitResult
 
   if (error) return { ok: false, error: error.message };
 
-  const result = data as SubmitResult;
+  const result = data as { ok: boolean; error?: string; evaluation_id?: string };
   if (!result?.ok) {
     return { ok: false, error: FRIENDLY[result?.error ?? ''] ?? 'Submission failed.' };
   }
-  revalidateTag('evals', 'max'); // refresh the cached dean overview
-  return { ok: true };
+  return { ok: true, evaluationId: result.evaluation_id };
 }
 
 /** Upserts the student's draft for one subject (RLS: own drafts only). */

@@ -71,23 +71,58 @@ test('faculty cannot modify questions (admin-only)', async () => {
 
 test('evaluations are immutable for the student who wrote them', async () => {
   const s = await signIn('student1@cetc.test');
-  const mine = await rest(s.token)('/evaluations?select=id,comment&limit=1');
+  const r = rest(s.token);
+  const mine = await r('/evaluations?select=id,payload_hash&limit=1');
   const id = mine.body[0]?.id;
-  const originalComment = mine.body[0]?.comment;
   if (!id) return; // nothing to test against
 
-  // PostgREST may 204 on zero affected rows — verify the row survived untouched
-  await rest(s.token)(`/evaluations?id=eq.${id}`, {
-    method: 'PATCH',
-    body: JSON.stringify({ comment: 'tampered' }),
-  });
-  const afterPatch = await rest(s.token)(`/evaluations?select=comment&id=eq.${id}`);
-  assert.equal(afterPatch.body.length, 1, 'evaluation row must still exist');
-  assert.equal(afterPatch.body[0].comment, originalComment, 'PATCH must not modify the evaluation');
+  const originalHash = mine.body[0].payload_hash;
 
-  await rest(s.token)(`/evaluations?id=eq.${id}`, { method: 'DELETE' });
-  const afterDelete = await rest(s.token)(`/evaluations?select=id&id=eq.${id}`);
+  // PostgREST returns 204 on zero affected rows — assert the DATA is untouched
+  await r(`/evaluations?id=eq.${id}`, {
+    method: 'PATCH',
+    body: JSON.stringify({ payload_hash: 'tampered' }),
+  });
+  const afterPatch = await r(`/evaluations?select=payload_hash&id=eq.${id}`);
+  assert.equal(afterPatch.body.length, 1, 'evaluation row must still exist');
+  assert.equal(
+    afterPatch.body[0].payload_hash,
+    originalHash,
+    'PATCH must not modify the evaluation',
+  );
+
+  await r(`/evaluations?id=eq.${id}`, { method: 'DELETE' });
+  const afterDelete = await r(`/evaluations?select=id&id=eq.${id}`);
   assert.equal(afterDelete.body.length, 1, 'DELETE must not remove the evaluation');
+});
+
+test('no role can read evaluation_comments directly (identity-free by schema)', async () => {
+  for (const email of ['student1@cetc.test', 'maria@cetc.test', 'dean@cetc.test']) {
+    const { token } = await signIn(email);
+    const { body } = await rest(token)('/evaluation_comments?select=id&limit=5');
+    assert.ok(Array.isArray(body), `${email}: expected an array`);
+    assert.equal(body.length, 0, `${email} must not select comments directly`);
+  }
+});
+
+test('anon may verify a receipt but learns nothing else', async () => {
+  const dean = await signIn('dean@cetc.test');
+  const { body: evals } = await rest(dean.token)('/evaluations?select=id&limit=1');
+  const id = evals[0]?.id;
+  if (!id) return; // no submissions on this project
+
+  const res = await fetch(`${URL}/rest/v1/rpc/rpc_receipt_for`, {
+    method: 'POST',
+    headers: { apikey: ANON, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ p_evaluation_id: id }),
+  });
+  assert.ok(res.ok, `receipt rpc must succeed for anon, got ${res.status}`);
+
+  const receipt = await res.json();
+  assert.equal(receipt.evaluation_id, id);
+  assert.ok(!('student_id' in receipt), 'receipt must not expose the student id');
+  assert.ok(!('comment' in receipt), 'receipt must not expose comment text');
+  assert.ok(!('anonymous' in receipt), 'receipt must not expose the anonymity flag');
 });
 
 test('drafts are student-scoped', async () => {

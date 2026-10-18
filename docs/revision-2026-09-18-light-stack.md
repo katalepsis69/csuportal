@@ -1,5 +1,8 @@
 # Light-Stack Revision Plan - 2026-09-18
 
+> **Superseded on the demo-data question by `docs/revision-2026-10-18-production-hardening.md`:**
+> every `DEFAULT_*` mock fallback this plan left in place has since been deleted.
+
 > Locked after stack review (ponytail + ui-design-spec review of the proposal).
 > Goal: same features, fewer dependencies, light/airy design per
 > `design-system/cetc-lsc/MASTER.md` (v2).
