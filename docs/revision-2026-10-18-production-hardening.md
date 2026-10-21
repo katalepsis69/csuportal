@@ -64,6 +64,14 @@ creates and removes a throwaway student, so it is not run here without a go-ahea
 further blocked until the paused project is resumed in the dashboard; the Management API exposes
 no resume endpoint.
 
+## Decision: no keep-alive (2026-10-21)
+
+Free-project pausing is accepted, not automated. While the project sleeps every page says so
+(`DbNotice`) and `/verify/[id]` reports that the check could not run instead of 500ing; the
+operator wakes it from the dashboard. A daily cron was rejected: it reinstates a moving part the
+light-stack pass deleted, to paper over a failure the UI now reports truthfully. Revisit only if
+students are expected to submit outside the operator's waking hours.
+
 ## Known, deliberately not fixed
 
 - **Legacy class contract** (`text-cream-*`, `border-subtle`, `.btn/.card/.table`) is still the

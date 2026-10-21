@@ -29,7 +29,25 @@ export default async function VerifyPage({ params }: { params: Promise<{ id: str
     { auth: { persistSession: false, autoRefreshToken: false } },
   );
 
-  const { data } = await supabase.rpc('rpc_receipt_for', { p_evaluation_id: id });
+  const { data, error } = await supabase.rpc('rpc_receipt_for', { p_evaluation_id: id });
+
+  // A paused/unreachable project must not turn a receipt link into a 500:
+  // say the check could not run instead of implying the receipt is bad.
+  if (error) {
+    return (
+      <main className="mx-auto max-w-2xl space-y-4 p-6 sm:p-10">
+        <p className="text-xs font-semibold tracking-[0.06em] text-muted-foreground uppercase">
+          CSU CETC Portal
+        </p>
+        <h1 className="text-2xl font-semibold tracking-tight">Receipt check unavailable</h1>
+        <p className="text-sm text-muted-foreground">
+          The verification service did not answer. The receipt itself is unaffected — this page
+          only reads the stored record to sign it. Try again once the database is reachable.
+        </p>
+      </main>
+    );
+  }
+
   const row = data as Receipt | null;
   if (!row?.evaluation_id) notFound();
 
